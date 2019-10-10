@@ -1,0 +1,11 @@
+{
+    "body": {
+        "accountDetails": {
+            "salutation": 1,
+            "address": {
+                "country": "BE"
+            }
+        }
+    },
+    "meta": {}
+}

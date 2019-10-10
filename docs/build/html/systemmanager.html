@@ -1,0 +1,599 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>SystemManager &#8212; pymultiMATIC 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Model" href="model.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="Model"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="model.html"
+                        title="previous chapter">Model</a></p>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="low_level_connector.html">Low Level Connector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modes.html">Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SystemManager</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+              <li>SystemManager</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="systemmanager">
+<h1>SystemManager<a class="headerlink" href="#systemmanager" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pymultimatic.systemmanager.SystemManager">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.systemmanager.</code><code class="sig-name descname">SystemManager</code><span class="sig-paren">(</span><em class="sig-param">user: str</em>, <em class="sig-param">password: str</em>, <em class="sig-param">smartphone_id: str = 'pymultiMATIC'</em>, <em class="sig-param">file_path: str = '~/.pymultimatic'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.systemmanager.SystemManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a convenient manager to help interact with vaillant API.</p>
+<p>The manager is calling the
+<a class="reference internal" href="low_level_connector.html#pymultimatic.api.connector.ApiConnector" title="pymultimatic.api.connector.ApiConnector"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiConnector</span></code></a>, the manager will
+provide to correct <a class="reference internal" href="low_level_connector.html#module-pymultimatic.api.payloads" title="pymultimatic.api.payloads"><code class="xref py py-mod docutils literal notranslate"><span class="pre">payloads</span></code></a> and
+<a class="reference internal" href="low_level_connector.html#module-pymultimatic.api.urls" title="pymultimatic.api.urls"><code class="xref py py-mod docutils literal notranslate"><span class="pre">urls</span></code></a> according to what you want to do.</p>
+<p>The manager is throwing <a class="reference internal" href="low_level_connector.html#pymultimatic.api.error.ApiError" title="pymultimatic.api.error.ApiError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiError</span></code></a>
+without altering it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<em>str</em>) – User to login with.</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – Password associated with the user.</p></li>
+<li><p><strong>smartphone_id</strong> (<em>str</em>) – This is required by the API to login.</p></li>
+<li><p><strong>file_path</strong> – (str): Path where cookie is/will be stored.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.get_circulation">
+<code class="sig-name descname">get_circulation</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; Optional[pymultimatic.model.component.Circulation]<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.get_circulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Get the <a class="reference internal" href="components.html#pymultimatic.model.component.Circulation" title="pymultimatic.model.component.Circulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circulation</span></code></a>
+information for the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dhw_id</strong> (<em>str</em>) – domestic hot water id (same as <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.get_hot_water" title="pymultimatic.systemmanager.SystemManager.get_hot_water"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_hot_water()</span></code></a>)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the circulation information, if any.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="components.html#pymultimatic.model.component.Circulation" title="pymultimatic.model.component.Circulation">Circulation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.get_hot_water">
+<code class="sig-name descname">get_hot_water</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; Optional[pymultimatic.model.component.HotWater]<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.get_hot_water" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>
+information for the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dhw_id</strong> (<em>str</em>) – domestic hot water id (same as
+<a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.get_circulation" title="pymultimatic.systemmanager.SystemManager.get_circulation"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_circulation()</span></code></a>).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the hot water information, if any.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater">HotWater</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.get_room">
+<code class="sig-name descname">get_room</code><span class="sig-paren">(</span><em class="sig-param">room_id: str</em><span class="sig-paren">)</span> &#x2192; Optional[pymultimatic.model.component.Room]<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.get_room" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a> information
+for the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>) – Id of the room, this is actually an index, 1,2,3,4</p></li>
+<li><p><strong>depending of the number of rooms you have.</strong> (<em>..</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the room information, if any.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room">Room</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.get_system">
+<code class="sig-name descname">get_system</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; pymultimatic.model.system.System<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.get_system" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the full <a class="reference internal" href="components.html#pymultimatic.model.system.System" title="pymultimatic.model.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a>. It may
+take some times, it actually does 3 or 4 API calls, depending on your
+system configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the full system.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="components.html#pymultimatic.model.system.System" title="pymultimatic.model.system.System">System</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.get_zone">
+<code class="sig-name descname">get_zone</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; Optional[pymultimatic.model.component.Zone]<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.get_zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Get the <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> information
+for the given id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>zone_id</strong> (<em>str</em>) – Name of the room, basically, you set it through the
+VRC 700.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the zone information, if any.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone">Zone</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.login">
+<code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param">force_login: bool = False</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to login to the API, see
+<a class="reference internal" href="low_level_connector.html#pymultimatic.api.connector.ApiConnector.login" title="pymultimatic.api.connector.ApiConnector.login"><code class="xref py py-func docutils literal notranslate"><span class="pre">login()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>force_login</strong> (<em>bool</em>) – Whether the login should be forced or not.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True/False if authentication succeeded or not.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.logout">
+<code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get logged out from the API, see
+<a class="reference internal" href="low_level_connector.html#pymultimatic.api.connector.ApiConnector.logout" title="pymultimatic.api.connector.ApiConnector.logout"><code class="xref py py-func docutils literal notranslate"><span class="pre">logout()</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.remove_holiday_mode">
+<code class="sig-name descname">remove_holiday_mode</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.remove_holiday_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove <a class="reference internal" href="modes.html#pymultimatic.model.mode.HolidayMode" title="pymultimatic.model.mode.HolidayMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">HolidayMode</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is a little workaround here, since the API doesn’t simply
+accept a DELETE request to remove the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.HolidayMode" title="pymultimatic.model.mode.HolidayMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">HolidayMode</span></code></a>, so the manager is
+setting:</p>
+<ul class="simple">
+<li><p>the start date to two days before</p></li>
+<li><p>the end date to yesterday</p></li>
+<li><p>temperature to frost protection</p></li>
+<li><p>active to <cite>False</cite></p></li>
+</ul>
+<p>This will ensure the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.HolidayMode" title="pymultimatic.model.mode.HolidayMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">HolidayMode</span></code></a> is not active.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.remove_quick_mode">
+<code class="sig-name descname">remove_quick_mode</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.remove_quick_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes current <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>if there is not <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a> set,
+the API returns an error (HTTP 409). <strong>This error is swallowed by
+the manager</strong>, so you don’t have to handle it.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.remove_room_quick_veto">
+<code class="sig-name descname">remove_room_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">room_id: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.remove_room_quick_veto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> from a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>room_id</strong> (<em>str</em>) – Id of the room.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.remove_zone_quick_veto">
+<code class="sig-name descname">remove_zone_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.remove_zone_quick_veto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> from a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>zone_id</strong> (<em>str</em>) – Id of the zone.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.request_hvac_update">
+<code class="sig-name descname">request_hvac_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.request_hvac_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request an hvac update. This allow the vaillant API to read the data
+from your system.</p>
+<p>This is necessary to update
+<a class="reference internal" href="model.html#pymultimatic.model.status.BoilerStatus" title="pymultimatic.model.status.BoilerStatus"><code class="xref py py-class docutils literal notranslate"><span class="pre">BoilerStatus</span></code></a> and
+<a class="reference internal" href="model.html#pymultimatic.model.status.Error" title="pymultimatic.model.status.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <strong>request</strong> done by the manager is done <strong>synchronously</strong>,
+but the <strong>update</strong> processing (basically, reading data from your
+system) is done <strong>asynchronously</strong> by vaillant API.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The manager will try to reduce number of call, I think the call is
+costly. If the
+<a class="reference internal" href="model.html#pymultimatic.model.syncstate.SyncState" title="pymultimatic.model.syncstate.SyncState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncState</span></code></a>
+<a class="reference internal" href="model.html#pymultimatic.model.syncstate.SyncState.is_pending" title="pymultimatic.model.syncstate.SyncState.is_pending"><code class="xref py py-class docutils literal notranslate"><span class="pre">is_pending</span></code></a>,
+the manager will skip the call to the API.</p>
+</div>
+<p>it can take some times for the update to occur (Most of the
+time, it takes about 1 or 2 minutes before you can see changes, if any)</p>
+<p>It the request is done too often, the API may return an error
+(HTTP 409).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_holiday_mode">
+<code class="sig-name descname">set_holiday_mode</code><span class="sig-paren">(</span><em class="sig-param">start_date: datetime.date</em>, <em class="sig-param">end_date: datetime.date</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_holiday_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the <a class="reference internal" href="modes.html#pymultimatic.model.mode.HolidayMode" title="pymultimatic.model.mode.HolidayMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">HolidayMode</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_date</strong> (<em>date</em>) – Start date of the holiday mode.</p></li>
+<li><p><strong>end_date</strong> (<em>date</em>) – End date of the holiday mode.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Target temperature while holiday mode
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.HolidayMode.is_applied" title="pymultimatic.model.mode.HolidayMode.is_applied"><code class="xref py py-class docutils literal notranslate"><span class="pre">is_applied</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_hot_water_operating_mode">
+<code class="sig-name descname">set_hot_water_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em>, <em class="sig-param">new_mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_hot_water_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set new operating mode for
+<a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>. The mode should be
+listed here <a class="reference internal" href="components.html#pymultimatic.model.component.HotWater.MODES" title="pymultimatic.model.component.HotWater.MODES"><code class="xref py py-class docutils literal notranslate"><span class="pre">MODES</span></code></a>
+otherwise it won’t have any effect.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To set <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a>, you
+have to use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.set_quick_mode" title="pymultimatic.systemmanager.SystemManager.set_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_quick_mode()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This call won’t have any effect if there is a
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a> activated, if you
+want to remove the quick mode, use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.remove_quick_mode" title="pymultimatic.systemmanager.SystemManager.remove_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_quick_mode()</span></code></a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dhw_id</strong> (<em>str</em>) – domestic hot water id.</p></li>
+<li><p><strong>new_mode</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><em>OperatingMode</em></a>) – The new mode to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_hot_water_setpoint_temperature">
+<code class="sig-name descname">set_hot_water_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_hot_water_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>This set the target temperature for <em>hot water</em>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_quick_mode">
+<code class="sig-name descname">set_quick_mode</code><span class="sig-paren">(</span><em class="sig-param">quick_mode: pymultimatic.model.mode.QuickMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_quick_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a> system wise.</p>
+<p>This will override the current
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a>, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>quick_mode</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><em>QuickMode</em></a>) – the quick mode to set, see
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickModes" title="pymultimatic.model.mode.QuickModes"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickModes</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_room_operating_mode">
+<code class="sig-name descname">set_room_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">room_id: str</em>, <em class="sig-param">new_mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_room_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set new operating mode for
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>. The mode should be
+listed here <a class="reference internal" href="components.html#pymultimatic.model.component.Room.MODES" title="pymultimatic.model.component.Room.MODES"><code class="xref py py-class docutils literal notranslate"><span class="pre">MODES</span></code></a>
+otherwise it won’t have any effect.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To set <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a>, you
+have to use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.set_quick_mode" title="pymultimatic.systemmanager.SystemManager.set_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_quick_mode()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This call won’t have any effect if there is a
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a> activated, if you
+want to remove the quick mode, use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.remove_quick_mode" title="pymultimatic.systemmanager.SystemManager.remove_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_quick_mode()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To set <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a>, you have to
+use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.set_room_quick_veto" title="pymultimatic.systemmanager.SystemManager.set_room_quick_veto"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_room_quick_veto()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>) – id of the room.</p></li>
+<li><p><strong>new_mode</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><em>OperatingMode</em></a>) – The new mode to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_room_quick_veto">
+<code class="sig-name descname">set_room_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">room_id: str</em>, <em class="sig-param">quick_veto: pymultimatic.model.mode.QuickVeto</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_room_quick_veto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.
+It will override the current
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a>, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>) – Id of the room.</p></li>
+<li><p><strong>quick_veto</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><em>QuickVeto</em></a>) – Quick veto to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_room_setpoint_temperature">
+<code class="sig-name descname">set_room_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">room_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_room_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the new current target temperature for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Setting the target temperature this way will actually set the room
+operating mode to
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingModes.MANUAL" title="pymultimatic.model.mode.OperatingModes.MANUAL"><code class="xref py py-class docutils literal notranslate"><span class="pre">MANUAL</span></code></a> (and
+target temperature to the desired temperature). It means the target
+temperature will remain the same until you change the target
+temperature again or the operating mode.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>room_id</strong> (<em>str</em>) – Id of the room.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Target temperature to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_operation_mode">
+<code class="sig-name descname">set_zone_operation_mode</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">new_mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_operation_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set new operating mode for
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>. The mode should be
+listed here <a class="reference internal" href="components.html#pymultimatic.model.component.Zone.MODES" title="pymultimatic.model.component.Zone.MODES"><code class="xref py py-class docutils literal notranslate"><span class="pre">MODES</span></code></a>
+otherwise it won’t have any effect.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To set <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a>, you
+have to use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.set_quick_mode" title="pymultimatic.systemmanager.SystemManager.set_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_quick_mode()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This call won’t have any effect if there is a
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a> activated, if you
+want to remove the quick mode, use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.remove_quick_mode" title="pymultimatic.systemmanager.SystemManager.remove_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_quick_mode()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To set <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a>, you have to
+use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.set_zone_quick_veto" title="pymultimatic.systemmanager.SystemManager.set_zone_quick_veto"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_zone_quick_veto()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zone_id</strong> (<em>str</em>) – id of the zone.</p></li>
+<li><p><strong>new_mode</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><em>OperatingMode</em></a>) – The new mode to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_quick_veto">
+<code class="sig-name descname">set_zone_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">quick_veto: pymultimatic.model.mode.QuickVeto</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_quick_veto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.
+It will override the current
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a>, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zone_id</strong> (<em>str</em>) – Id of the zone.</p></li>
+<li><p><strong>quick_veto</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><em>QuickVeto</em></a>) – Quick veto to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_setback_temperature">
+<code class="sig-name descname">set_zone_setback_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_setback_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the configured temperature for the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingModes.NIGHT" title="pymultimatic.model.mode.SettingModes.NIGHT"><code class="xref py py-class docutils literal notranslate"><span class="pre">NIGHT</span></code></a> mode.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It won’t alter the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">OperatingMode</span></code></a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zone_id</strong> (<em>str</em>) – Id of the zone.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – New temperature.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_setpoint_temperature">
+<code class="sig-name descname">set_zone_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the configured temperature for the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingModes.DAY" title="pymultimatic.model.mode.SettingModes.DAY"><code class="xref py py-class docutils literal notranslate"><span class="pre">DAY</span></code></a> mode.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It won’t alter the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">OperatingMode</span></code></a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zone_id</strong> (<em>str</em>) – Id of the zone.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – New temperature.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="model.html" title="previous chapter (use the left arrow)">Model</a>
+      </div>
+    
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="Model"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2019, Thomas Germain. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

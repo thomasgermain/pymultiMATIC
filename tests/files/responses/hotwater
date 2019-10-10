@@ -1,0 +1,184 @@
+{
+    "body": {
+        "configuration": {
+            "operation_mode": "AUTO",
+            "temperature_setpoint": 50
+        },
+        "timeprogram": {
+            "monday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "05:40",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "07:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "17:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "19:20",
+                    "mode": "OFF"
+                }
+            ],
+            "tuesday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "05:40",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "07:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "17:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "19:20",
+                    "mode": "OFF"
+                }
+            ],
+            "wednesday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "05:40",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "07:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "17:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "19:20",
+                    "mode": "OFF"
+                }
+            ],
+            "thursday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "05:40",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "07:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "17:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "19:20",
+                    "mode": "OFF"
+                }
+            ],
+            "friday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "05:40",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "07:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "17:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "19:20",
+                    "mode": "OFF"
+                }
+            ],
+            "saturday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "06:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "08:30",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "17:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "19:20",
+                    "mode": "OFF"
+                }
+            ],
+            "sunday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "06:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "08:30",
+                    "mode": "OFF"
+                },
+                {
+                    "startTime": "17:00",
+                    "mode": "ON"
+                },
+                {
+                    "startTime": "19:20",
+                    "mode": "OFF"
+                }
+            ]
+        }
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1555409557401,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1555416830000,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/timeprogram"
+                }
+            }
+        ]
+    }
+}

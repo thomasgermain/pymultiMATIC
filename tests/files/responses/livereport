@@ -1,0 +1,76 @@
+{
+    "body": {
+        "devices": [
+            {
+                "reports": [
+                    {
+                        "unit": "°C",
+                        "name": "Température ECS ballon",
+                        "value": 44.5,
+                        "_id": "DomesticHotWaterTankTemperature",
+                        "measurement_category": "TEMPERATURE",
+                        "associated_device_function": "DHW"
+                    }
+                ],
+                "_id": "Control_DHW",
+                "name": "Circuit sanitaire"
+            },
+            {
+                "reports": [
+                    {
+                        "unit": "°C",
+                        "name": "Sonde de température de départ",
+                        "value": 38,
+                        "_id": "FlowTemperatureSensor",
+                        "measurement_category": "TEMPERATURE",
+                        "associated_device_function": "HEATING"
+                    }
+                ],
+                "_id": "Control_CC1",
+                "name": "Circuit chauffage 1"
+            },
+            {
+                "reports": [
+                    {
+                        "unit": "bar",
+                        "name": "Pression d'eau",
+                        "value": 1.9,
+                        "_id": "WaterPressureSensor",
+                        "measurement_category": "PRESSURE",
+                        "associated_device_function": "HEATING"
+                    }
+                ],
+                "_id": "Control_SYS_MultiMatic",
+                "name": "multiMATIC"
+            }
+        ]
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1546268600,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/livereport/v1/devices/Control_DHW/reports/DomesticHotWaterTankTemperature"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1546268601,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/livereport/v1/devices/Control_CC1/reports/FlowTemperatureSensor"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1546268603,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/livereport/v1/devices/Control_SYS_MultiMatic/reports/WaterPressureSensor"
+                }
+            }
+        ]
+    }
+}

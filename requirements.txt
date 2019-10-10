@@ -1,0 +1,7 @@
+attrs>=19.0.0,<20.0.0
+responses>=0.10.0,<1.0.0
+requests>=2.20.0,<3.0.0
+jsonpickle>=1.0,<2.0
+pytest
+sphinx
+guzzle_sphinx_theme

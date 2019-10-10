@@ -1,0 +1,44 @@
+{
+    "monday": [
+        {
+            "startTime": "00:00",
+            "temperatureSetpoint": 17.5
+        }
+    ],
+    "tuesday": [
+        {
+            "startTime": "00:00",
+            "temperatureSetpoint": 17.5
+        }
+    ],
+    "wednesday": [
+        {
+            "startTime": "00:00",
+            "temperatureSetpoint": 17.5
+        }
+    ],
+    "thursday": [
+        {
+            "startTime": "00:00",
+            "temperatureSetpoint": 17.5
+        }
+    ],
+    "friday": [
+        {
+            "startTime": "00:00",
+            "temperatureSetpoint": 17.5
+        }
+    ],
+    "saturday": [
+        {
+            "startTime": "00:00",
+            "temperatureSetpoint": 17.5
+        }
+    ],
+    "sunday": [
+        {
+            "startTime": "00:00",
+            "temperatureSetpoint": 17.5
+        }
+    ]
+}

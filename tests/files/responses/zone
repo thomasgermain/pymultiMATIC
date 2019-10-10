@@ -1,0 +1,182 @@
+{
+    "body": {
+        "heating": {
+            "configuration": {
+                "mode": "AUTO",
+                "setback_temperature": 19.5,
+                "setpoint_temperature": 20
+            },
+            "timeprogram": {
+                "monday": [
+                    {
+                        "startTime": "00:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "04:00",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "07:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "14:00",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "19:30",
+                        "setting": "NIGHT"
+                    }
+                ],
+                "tuesday": [
+                    {
+                        "startTime": "00:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "04:00",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "07:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "14:00",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "19:30",
+                        "setting": "NIGHT"
+                    }
+                ],
+                "wednesday": [
+                    {
+                        "startTime": "00:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "04:30",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "19:30",
+                        "setting": "NIGHT"
+                    }
+                ],
+                "thursday": [
+                    {
+                        "startTime": "00:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "04:00",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "07:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "14:00",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "19:30",
+                        "setting": "NIGHT"
+                    }
+                ],
+                "friday": [
+                    {
+                        "startTime": "00:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "04:30",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "19:30",
+                        "setting": "NIGHT"
+                    }
+                ],
+                "saturday": [
+                    {
+                        "startTime": "00:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "04:30",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "19:30",
+                        "setting": "NIGHT"
+                    }
+                ],
+                "sunday": [
+                    {
+                        "startTime": "00:00",
+                        "setting": "NIGHT"
+                    },
+                    {
+                        "startTime": "04:30",
+                        "setting": "DAY"
+                    },
+                    {
+                        "startTime": "19:30",
+                        "setting": "NIGHT"
+                    }
+                ]
+            }
+        },
+        "configuration": {
+            "name": "Zone 1",
+            "enabled": true,
+            "active_function": "STANDBY",
+            "inside_temperature": 20.8,
+            "quick_veto": {
+                "active": false,
+                "setpoint_temperature": 20
+            }
+        },
+        "_id": "Control_ZO2"
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1555443893467,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1555451149000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/timeprogram"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1555443893467,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/configuration/quick_veto"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1555443901742,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/configuration"
+                }
+            }
+        ]
+    }
+}

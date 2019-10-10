@@ -1,0 +1,14 @@
+{
+    "body": {
+        "onlineStatus": {
+            "status": "ONLINE"
+        },
+        "firmwareUpdateStatus": {
+            "status": "UPDATE_NOT_PENDING"
+        },
+        "facilityInstallationStatus": {
+            "status": "NOT_INSTALLABLE"
+        }
+    },
+    "meta": {}
+}

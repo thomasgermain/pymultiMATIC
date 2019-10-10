@@ -1,0 +1,72 @@
+{
+    "body": {
+        "configuration": {
+            "operation_mode": "AUTO",
+            "temperature_setpoint": 50
+        },
+        "timeprogram": {
+            "monday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "ON"
+                }
+            ],
+            "tuesday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "ON"
+                }
+            ],
+            "wednesday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "ON"
+                }
+            ],
+            "thursday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "ON"
+                }
+            ],
+            "friday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "ON"
+                }
+            ],
+            "saturday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "ON"
+                }
+            ],
+            "sunday": [
+                {
+                    "startTime": "00:00",
+                    "mode": "ON"
+                }
+            ]
+        }
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1555409557401,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1555416830000,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/timeprogram"
+                }
+            }
+        ]
+    }
+}

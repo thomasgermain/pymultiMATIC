@@ -1,0 +1,71 @@
+{
+    "body": {
+        "configuration": {
+            "operationMode": "AUTO"
+        },
+        "timeprogram": {
+            "monday": [
+                {
+                    "startTime": "00:00",
+                    "setting": "OFF"
+                }
+            ],
+            "tuesday": [
+                {
+                    "startTime": "00:00",
+                    "setting": "OFF"
+                }
+            ],
+            "wednesday": [
+                {
+                    "startTime": "00:00",
+                    "setting": "OFF"
+                }
+            ],
+            "thursday": [
+                {
+                    "startTime": "00:00",
+                    "setting": "OFF"
+                }
+            ],
+            "friday": [
+                {
+                    "startTime": "00:00",
+                    "setting": "OFF"
+                }
+            ],
+            "saturday": [
+                {
+                    "startTime": "00:00",
+                    "setting": "OFF"
+                }
+            ],
+            "sunday": [
+                {
+                    "startTime": "00:00",
+                    "setting": "OFF"
+                }
+            ]
+        }
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1555414794967,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/circulation/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1555414695000,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/circulation/timeprogram"
+                }
+            }
+        ]
+    }
+}

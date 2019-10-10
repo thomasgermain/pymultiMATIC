@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Model &#8212; pymultiMATIC 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SystemManager" href="systemmanager.html" />
+    <link rel="prev" title="Components" href="components.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="systemmanager.html" title="SystemManager"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="components.html" title="Components"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="components.html"
+                        title="previous chapter">Components</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="systemmanager.html"
+                        title="next chapter">SystemManager</a></p>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="low_level_connector.html">Low Level Connector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modes.html">Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="components.html">Components</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#error">Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#boilerstatus">BoilerStatus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#systemstatus">SystemStatus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syncstate">SyncState</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timeperiodsetting">TimePeriodSetting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timeprogramday">TimeProgramDay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timeprogram">TimeProgram</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="systemmanager.html">SystemManager</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+              <li>Model</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <div class="section" id="module-pymultimatic.model">
+<span id="model"></span><h1>Model<a class="headerlink" href="#module-pymultimatic.model" title="Permalink to this headline">¶</a></h1>
+<p>Mapped model from the API.</p>
+<div class="section" id="error">
+<h2>Error<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.status.Error">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">Error</code><span class="sig-paren">(</span><em class="sig-param">device_name: str</em>, <em class="sig-param">title: str</em>, <em class="sig-param">status_code: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">timestamp: datetime.datetime</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Errors coming from your system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_name</strong> (<em>str</em>) – Name of the device from where the error is coming.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – Short description of the error.</p></li>
+<li><p><strong>status_code</strong> (<em>str</em>) – Code of the error.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Long description of the error.</p></li>
+<li><p><strong>timestamp</strong> (<em>datetime</em>) – When errors occurred.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="boilerstatus">
+<h2>BoilerStatus<a class="headerlink" href="#boilerstatus" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.status.BoilerStatus">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">BoilerStatus</code><span class="sig-paren">(</span><em class="sig-param">device_name: str, title: str, status_code: str, description: str, timestamp: datetime.datetime, hint: str, water_pressure: Optional[float], current_temperature: Optional[float]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.BoilerStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Status of the boiler. This is sent with an error format, but in this
+case, it’s more like a status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hint</strong> (<em>str</em>) – Directly coming from the API, most of the time the value is
+<code class="docutils literal notranslate"><span class="pre">...</span></code></p></li>
+<li><p><strong>water_pressure</strong> (<em>float</em>) – Water pressure in bar</p></li>
+<li><p><strong>current_temperature</strong> (<em>float</em>) – Current temperature of the boiler.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pymultimatic.model.status.BoilerStatus.is_error">
+<em class="property">property </em><code class="sig-name descname">is_error</code><a class="headerlink" href="#pymultimatic.model.status.BoilerStatus.is_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if there is an error at boiler side.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="systemstatus">
+<h2>SystemStatus<a class="headerlink" href="#systemstatus" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.status.SystemStatus">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">SystemStatus</code><span class="sig-paren">(</span><em class="sig-param">online_status: str</em>, <em class="sig-param">update_status: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.SystemStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Status of the system.</p>
+<dl class="method">
+<dt id="pymultimatic.model.status.SystemStatus.is_online">
+<em class="property">property </em><code class="sig-name descname">is_online</code><a class="headerlink" href="#pymultimatic.model.status.SystemStatus.is_online" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the system is connected to the internet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.model.status.SystemStatus.is_up_to_date">
+<em class="property">property </em><code class="sig-name descname">is_up_to_date</code><a class="headerlink" href="#pymultimatic.model.status.SystemStatus.is_up_to_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the system is up to date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="syncstate">
+<h2>SyncState<a class="headerlink" href="#syncstate" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.syncstate.SyncState">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.syncstate.</code><code class="sig-name descname">SyncState</code><span class="sig-paren">(</span><em class="sig-param">state: str</em>, <em class="sig-param">timestamp: datetime.datetime</em>, <em class="sig-param">resource_link: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sync state coming from the API.
+In the vaillant API, most resource you can ask for are flagged with a
+<code class="docutils literal notranslate"><span class="pre">resourceState</span></code>, with that, you can know if the resource you are asking
+for is synced or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<em>str</em>) – Sate coming from the API.</p></li>
+<li><p><strong>timestamp</strong> (<em>datetime</em>) – state’s last update.</p></li>
+<li><p><strong>resource_link</strong> (<em>str</em>) – Link to the resource the state is talking about.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pymultimatic.model.syncstate.SyncState.is_init">
+<em class="property">property </em><code class="sig-name descname">is_init</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if state is initializing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.model.syncstate.SyncState.is_outdated">
+<em class="property">property </em><code class="sig-name descname">is_outdated</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_outdated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if state is outdated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.model.syncstate.SyncState.is_pending">
+<em class="property">property </em><code class="sig-name descname">is_pending</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_pending" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if state is pending.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.model.syncstate.SyncState.is_synced">
+<em class="property">property </em><code class="sig-name descname">is_synced</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_synced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if state is synced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="timeperiodsetting">
+<h2>TimePeriodSetting<a class="headerlink" href="#timeperiodsetting" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.timeprogram.TimePeriodSetting">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimePeriodSetting</code><span class="sig-paren">(</span><em class="sig-param">start_time: str, target_temperature: Optional[float], setting: Optional[pymultimatic.model.mode.SettingMode]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a period setting, defining what the
+<a class="reference internal" href="components.html#pymultimatic.model.component.Component" title="pymultimatic.model.component.Component"><code class="xref py py-class docutils literal notranslate"><span class="pre">Component</span></code></a> should do when on
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingModes.AUTO" title="pymultimatic.model.mode.OperatingModes.AUTO"><code class="xref py py-class docutils literal notranslate"><span class="pre">AUTO</span></code></a>.</p>
+<p>There is not end of the period, the end of the period is equal to the start
+time of the next period.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_time</strong> (<em>str</em>) – Start time of the period, format is HH:mm.</p></li>
+<li><p><strong>target_temperature</strong> (<em>float</em>) – Target temperature to reach during this</p></li>
+<li><p><strong>period</strong><strong>, </strong><strong>target temperature is only available for</strong> (<em>time</em>) – <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p></li>
+<li><p><strong>setting</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingMode" title="pymultimatic.model.mode.SettingMode"><em>SettingMode</em></a>) – The setting configured, see
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingModes" title="pymultimatic.model.mode.SettingModes"><code class="xref py py-class docutils literal notranslate"><span class="pre">SettingModes</span></code></a>, this is not
+available for a <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="pymultimatic.model.timeprogram.TimePeriodSetting.absolute_minutes">
+<code class="sig-name descname">absolute_minutes</code><em class="property"> = None</em><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting.absolute_minutes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <code class="xref py py-attr docutils literal notranslate"><span class="pre">start_time</span></code> in absolute minute. hours * 60 + minutes.
+This is more convenient to compare TimePeriodSetting using this.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="timeprogramday">
+<h2>TimeProgramDay<a class="headerlink" href="#timeprogramday" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.timeprogram.TimeProgramDay">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimeProgramDay</code><span class="sig-paren">(</span><em class="sig-param">settings: List[pymultimatic.model.timeprogram.TimePeriodSetting]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgramDay" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a day, this is basically a list of <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimePeriodSetting</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>settings</strong> (<em>List</em><em>[</em><a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting"><em>TimePeriodSetting</em></a><em>]</em>) – List of periods for this day.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="timeprogram">
+<h2>TimeProgram<a class="headerlink" href="#timeprogram" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.timeprogram.TimeProgram">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimeProgram</code><span class="sig-paren">(</span><em class="sig-param">days: Dict[str, pymultimatic.model.timeprogram.TimeProgramDay]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the full time program, a week, reflecting the configuration done
+through mobile app.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>days</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#pymultimatic.model.timeprogram.TimeProgramDay" title="pymultimatic.model.timeprogram.TimeProgramDay"><em>TimeProgramDay</em></a><em>]</em>) – Days of the week.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pymultimatic.model.timeprogram.TimeProgram.get_for">
+<code class="sig-name descname">get_for</code><span class="sig-paren">(</span><em class="sig-param">search_date: datetime.datetime</em><span class="sig-paren">)</span> &#x2192; pymultimatic.model.timeprogram.TimePeriodSetting<a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram.get_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the corresponding <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimePeriodSetting</span></code></a>
+for the given time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>search_date</strong> (<em>datetime</em>) – Only the day, the hour and minute are used
+in order to get the right <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimePeriodSetting</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The corresponding setting.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting">TimePeriodSetting</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="components.html" title="previous chapter (use the left arrow)">Components</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="systemmanager.html" title="next chapter (use the right arrow)">SystemManager</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="systemmanager.html" title="SystemManager"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="components.html" title="Components"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2019, Thomas Germain. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

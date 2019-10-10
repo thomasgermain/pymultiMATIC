@@ -1,0 +1,22 @@
+{
+    "body": {
+    },
+    "meta": {
+        "onlineStatus": {
+            "status": "ONLINE"
+        },
+        "firmwareUpdateStatus": {
+            "status": "UPDATE_NOT_PENDING"
+        },
+        "syncState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1546439817247,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/1234567890123456789012345678/hvacstate/v1/overview"
+                }
+            }
+        ]
+    }
+}

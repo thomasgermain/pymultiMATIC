@@ -1,0 +1,23 @@
+{
+    "body": {
+        "facilitiesList": [
+            {
+                "serialNumber": "1234567890123456789012345678",
+                "name": "Home",
+                "responsibleCountryCode": "BE",
+                "supportedBrand": "GREEN_BRAND_COMPATIBLE",
+                "capabilities": [
+                    "ROOM_BY_ROOM",
+                    "SYSTEMCONTROL_MULTIMATIC"
+                ],
+                "networkInformation": {
+                    "macAddressEthernet": "01:23:45:67:89:AB",
+                    "macAddressWifiAccessPoint": "23:45:67:89:0A:BC",
+                    "macAddressWifiClient": "45:67:89:01:23:AB"
+                },
+                "firmwareVersion": "1.2.3"
+            }
+        ]
+    },
+    "meta": {}
+}
