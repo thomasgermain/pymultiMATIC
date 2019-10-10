@@ -1,0 +1,42 @@
+language: python
+
+os:
+- linux
+
+python:
+- '3.6'
+- '3.7'
+
+install:
+- pip install -r requirements.txt
+- pip install pylint
+- pip install mypy
+- pip install pycodestyle
+- pip install coveralls
+script:
+- pylint pymultimatic
+- pycodestyle pymultimatic
+- mypy --strict pymultimatic
+- pylint --rcfile=tests/.pylintrc tests
+- pycodestyle tests
+- mypy --strict tests
+- coverage run --source=pymultimatic setup.py pytest
+after_success:
+- coveralls
+
+deploy:
+  provider: pypi
+  user:
+    secure: dtaREsqabVL/r59d5LcF2e3+YYMgrfS9/kW7KVq+YP1igk/Xs/B3yQm1AbD+T+d+dlwjdGoejdx075V1mQynum3BAsQ7HMkMJErbjoFjNicNTTVu65T2Si+AACrp3v3gS7r0ZrMM/OlI6W5Hc63c+cSoWP52Z0esl3sWC+DvjfmLrHn1Elb1M2sx4079okcxvT+QPc+q2qAPKZ5FrxuvN3u6Q8SrN8mjlpQluCwPvoo/4o2HN+tXYrCgLyBxFa8FTGT7jbo/bCm7vC2Mczbg12q5KCNT8LTXDgbzIIbk/1Lk4EPLJI2Ug3PxDWqhkjzF3xbi+I6/zwXxuCi3TeUvisigiFRTFnG0be0YGCLAwDOg/k3GAPSU2kyJer/UTOmv/uDWiHgiF2jTrKde0IiNAtk53IpQdvBrbrpMG7h+gHc0cKck2POGIfrq/Lv9kY6y9kx2bat/juIFfj8YRd4JOvzS3GDLUaQckfAP6R5voHDEE6uA9mHQUqX79TGI3AtutdkHODn+qxpjnIGKq5UTG6e0FNovmfQ7LwytGXnsuHBOpGxC57ywXfgW7WsPwFQn5CpijasL1MiEehgnVOm/JPTCN3uaDoB6gOrPMh2cHrymPE5TTKjYnte4bTPH5wz6w09bb/vFGv8vTpQRKTUL7vqYt1FCRPiW3BMSH0hU9Os=
+  password:
+    secure: pMuO+EePJpolfz1edxxiFs+PRPlXjWPL90i1AThJwbcyaHBFQNFPu3EXdxUqCHXoOOYpnegCuLNpAupku0IdHNXu6KvRjf40RMZYND++KgP2nuxJPHIuGd70j+wKoLZnkxyWBLBB0qYSOSRKr7onPSfDihPVjdxe62ziYsd8UlwWvhzKSEa5/8/y1Xoc0BVHMbFTw2UGw3mk2dabk7u85MK/ibQVUQGaHG1cT/PfIml7Uehg1ZJDZewQBw5cwFqHYXa3aWp6uVj1hA4n53zDXzY26QkB0WUB9iGsLs1mDod4a+kYvT8Y468844ftplID3UjcmRCMivRBWpEqvh3ZAl+lxyBpnnuu6QGVJ9lth+hc6XJ6Xq6HZ3NIBvQpeMJxdqRAR3q7IN/7rwtZhtmmj9U/9pMMP8TYO/2kSZc5o4X8hoiy5Ea9tMnquJQ0NGrz4ekg9pNWxs0tnrjHvGGDBFHQ+QyyaleUIL2xZF302ZndBjr/kMrvx04IFUD3wQ5LceuUhdNe23/GAa7cYvPjq5/NEQKI7m1IMX2MoKChj8x68Qwhn0a1f3DnlJTtNOk7EFfLxSyUaZBirAYQfRDzZQq5j6mOAY9PB8cp2atbnHrmj2M+N8g9NW2ENF4XFLKiKdz1T4OAQRteWRZc2a8WzfeEDyeyCrkXBN8XWsAhBdQ=
+  distributions: "sdist"
+  skip_existing: true
+  on:
+    tags: true
+    branch: master
+
+notifications:
+  email:
+    on_failure: change
+    on_success: change

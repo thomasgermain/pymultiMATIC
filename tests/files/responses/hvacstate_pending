@@ -1,0 +1,33 @@
+{
+    "body": {
+        "errorMessages": [
+            {
+                "deviceName": "VC BE 246/5-3",
+                "type": "STATUS",
+                "title": "Mode chauffage : Arrêt temporaire après une opération de chauffage",
+                "statusCode": "S.8",
+                "description": "...",
+                "hint": "...",
+                "timestamp": 1545896904282
+            }
+        ]
+    },
+    "meta": {
+        "onlineStatus": {
+            "status": "ONLINE"
+        },
+        "firmwareUpdateStatus": {
+            "status": "UPDATE_NOT_PENDING"
+        },
+        "syncState": [
+            {
+                "state": "PENDING",
+                "timestamp": 1546439817247,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/1234567890123456789012345678/hvacstate/v1/overview"
+                }
+            }
+        ]
+    }
+}

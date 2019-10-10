@@ -1,0 +1,42 @@
+{
+    "body": {
+        "errorMessages": [
+            {
+                "deviceName": "VC BE 246/5-3",
+                "type": "STATUS",
+                "title": "Mode été : aucune demande d’eau chaude sanitaire",
+                "statusCode": "S.31",
+                "description": "Le mode chauffage est désactivé et il n’y a pas de demande d’eau chaude sanitaire.",
+                "hint": "...",
+                "timestamp": 1562356114295
+            },
+            {
+                "deviceName": "VR920",
+                "type": "ERROR",
+                "title": "Défaut : Bus de communication eBus",
+                "statusCode": "F.900",
+                "description": "...",
+                "hint": "...",
+                "timestamp": 1562909693021
+            }
+        ]
+    },
+    "meta": {
+        "onlineStatus": {
+            "status": "ONLINE"
+        },
+        "firmwareUpdateStatus": {
+            "status": "UPDATE_NOT_PENDING"
+        },
+        "syncState": [
+            {
+                "state": "PENDING",
+                "timestamp": 1562922596282,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/1234567890123456789012345678/hvacstate/v1/overview"
+                }
+            }
+        ]
+    }
+}
