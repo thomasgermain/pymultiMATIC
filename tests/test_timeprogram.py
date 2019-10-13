@@ -62,3 +62,51 @@ class TimeProgramTest(unittest.TestCase):
                          actual.target_temperature)
         self.assertEqual(expected.setting, actual.setting)
         self.assertEqual(expected.start_time, actual.start_time)
+        self.assertEqual(expected.hour, actual.hour)
+        self.assertEqual(expected.minute, actual.minute)
+        self.assertEqual(expected.absolute_minutes, actual.absolute_minutes)
+
+    def test_get_next_before_first(self) -> None:
+        tpds1 = TimePeriodSetting('01:00', 25, SettingModes.ON)
+        tpds2 = TimePeriodSetting('05:00', 20, SettingModes.OFF)
+        tpds3 = TimePeriodSetting('08:00', 20, SettingModes.OFF)
+        tpds_day_after = TimePeriodSetting('03:00', 20, SettingModes.OFF)
+
+        monday = TimeProgramDay([tpds1, tpds2, tpds3])
+        tuesday = TimeProgramDay([tpds_day_after])
+
+        timeprogram = TimeProgram({'monday': monday, 'tuesday': tuesday})
+
+        next_setting = timeprogram.get_next(datetime(2019, 2, 18, 0, 30))
+
+        self._assert(next_setting, tpds1)
+
+    def test_get_next_between_same_day(self) -> None:
+        tpds1 = TimePeriodSetting('01:00', 25, SettingModes.ON)
+        tpds2 = TimePeriodSetting('05:00', 20, SettingModes.OFF)
+        tpds3 = TimePeriodSetting('08:00', 20, SettingModes.OFF)
+        tpds_day_after = TimePeriodSetting('03:00', 20, SettingModes.OFF)
+
+        monday = TimeProgramDay([tpds1, tpds2, tpds3])
+        tuesday = TimeProgramDay([tpds_day_after])
+
+        timeprogram = TimeProgram({'monday': monday, 'tuesday': tuesday})
+
+        next_setting = timeprogram.get_next(datetime(2019, 2, 18, 4, 30))
+
+        self._assert(next_setting, tpds2)
+
+    def test_get_next_after_last(self) -> None:
+        tpds1 = TimePeriodSetting('01:00', 25, SettingModes.ON)
+        tpds2 = TimePeriodSetting('05:00', 20, SettingModes.OFF)
+        tpds3 = TimePeriodSetting('08:00', 20, SettingModes.OFF)
+        tpds_day_after = TimePeriodSetting('03:00', 20, SettingModes.OFF)
+
+        monday = TimeProgramDay([tpds1, tpds2, tpds3])
+        tuesday = TimeProgramDay([tpds_day_after])
+
+        timeprogram = TimeProgram({'monday': monday, 'tuesday': tuesday})
+
+        next_setting = timeprogram.get_next(datetime(2019, 2, 18, 9, 30))
+
+        self._assert(next_setting, tpds_day_after)
