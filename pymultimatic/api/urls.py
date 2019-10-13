@@ -32,7 +32,7 @@ _ROOM = _ROOMS_LIST + '/{room_index}'
 _ROOM_CONFIGURATION = _ROOMS_LIST + '/{room_index}/configuration'
 _ROOM_QUICK_VETO = _ROOM_CONFIGURATION + '/quickVeto'
 _ROOM_TIMEPROGRAM = _ROOMS_LIST + '/{room_index}/timeprogram'
-_ROOM_OPERATION_MODE = _ROOM_CONFIGURATION + '/operationMode'
+_ROOM_OPERATING_MODE = _ROOM_CONFIGURATION + '/operationMode'
 _ROOM_CHILD_LOCK = _ROOM_CONFIGURATION + '/childLock'
 _ROOM_NAME = _ROOM_CONFIGURATION + '/name'
 _ROOM_DEVICE_NAME = _ROOM_CONFIGURATION + '/devices/{sgtin}/name'
@@ -75,7 +75,7 @@ _CIRCULATION_TIMEPROGRAM = _CIRCULATION_CONFIGURATION + '/timeprogram'
 _HOT_WATER = _DHW + '/hotwater'
 _HOT_WATER_CONFIGURATION = _HOT_WATER + '/configuration'
 _HOT_WATER_TIMEPROGRAM = _HOT_WATER_CONFIGURATION + '/timeprogram'
-_HOT_WATER_OPERATION_MODE = _HOT_WATER_CONFIGURATION + '/operation_mode'
+_HOT_WATER_OPERATING_MODE = _HOT_WATER_CONFIGURATION + '/operation_mode'
 _HOT_WATER_TEMPERATURE_SETPOINT = _HOT_WATER_CONFIGURATION + \
                                   '/temperature_setpoint'
 
@@ -85,7 +85,7 @@ _VENTILATION_CONFIGURATION = _VENTILATION + '/fan/configuration'
 _VENTILATION_TIMEPROGRAM = _VENTILATION_CONFIGURATION + '/timeprogram'
 _VENTILATION_DAY_LEVEL = _VENTILATION_CONFIGURATION + '/day_level'
 _VENTILATION_NIGHT_LEVEL = _VENTILATION_CONFIGURATION + '/night_level'
-_VENTILATION_OPERATION_MODE = _VENTILATION_CONFIGURATION + '/operation_mode'
+_VENTILATION_OPERATING_MODE = _VENTILATION_CONFIGURATION + '/operation_mode'
 
 """Zones"""
 _ZONES_LIST = _SYSTEM + '/zones'
@@ -124,7 +124,7 @@ def authenticate() -> str:
 
 
 def logout() -> str:
-    """Url to logout from the application, cookies are invalidated."""
+    """Url to logout from the API, cookies are invalidated."""
     return _LOGOUT
 
 
@@ -132,7 +132,8 @@ def facilities_list() -> str:
     """Url to get the list of serial numbers of the facilities (and some other
     properties).
 
-    For now, the connector only handle one serial number.
+    Note:
+        For now, the connector only handle one serial number.
     """
     return _FACILITIES_LIST
 
@@ -150,64 +151,77 @@ def rbr_installation_status() -> str:
 
 
 def rooms() -> str:
-    """Url to get the list of rooms."""
+    """Url to get the list of :class:`~pymultimatic.model.component.Room`."""
     return _ROOMS_LIST.format(serial_number='{serial_number}')
 
 
 def room(room_index: str) -> str:
     """Url to get specific room details (configuration, timeprogram). Or to
-    delete a room"""
+    delete a :class:`~pymultimatic.model.component.Room`.
+    """
     return _ROOM.format(serial_number='{serial_number}',
                         room_index=room_index)
 
 
 def room_configuration(room_index: str) -> str:
-    """Url to get configuration for a room (name, temperature, target
-    temperature, etc.)."""
+    """Url to get configuration for a
+    :class:`~pymultimatic.model.component.Room` (name, temperature,
+    target temperature, etc.).
+    """
     return _ROOM_CONFIGURATION.format(serial_number='{serial_number}',
                                       room_index=room_index)
 
 
 def room_quick_veto(room_index: str) -> str:
-    """Url to handle quick veto for a room."""
+    """Url to handle :class:`~pymultimatic.model.mode.QuickVeto` for a
+    :class:`~pymultimatic.model.component.Room`.
+    """
     return _ROOM_QUICK_VETO.format(serial_number='{serial_number}',
                                    room_index=room_index)
 
 
-def room_operation_mode(room_index: str) -> str:
-    """Url to set operation for a room."""
-    return _ROOM_OPERATION_MODE.format(
+def room_operating_mode(room_index: str) -> str:
+    """Url to set operating for a :class:`~pymultimatic.model.component.Room`.
+    """
+    return _ROOM_OPERATING_MODE.format(
         serial_number='{serial_number}', room_index=room_index)
 
 
 def room_timeprogram(room_index: str) -> str:
-    """Url to get/update configuration for a room (name, temperature,
-    target temperature, etc.)."""
+    """Url to get/update configuration for a
+    class:`~pymultimatic.model.component.Room`. (name, temperature,
+    target temperature, etc.).
+    """
     return _ROOM_TIMEPROGRAM.format(serial_number='{serial_number}',
                                     room_index=room_index)
 
 
 def room_child_lock(room_index: str) -> str:
-    """Url to handle child lock for all devices in a room."""
+    """Url to handle child lock for all
+    :class:`~pymultimatic.model.component.Device` in a
+    :class:`~pymultimatic.model.component.Room`.
+    """
     return _ROOM_CHILD_LOCK.format(serial_number='{serial_number}',
                                    room_index=room_index)
 
 
 def room_name(room_index: str) -> str:
-    """Set room name."""
+    """Set :class:`~pymultimatic.model.component.Room` name."""
     return _ROOM_NAME.format(serial_number='{serial_number}',
                              room_index=room_index)
 
 
 def room_device_name(room_index: str, sgtin: str) -> str:
-    """Set device name."""
+    """Set :class:`~pymultimatic.model.component.Device` name."""
     return _ROOM_DEVICE_NAME.format(serial_number='{serial_number}',
                                     room_index=room_index,
                                     sgtin=sgtin)
 
 
 def room_temperature_setpoint(room_index: str) -> str:
-    """Url to handle target temperature for a room."""
+    """Url to handle target temperature for a
+    :class:`~pymultimatic.model.component.Room`.
+    """
     return _ROOM_TEMPERATURE_SETPOINT.format(
         serial_number='{serial_number}', room_index=room_index)
 
@@ -316,8 +330,10 @@ def facilities_installer_info() -> str:
 
 
 def system() -> str:
-    """Url to get full system (zones, dhw, ventilation, holiday mode, etc.)
-    except rooms."""
+    """Url to get full :class:`~pymultimatic.model.system.System` (zones, dhw,
+    ventilation, holiday mode, etc.) except
+    :class:`~pymultimatic.model.component.Room`.
+    """
     return _SYSTEM.format(serial_number='{serial_number}')
 
 
@@ -338,69 +354,85 @@ def system_datetime() -> str:
 
 
 def system_parameters() -> str:
-    """Url to get system control parameters."""
+    """Url to get system parameters."""
     return _SYSTEM_PARAMETERS.format(serial_number='{serial_number}')
 
 
 def system_quickmode() -> str:
-    """Url to get system control quick mode."""
+    """Url to get system :class:`~pymultimatic.model.mode.QuickMode`."""
     return _SYSTEM_QUICK_MODE.format(serial_number='{serial_number}')
 
 
 def system_holiday_mode() -> str:
-    """Url to get system control holiday mode."""
+    """Url to get system :class:`~pymultimatic.model.mode.HolidayMode`."""
     return _SYSTEM_HOLIDAY_MODE.format(
         serial_number='{serial_number}')
 
 
 def dhw(dhw_id: str) -> str:
-    """Url to get domestic hot water (hot water and circulation)."""
+    """Url to get domestic hot water
+    (:class:`~pymultimatic.model.component.HotWater` and
+    :class:`~pymultimatic.model.component.Circulation`).
+    """
     return _DHW.format(serial_number='{serial_number}', dhw_id=dhw_id)
 
 
 def circulation(dhw_id: str) -> str:
-    """Url to get circulation details."""
+    """Url to get :class:`~pymultimatic.model.component.Circulation` details.
+    """
     return _CIRCULATION.format(serial_number='{serial_number}', dhw_id=dhw_id)
 
 
 def circulation_configuration(dhw_id: str) -> str:
-    """Url to handle circulation configuration."""
+    """Url to handle :class:`~pymultimatic.model.component.Circulation`
+    configuration.
+    """
     return _CIRCULATION_CONFIGURATION.format(
         serial_number='{serial_number}', dhw_id=dhw_id)
 
 
 def circulation_timeprogram(dhw_id: str) -> str:
-    """Url to handle circulation timeprogram."""
+    """Url to handle :class:`~pymultimatic.model.component.Circulation`
+    :class:`~pymultimatic.model.timeprogram.TimeProgram`.
+    """
     return _CIRCULATION_TIMEPROGRAM.format(
         serial_number='{serial_number}', dhw_id=dhw_id)
 
 
 def hot_water(dhw_id: str) -> str:
-    """Url to get hot water detail."""
+    """Url to get :class:`~pymultimatic.model.component.HotWater` detail."""
     return _HOT_WATER.format(serial_number='{serial_number}',
                              dhw_id=dhw_id)
 
 
 def hot_water_configuration(dhw_id: str) -> str:
-    """Url to handle hot water configuration."""
+    """Url to handle :class:`~pymultimatic.model.component.HotWater`
+    configuration.
+    """
     return _HOT_WATER_CONFIGURATION.format(
         serial_number='{serial_number}', dhw_id=dhw_id)
 
 
 def hot_water_timeprogram(dhw_id: str) -> str:
-    """Url to handle hot water timeprogram."""
+    """Url to handle :class:`~pymultimatic.model.component.HotWater`
+    :class:`~pymultimatic.model.timeprogram.TimeProgram`.
+    """
     return _HOT_WATER_TIMEPROGRAM.format(
         serial_number='{serial_number}', dhw_id=dhw_id)
 
 
-def hot_water_operation_mode(dhw_id: str) -> str:
-    """Url to set hot water operation mode, only if it's not a quick action."""
-    return _HOT_WATER_OPERATION_MODE.format(
+def hot_water_operating_mode(dhw_id: str) -> str:
+    """Url to set :class:`~pymultimatic.model.component.HotWater`
+    operating mode, only if it's not a quick action.
+    """
+    return _HOT_WATER_OPERATING_MODE.format(
         serial_number='{serial_number}', dhw_id=dhw_id)
 
 
 def hot_water_temperature_setpoint(dhw_id: str) -> str:
-    """Url to set hot water temperature setpoint."""
+    """Url to set :class:`~pymultimatic.model.component.HotWater`
+    temperature setpoint.
+    """
     return _HOT_WATER_TEMPERATURE_SETPOINT.format(
         serial_number='{serial_number}', dhw_id=dhw_id)
 
@@ -432,101 +464,123 @@ def set_ventilation_day_level(ventilation_id: str) -> str:
 def set_ventilation_night_level(ventilation_id: str) -> str:
     """
     Url to set ventilation night level
-"""
+    """
     return _VENTILATION_NIGHT_LEVEL.format(
         serial_number='{serial_number}', ventilation_id=ventilation_id)
 
 
-def set_ventilation_operation_mode(ventilation_id: str) -> str:
-    """Url to set ventilation operation mode."""
-    return _VENTILATION_OPERATION_MODE.format(
+def set_ventilation_operating_mode(ventilation_id: str) -> str:
+    """Url to set ventilation operating mode."""
+    return _VENTILATION_OPERATING_MODE.format(
         serial_number='{serial_number}', ventilation_id=ventilation_id)
 
 
 def zones() -> str:
-    """Url to get zones."""
+    """Url to get :class:`~pymultimatic.model.component.Zone`."""
     return _ZONES_LIST.format(serial_number='{serial_number}')
 
 
 def zone(zone_id: str) -> str:
-    """Url to get a specific zone."""
+    """Url to get a specific :class:`~pymultimatic.model.component.Zone`."""
     return _ZONE.format(serial_number='{serial_number}',
                         zone_id=zone_id)
 
 
 def zone_configuration(zone_id: str) -> str:
-    """Url to get a specific zone configuration."""
+    """Url to get a specific :class:`~pymultimatic.model.component.Zone`
+    configuration.
+    """
     return _ZONE_CONFIGURATION.format(serial_number='{serial_number}',
                                       zone_id=zone_id)
 
 
 def zone_name(zone_id: str) -> str:
-    """Url to set zone name."""
+    """Url to set :class:`~pymultimatic.model.component.Zone` name."""
     return _ZONE_NAME.format(serial_number='{serial_number}',
                              zone_id=zone_id)
 
 
 def zone_quick_veto(zone_id: str) -> str:
-    """Url to get quick veto."""
+    """Url to get :class:`~pymultimatic.model.mode.QuickVeto` for a
+    :class:`~pymultimatic.model.component.Zone`.
+    """
     return _ZONE_QUICK_VETO.format(serial_number='{serial_number}',
                                    zone_id=zone_id)
 
 
 def zone_heating_configuration(zone_id: str) -> str:
-    """Url to get zone heating configuration."""
+    """Url to get :class:`~pymultimatic.model.component.Zone` heating
+    configuration.
+    """
     return _ZONE_HEATING_CONFIGURATION.format(
         serial_number='{serial_number}', zone_id=zone_id)
 
 
 def zone_heating_timeprogram(zone_id: str) -> str:
-    """Url to get a zone heating timeprogram."""
+    """Url to get a :class:`~pymultimatic.model.component.Zone` heating
+    :class:`~pymultimatic.model.timeprogram.TimeProgram`.
+    """
     return _ZONE_HEATING_TIMEPROGRAM.format(
         serial_number='{serial_number}', zone_id=zone_id)
 
 
 def zone_heating_mode(zone_id: str) -> str:
-    """Url to get a zone heating mode."""
+    """Url to get a :class:`~pymultimatic.model.component.Zone` heating mode.
+    """
     return _ZONE_HEATING_MODE.format(serial_number='{serial_number}',
                                      zone_id=zone_id)
 
 
 def zone_heating_setpoint_temperature(zone_id: str) -> str:
-    """Url to set a zone setpoint temperature."""
+    """Url to set a :class:`~pymultimatic.model.component.Zone` setpoint
+    temperature.
+    """
     return _ZONE_HEATING_SETPOINT_TEMPERATURE.format(
         serial_number='{serial_number}', zone_id=zone_id)
 
 
 def zone_heating_setback_temperature(zone_id: str) -> str:
-    """Url to set a zone setback temperature."""
+    """Url to set a :class:`~pymultimatic.model.component.Zone` setback
+    temperature.
+    """
     return _ZONE_HEATING_SETBACK_TEMPERATURE.format(
         serial_number='{serial_number}', zone_id=zone_id)
 
 
 def zone_cooling_configuration(zone_id: str) -> str:
-    """Url to get a zone cooling configuration."""
+    """Url to get a :class:`~pymultimatic.model.component.Zone` cooling
+    configuration.
+    """
     return _ZONE_COOLING_CONFIGURATION.format(
         serial_number='{serial_number}', zone_id=zone_id)
 
 
 def zone_cooling_timeprogram(zone_id: str) -> str:
-    """Url to get zone cooling timeprogram."""
+    """Url to get :class:`~pymultimatic.model.component.Zone` cooling
+    timeprogram.
+    """
     return _ZONE_COOLING_TIMEPROGRAM.format(
         serial_number='{serial_number}', zone_id=zone_id)
 
 
 def zone_cooling_mode(zone_id: str) -> str:
-    """Url to set a zone cooling mode."""
+    """Url to set a :class:`~pymultimatic.model.component.Zone` cooling mode.
+    """
     return _ZONE_COOLING_MODE.format(serial_number='{serial_number}',
                                      zone_id=zone_id)
 
 
 def zone_cooling_setpoint_temperature(zone_id: str) -> str:
-    """Url to set the cooling temperature setpoint."""
+    """Url to set the cooling temperature setpoint for a
+    :class:`~pymultimatic.model.component.Zone`.
+    """
     return _ZONE_COOLING_SETPOINT_TEMPERATURE.format(
         serial_number='{serial_number}', zone_id=zone_id)
 
 
 def zone_cooling_manual_setpoint_temperature(zone_id: str) -> str:
-    """Url to set manual cooling setpoint temperature."""
+    """Url to set manual cooling setpoint temperature for a
+    :class:`~pymultimatic.model.component.Zone`.
+    """
     return _ZONE_COOLING_MANUAL_SETPOINT_TEMPERATURE.format(
         serial_number='{serial_number}', zone_id=zone_id)

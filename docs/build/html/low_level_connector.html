@@ -307,19 +307,21 @@ by <a class="reference internal" href="#module-pymultimatic.api.connector" title
 <dl class="function">
 <dt id="pymultimatic.api.urls.circulation">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">circulation</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.circulation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get circulation details.</p>
+<dd><p>Url to get <a class="reference internal" href="components.html#pymultimatic.model.component.Circulation" title="pymultimatic.model.component.Circulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circulation</span></code></a> details.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.circulation_configuration">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">circulation_configuration</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.circulation_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to handle circulation configuration.</p>
+<dd><p>Url to handle <a class="reference internal" href="components.html#pymultimatic.model.component.Circulation" title="pymultimatic.model.component.Circulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circulation</span></code></a>
+configuration.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.circulation_timeprogram">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">circulation_timeprogram</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.circulation_timeprogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to handle circulation timeprogram.</p>
+<dd><p>Url to handle <a class="reference internal" href="components.html#pymultimatic.model.component.Circulation" title="pymultimatic.model.component.Circulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circulation</span></code></a>
+<a class="reference internal" href="model.html#pymultimatic.model.timeprogram.TimeProgram" title="pymultimatic.model.timeprogram.TimeProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeProgram</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -331,7 +333,9 @@ by <a class="reference internal" href="#module-pymultimatic.api.connector" title
 <dl class="function">
 <dt id="pymultimatic.api.urls.dhw">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">dhw</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.dhw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get domestic hot water (hot water and circulation).</p>
+<dd><p>Url to get domestic hot water
+(<a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a> and
+<a class="reference internal" href="components.html#pymultimatic.model.component.Circulation" title="pymultimatic.model.component.Circulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Circulation</span></code></a>).</p>
 </dd></dl>
 
 <dl class="function">
@@ -370,7 +374,10 @@ device.</p>
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">facilities_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.facilities_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Url to get the list of serial numbers of the facilities (and some other
 properties).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>For now, the connector only handle one serial number.</p>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -388,31 +395,35 @@ properties).</p>
 <dl class="function">
 <dt id="pymultimatic.api.urls.hot_water">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">hot_water</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.hot_water" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get hot water detail.</p>
+<dd><p>Url to get <a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a> detail.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.hot_water_configuration">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">hot_water_configuration</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.hot_water_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to handle hot water configuration.</p>
+<dd><p>Url to handle <a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>
+configuration.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pymultimatic.api.urls.hot_water_operation_mode">
-<code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">hot_water_operation_mode</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.hot_water_operation_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set hot water operation mode, only if it’s not a quick action.</p>
+<dt id="pymultimatic.api.urls.hot_water_operating_mode">
+<code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">hot_water_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.hot_water_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Url to set <a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>
+operating mode, only if it’s not a quick action.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.hot_water_temperature_setpoint">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">hot_water_temperature_setpoint</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.hot_water_temperature_setpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set hot water temperature setpoint.</p>
+<dd><p>Url to set <a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>
+temperature setpoint.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.hot_water_timeprogram">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">hot_water_timeprogram</code><span class="sig-paren">(</span><em class="sig-param">dhw_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.hot_water_timeprogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to handle hot water timeprogram.</p>
+<dd><p>Url to handle <a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>
+<a class="reference internal" href="model.html#pymultimatic.model.timeprogram.TimeProgram" title="pymultimatic.model.timeprogram.TimeProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeProgram</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -443,7 +454,7 @@ hot water temperature, etc.).</p>
 <dl class="function">
 <dt id="pymultimatic.api.urls.logout">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.logout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to logout from the application, cookies are invalidated.</p>
+<dd><p>Url to logout from the API, cookies are invalidated.</p>
 </dd></dl>
 
 <dl class="function">
@@ -486,63 +497,69 @@ hot water temperature, etc.).</p>
 <dt id="pymultimatic.api.urls.room">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room" title="Permalink to this definition">¶</a></dt>
 <dd><p>Url to get specific room details (configuration, timeprogram). Or to
-delete a room</p>
+delete a <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.room_child_lock">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_child_lock</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_child_lock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to handle child lock for all devices in a room.</p>
+<dd><p>Url to handle child lock for all
+<a class="reference internal" href="components.html#pymultimatic.model.component.Device" title="pymultimatic.model.component.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> in a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.room_configuration">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_configuration</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get configuration for a room (name, temperature, target
-temperature, etc.).</p>
+<dd><p>Url to get configuration for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a> (name, temperature,
+target temperature, etc.).</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.room_device_name">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_device_name</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em>, <em class="sig-param">sgtin: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_device_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set device name.</p>
+<dd><p>Set <a class="reference internal" href="components.html#pymultimatic.model.component.Device" title="pymultimatic.model.component.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> name.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.room_name">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_name</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set room name.</p>
+<dd><p>Set <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a> name.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pymultimatic.api.urls.room_operation_mode">
-<code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_operation_mode</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_operation_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set operation for a room.</p>
+<dt id="pymultimatic.api.urls.room_operating_mode">
+<code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Url to set operating for a <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.room_quick_veto">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_quick_veto" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to handle quick veto for a room.</p>
+<dd><p>Url to handle <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.room_temperature_setpoint">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_temperature_setpoint</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_temperature_setpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to handle target temperature for a room.</p>
+<dd><p>Url to handle target temperature for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.room_timeprogram">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">room_timeprogram</code><span class="sig-paren">(</span><em class="sig-param">room_index: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.room_timeprogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get/update configuration for a room (name, temperature,
+<dd><p>Url to get/update configuration for a
+class:<cite>~pymultimatic.model.component.Room</cite>. (name, temperature,
 target temperature, etc.).</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.rooms">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">rooms</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.rooms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get the list of rooms.</p>
+<dd><p>Url to get the list of <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -558,16 +575,17 @@ target temperature, etc.).</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pymultimatic.api.urls.set_ventilation_operation_mode">
-<code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">set_ventilation_operation_mode</code><span class="sig-paren">(</span><em class="sig-param">ventilation_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.set_ventilation_operation_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set ventilation operation mode.</p>
+<dt id="pymultimatic.api.urls.set_ventilation_operating_mode">
+<code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">set_ventilation_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">ventilation_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.set_ventilation_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Url to set ventilation operating mode.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.system">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">system</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.system" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get full system (zones, dhw, ventilation, holiday mode, etc.)
-except rooms.</p>
+<dd><p>Url to get full <a class="reference internal" href="components.html#pymultimatic.model.system.System" title="pymultimatic.model.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a> (zones, dhw,
+ventilation, holiday mode, etc.) except
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -585,19 +603,19 @@ except rooms.</p>
 <dl class="function">
 <dt id="pymultimatic.api.urls.system_holiday_mode">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">system_holiday_mode</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.system_holiday_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get system control holiday mode.</p>
+<dd><p>Url to get system <a class="reference internal" href="modes.html#pymultimatic.model.mode.HolidayMode" title="pymultimatic.model.mode.HolidayMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">HolidayMode</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.system_parameters">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">system_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.system_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get system control parameters.</p>
+<dd><p>Url to get system parameters.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.system_quickmode">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">system_quickmode</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.system_quickmode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get system control quick mode.</p>
+<dd><p>Url to get system <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -627,91 +645,101 @@ except rooms.</p>
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get a specific zone.</p>
+<dd><p>Url to get a specific <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_configuration">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_configuration</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get a specific zone configuration.</p>
+<dd><p>Url to get a specific <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>
+configuration.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_cooling_configuration">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_cooling_configuration</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_cooling_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get a zone cooling configuration.</p>
+<dd><p>Url to get a <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> cooling
+configuration.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_cooling_manual_setpoint_temperature">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_cooling_manual_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_cooling_manual_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set manual cooling setpoint temperature.</p>
+<dd><p>Url to set manual cooling setpoint temperature for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_cooling_mode">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_cooling_mode</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_cooling_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set a zone cooling mode.</p>
+<dd><p>Url to set a <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> cooling mode.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_cooling_setpoint_temperature">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_cooling_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_cooling_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set the cooling temperature setpoint.</p>
+<dd><p>Url to set the cooling temperature setpoint for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_cooling_timeprogram">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_cooling_timeprogram</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_cooling_timeprogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get zone cooling timeprogram.</p>
+<dd><p>Url to get <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> cooling
+timeprogram.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_heating_configuration">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_heating_configuration</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_heating_configuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get zone heating configuration.</p>
+<dd><p>Url to get <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> heating
+configuration.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_heating_mode">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_heating_mode</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_heating_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get a zone heating mode.</p>
+<dd><p>Url to get a <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> heating mode.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_heating_setback_temperature">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_heating_setback_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_heating_setback_temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set a zone setback temperature.</p>
+<dd><p>Url to set a <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> setback
+temperature.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_heating_setpoint_temperature">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_heating_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_heating_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set a zone setpoint temperature.</p>
+<dd><p>Url to set a <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> setpoint
+temperature.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_heating_timeprogram">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_heating_timeprogram</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_heating_timeprogram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get a zone heating timeprogram.</p>
+<dd><p>Url to get a <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> heating
+<a class="reference internal" href="model.html#pymultimatic.model.timeprogram.TimeProgram" title="pymultimatic.model.timeprogram.TimeProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeProgram</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_name">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_name</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to set zone name.</p>
+<dd><p>Url to set <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a> name.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zone_quick_veto">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zone_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zone_quick_veto" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get quick veto.</p>
+<dd><p>Url to get <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.urls.zones">
 <code class="sig-prename descclassname">pymultimatic.api.urls.</code><code class="sig-name descname">zones</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#pymultimatic.api.urls.zones" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url to get zones.</p>
+<dd><p>Url to get <a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 </div>
@@ -721,70 +749,80 @@ except rooms.</p>
 <dl class="function">
 <dt id="pymultimatic.api.payloads.holiday_mode">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">holiday_mode</code><span class="sig-paren">(</span><em class="sig-param">active: bool</em>, <em class="sig-param">start_date: datetime.date</em>, <em class="sig-param">end_date: datetime.date</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.holiday_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload to set holiday mode.</p>
+<dd><p>Payload to set <a class="reference internal" href="modes.html#pymultimatic.model.mode.HolidayMode" title="pymultimatic.model.mode.HolidayMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">HolidayMode</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pymultimatic.api.payloads.hot_water_operation_mode">
-<code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">hot_water_operation_mode</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.hot_water_operation_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload to set operation mode for <em>hotwater</em>.</p>
+<dt id="pymultimatic.api.payloads.hot_water_operating_mode">
+<code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">hot_water_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.hot_water_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Payload to set operating mode for
+<a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.payloads.hotwater_temperature_setpoint">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">hotwater_temperature_setpoint</code><span class="sig-paren">(</span><em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.hotwater_temperature_setpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload used to set target temperature for <em>hotwater</em>.</p>
+<dd><p>Payload used to set target temperature for
+<a class="reference internal" href="components.html#pymultimatic.model.component.HotWater" title="pymultimatic.model.component.HotWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">HotWater</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.payloads.quickmode">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">quickmode</code><span class="sig-paren">(</span><em class="sig-param">quick_mode: str</em>, <em class="sig-param">duration: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.quickmode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload to set quick mode for the system.</p>
+<dd><p>Payload to set <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code></a> for the
+system.</p>
 <p>Duration is mandatory (Duration is in minutes, max 1440 =24 hours).</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pymultimatic.api.payloads.room_operation_mode">
-<code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">room_operation_mode</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.room_operation_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload to set operation mode for <em>room</em>.</p>
+<dt id="pymultimatic.api.payloads.room_operating_mode">
+<code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">room_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.room_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Payload to set operating mode for
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.payloads.room_quick_veto">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">room_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">temperature: float, duration: Optional[int]</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.room_quick_veto" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload to set a quick veto for a <em>Room</em>.</p>
+<dd><p>Payload to set a <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 <p>Duration is mandatory (Duration is in minutes, max 1440 =24 hours).</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.payloads.room_temperature_setpoint">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">room_temperature_setpoint</code><span class="sig-paren">(</span><em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.room_temperature_setpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload used to set target temperature for <em>room</em>.</p>
+<dd><p>Payload used to set target temperature for
+<a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="pymultimatic.api.payloads.zone_operation_mode">
-<code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">zone_operation_mode</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.zone_operation_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload to set operation mode for <em>zone</em>.</p>
+<dt id="pymultimatic.api.payloads.zone_operating_mode">
+<code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">zone_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.zone_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Payload to set operating mode for
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.payloads.zone_quick_veto">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">zone_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.zone_quick_veto" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload to set a quick veto for a <em>Zone</em>.</p>
+<dd><p>Payload to set a <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 <p>The duration is not configurable by the API, it’s 6 hours</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.payloads.zone_temperature_setback">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">zone_temperature_setback</code><span class="sig-paren">(</span><em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.zone_temperature_setback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload used to set setback temperature for <em>zone</em>.</p>
+<dd><p>Payload used to set setback temperature for
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="pymultimatic.api.payloads.zone_temperature_setpoint">
 <code class="sig-prename descclassname">pymultimatic.api.payloads.</code><code class="sig-name descname">zone_temperature_setpoint</code><span class="sig-paren">(</span><em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="headerlink" href="#pymultimatic.api.payloads.zone_temperature_setpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Payload used to set target temperature for <em>zone</em>.</p>
+<dd><p>Payload used to set target temperature for
+<a class="reference internal" href="components.html#pymultimatic.model.component.Zone" title="pymultimatic.model.component.Zone"><code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code></a>.</p>
 </dd></dl>
 
 </div>

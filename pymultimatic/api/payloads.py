@@ -7,51 +7,66 @@ _DATE_FORMAT = "%Y-%m-%d"
 
 
 def hotwater_temperature_setpoint(temperature: float) -> Dict[str, Any]:
-    """Payload used to set target temperature for *hotwater*."""
+    """Payload used to set target temperature for
+    :class:`~pymultimatic.model.component.HotWater`.
+    """
     return {
         "temperature_setpoint": temperature
     }
 
 
 def room_temperature_setpoint(temperature: float) -> Dict[str, Any]:
-    """Payload used to set target temperature for *room*."""
+    """Payload used to set target temperature for
+    :class:`~pymultimatic.model.component.Room`.
+    """
     return {
         "temperatureSetpoint": temperature
     }
 
 
 def zone_temperature_setpoint(temperature: float) -> Dict[str, Any]:
-    """Payload used to set target temperature for *zone*."""
+    """Payload used to set target temperature for
+    :class:`~pymultimatic.model.component.Zone`.
+    """
     return {
         "setpoint_temperature": temperature
     }
 
 
 def zone_temperature_setback(temperature: float) -> Dict[str, Any]:
-    """Payload used to set setback temperature for *zone*."""
+    """Payload used to set setback temperature for
+    :class:`~pymultimatic.model.component.Zone`.
+    """
     return {
         "setback_temperature": temperature
     }
 
 
-def hot_water_operation_mode(mode: str) -> Dict[str, Any]:
-    """Payload to set operation mode for *hotwater*."""
+def hot_water_operating_mode(mode: str) -> Dict[str, Any]:
+    """Payload to set operating mode for
+    :class:`~pymultimatic.model.component.HotWater`.
+    """
     return {"operation_mode": mode}
 
 
-def room_operation_mode(mode: str) -> Dict[str, Any]:
-    """Payload to set operation mode for *room*."""
+def room_operating_mode(mode: str) -> Dict[str, Any]:
+    """Payload to set operating mode for
+    :class:`~pymultimatic.model.component.Room`.
+    """
     return {"operationMode": mode}
 
 
-def zone_operation_mode(mode: str) -> Dict[str, Any]:
-    """Payload to set operation mode for *zone*."""
+def zone_operating_mode(mode: str) -> Dict[str, Any]:
+    """Payload to set operating mode for
+    :class:`~pymultimatic.model.component.Zone`.
+    """
     return {"mode": mode}
 
 
 def quickmode(quick_mode: str, duration: Optional[int] = None) \
         -> Dict[str, Any]:
-    """Payload to set quick mode for the system.
+    """Payload to set :class:`~pymultimatic.model.mode.QuickMode` for the
+    system.
 
     Duration is mandatory (Duration is in minutes, max 1440 =24 hours).
     """
@@ -69,7 +84,8 @@ def quickmode(quick_mode: str, duration: Optional[int] = None) \
 
 
 def zone_quick_veto(temperature: float) -> Dict[str, Any]:
-    """Payload to set a quick veto for a *Zone*.
+    """Payload to set a :class:`~pymultimatic.model.mode.QuickVeto` for a
+    :class:`~pymultimatic.model.component.Zone`.
 
     The duration is not configurable by the API, it's 6 hours
     """
@@ -80,7 +96,8 @@ def zone_quick_veto(temperature: float) -> Dict[str, Any]:
 
 def room_quick_veto(temperature: float, duration: Optional[int])\
         -> Dict[str, Any]:
-    """Payload to set a quick veto for a *Room*.
+    """Payload to set a :class:`~pymultimatic.model.mode.QuickVeto` for a
+    :class:`~pymultimatic.model.component.Room`.
 
     Duration is mandatory (Duration is in minutes, max 1440 =24 hours).
     """
@@ -96,7 +113,7 @@ def room_quick_veto(temperature: float, duration: Optional[int])\
 
 def holiday_mode(active: bool, start_date: date, end_date: date,
                  temperature: float) -> Dict[str, Any]:
-    """Payload to set holiday mode."""
+    """Payload to set :class:`~pymultimatic.model.mode.HolidayMode`."""
     return {
         "active": active,
         "start_date": start_date.strftime(_DATE_FORMAT),

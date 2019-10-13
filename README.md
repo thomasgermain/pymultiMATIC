@@ -97,7 +97,7 @@ system = manager.get_system()
 manager.set_hot_water_setpoint_temperature('dhw_id', 55)
 
 # set the zone operation mode to 'AUTO'
-manager.set_zone_operation_mode('zone_id', OperatingModes.AUTO)
+manager.set_zone_operating_mode('zone_id', OperatingModes.AUTO)
 ```
 
 The main object to manipulate is `pymultimatic.model.System`, which is grouping all the information about your system.
