@@ -17,6 +17,7 @@ class Mode:
     name = attr.ib(type=str)
 
 
+@attr.s(frozen=True)
 class OperatingMode(Mode):
     """Represents the operating mode of a
     :class:`~pymultimatic.model.component.Component`"""
@@ -120,6 +121,7 @@ class QuickVeto(Mode):
                              .format(attribute, value))
 
 
+@attr.s(frozen=True)
 class SettingMode(Mode):
     """This is the setting which is configured in
     :class:`~pymultimatic.model.timeprogram.TimePeriodSetting`."""
@@ -169,7 +171,7 @@ class SettingModes:
         return cls._VALUES[name]
 
 
-@attr.s
+@attr.s(frozen=True)
 class QuickMode(Mode):
     """This class is a helper to check what is impacted by a quick mode.
 
