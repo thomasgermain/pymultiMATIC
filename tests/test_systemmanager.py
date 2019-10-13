@@ -145,7 +145,7 @@ class SystemManagerTest(unittest.TestCase):
     def test_set_hot_water_operation_mode_heating_mode(self) -> None:
         serial_number = testutil.mock_full_auth_success()
 
-        url = urls.hot_water_operation_mode('hotwater')\
+        url = urls.hot_water_operating_mode('hotwater')\
             .format(serial_number=serial_number)
 
         responses.add(responses.PUT, url, status=200)
@@ -168,7 +168,7 @@ class SystemManagerTest(unittest.TestCase):
     def test_set_room_operation_mode_heating_mode(self) -> None:
         serial_number = testutil.mock_full_auth_success()
 
-        url = urls.room_operation_mode('1').format(serial_number=serial_number)
+        url = urls.room_operating_mode('1').format(serial_number=serial_number)
 
         responses.add(responses.PUT, url, status=200)
         self.manager.set_room_operating_mode('1', OperatingModes.AUTO)
@@ -188,17 +188,17 @@ class SystemManagerTest(unittest.TestCase):
             .format(serial_number=serial_number)
 
         responses.add(responses.PUT, url, status=200)
-        self.manager.set_zone_operation_mode('Zone1', OperatingModes.AUTO)
+        self.manager.set_zone_operating_mode('Zone1', OperatingModes.AUTO)
         self.assertEqual(url, responses.calls[-1].request.url)
 
     def test_set_zone_operation_mode_no_new_mode(self) -> None:
-        self.manager.set_zone_operation_mode('Zone1', None)
+        self.manager.set_zone_operating_mode('Zone1', None)
 
     def test_set_zone_operation_mode_no_zone(self) -> None:
-        self.manager.set_zone_operation_mode(None, OperatingModes.MANUAL)
+        self.manager.set_zone_operating_mode(None, OperatingModes.MANUAL)
 
     def test_set_zone_operation_mode_wrong_mode(self) -> None:
-        self.manager.set_zone_operation_mode('Zone1', OperatingModes.ON)
+        self.manager.set_zone_operating_mode('Zone1', OperatingModes.ON)
 
     @responses.activate
     def test_get_room(self) -> None:

@@ -175,8 +175,8 @@ class SystemManager:
         if new_mode in HotWater.MODES:
             _LOGGER.debug("New mode is %s", new_mode)
             self._connector.put(
-                urls.hot_water_operation_mode(dhw_id),
-                payloads.hot_water_operation_mode(new_mode.name))
+                urls.hot_water_operating_mode(dhw_id),
+                payloads.hot_water_operating_mode(new_mode.name))
         else:
             _LOGGER.debug("New mode is not available for hot water %s",
                           new_mode)
@@ -208,13 +208,13 @@ class SystemManager:
         """
         if new_mode in Room.MODES and new_mode != OperatingModes.QUICK_VETO:
             _LOGGER.debug("New mode is %s", new_mode)
-            self._connector.put(urls.room_operation_mode(room_id),
-                                payloads.room_operation_mode(
+            self._connector.put(urls.room_operating_mode(room_id),
+                                payloads.room_operating_mode(
                                     new_mode.name))
         else:
             _LOGGER.debug("mode is not available for room %s", new_mode)
 
-    def set_zone_operation_mode(self, zone_id: str, new_mode: OperatingMode) \
+    def set_zone_operating_mode(self, zone_id: str, new_mode: OperatingMode) \
             -> None:
         """Set new operating mode for
         :class:`~pymultimatic.model.component.Zone`. The mode should be
@@ -242,7 +242,7 @@ class SystemManager:
         if new_mode in Zone.MODES and new_mode != OperatingModes.QUICK_VETO:
             _LOGGER.debug("New mode is %s", new_mode)
             self._connector.put(urls.zone_heating_mode(zone_id),
-                                payloads.zone_operation_mode(new_mode.name))
+                                payloads.zone_operating_mode(new_mode.name))
         else:
             _LOGGER.debug("mode is not available for zone %s", new_mode)
 
