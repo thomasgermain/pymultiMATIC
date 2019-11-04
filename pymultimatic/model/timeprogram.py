@@ -42,12 +42,18 @@ class TimePeriodSetting:
     start_time = attr.ib(type=str)
     target_temperature = attr.ib(type=Optional[float])
     setting = attr.ib(type=Optional[SettingMode])
+    hour = attr.ib(type=int, init=False)
+    """Hour at which the setting is starting."""
+    minute = attr.ib(type=int, init=False)
+    """Minute at which the setting is starting."""
     absolute_minutes = attr.ib(type=int, init=False)
     """Represents :attr:`start_time` in absolute minute. hours * 60 + minutes.
     This is more convenient to compare TimePeriodSetting using this."""
 
     def __attrs_post_init__(self) -> None:
         self.absolute_minutes = _to_absolute_minutes(self.start_time)
+        self.hour = int(self.start_time.split(':')[0])
+        self.minute = int(self.start_time.split(':')[1])
 
     # pylint: disable=unused-argument, no-self-use
     @start_time.validator
@@ -122,3 +128,48 @@ class TimeProgram:
         # if no match a this point, it means search date is after the last
         # setting of the day
         return copy.deepcopy(tp_day.settings[-1])
+
+    def get_next(self, search_date: datetime) -> TimePeriodSetting:
+        """
+        Get the next :class:`TimePeriodSetting` for the given time.
+        So if there is a time program like this:
+
+        * 5:00
+
+        * 6:00
+
+        And It's 5:30, it will return the second one
+
+        Args:
+            search_date (datetime): Only the day, the hour and minute are used
+                in order to get the right :class:`TimePeriodSetting`.
+
+        Returns:
+            TimePeriodSetting: The corresponding setting.
+        """
+        day = search_date.strftime("%A").lower()
+        day_after = (search_date + timedelta(days=1)).strftime("%A").lower()
+        time = str(search_date.hour) + ':' + str(search_date.minute)
+
+        abs_minutes = _to_absolute_minutes(time)
+        tp_day = self.days[day]
+        tp_day_after = self.days[day_after]
+
+        # if given hour:minute is before the first setting of the day,
+        # get the first setting of the day
+        if abs_minutes < tp_day.settings[0].absolute_minutes:
+            return copy.deepcopy(tp_day.settings[0])
+
+        idx: int = 0
+        max_len: int = len(tp_day.settings)
+        while idx < max_len and \
+                abs_minutes > tp_day.settings[idx].absolute_minutes:
+            idx += 1
+
+        if not idx == max_len:
+            # At this point, we are on next setting, so it's fine
+            return copy.deepcopy(tp_day.settings[idx])
+
+        # if no match a this point, it means search date is after the last
+        # setting of the day, so next one, is the first setting of the next day
+        return copy.deepcopy(tp_day_after.settings[0])
