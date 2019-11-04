@@ -6,7 +6,7 @@ import unittest
 from tests import testutil
 from pymultimatic.model import System, TimePeriodSetting, \
     TimeProgramDay, QuickModes, QuickVeto, HolidayMode, Room, HotWater, Zone, \
-    Circulation, OperatingModes, mapper, SettingModes
+    Circulation, OperatingModes, mapper, SettingModes, constants
 
 
 class SystemTest(unittest.TestCase):
@@ -110,7 +110,7 @@ class SystemTest(unittest.TestCase):
 
         self.assertEqual(OperatingModes.AUTO, active_mode.current_mode)
         self.assertEqual(SettingModes.OFF, active_mode.sub_mode)
-        self.assertEqual(HotWater.MIN_TARGET_TEMP,
+        self.assertEqual(constants.FROST_PROTECTION_TEMP,
                          active_mode.target_temperature)
 
     def test_get_active_mode_hot_water_system_off(self) -> None:
