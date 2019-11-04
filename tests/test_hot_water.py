@@ -2,7 +2,7 @@
 import unittest
 
 from tests import testutil
-from pymultimatic.model import HotWater, OperatingModes
+from pymultimatic.model import HotWater, OperatingModes, constants
 
 
 class HotWaterTest(unittest.TestCase):
@@ -27,6 +27,6 @@ class HotWaterTest(unittest.TestCase):
         active_mode = hot_water.active_mode
 
         self.assertEqual(OperatingModes.OFF, active_mode.current_mode)
-        self.assertEqual(HotWater.MIN_TARGET_TEMP,
+        self.assertEqual(constants.FROST_PROTECTION_TEMP,
                          active_mode.target_temperature)
         self.assertIsNone(active_mode.sub_mode)

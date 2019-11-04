@@ -134,13 +134,14 @@ class HotWater(Component):
                 mode = ActiveMode(self.target_temperature, OperatingModes.AUTO,
                                   setting.setting)
             else:
-                mode = ActiveMode(HotWater.MIN_TARGET_TEMP,
+                mode = ActiveMode(constants.FROST_PROTECTION_TEMP,
                                   OperatingModes.AUTO, setting.setting)
 
         elif self.operating_mode == OperatingModes.ON:
             mode = ActiveMode(self.target_temperature, OperatingModes.ON)
         else:  # MODE_OFF
-            mode = ActiveMode(HotWater.MIN_TARGET_TEMP, OperatingModes.OFF)
+            mode = ActiveMode(constants.FROST_PROTECTION_TEMP,
+                              OperatingModes.OFF)
 
         return mode
 
