@@ -4,6 +4,7 @@ from typing import List, Optional, Dict
 
 import attr
 
+from pymultimatic.model import constants
 from . import ActiveMode, HolidayMode, HotWater, Room, Zone, BoilerStatus, \
     Circulation, QuickMode, QuickModes, Error, SystemStatus
 
@@ -196,7 +197,8 @@ class System:
         if hot_water:
             if self.holiday_mode.active_mode:
                 active_mode = self.holiday_mode.active_mode
-                active_mode.target_temperature = HotWater.MIN_TARGET_TEMP
+                active_mode.target_temperature = \
+                    constants.FROST_PROTECTION_TEMP
                 return active_mode
 
             if self.quick_mode and self.quick_mode.for_dhw:
