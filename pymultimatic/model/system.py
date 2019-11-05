@@ -207,11 +207,11 @@ class System:
                                       self.quick_mode)
 
                 if self.quick_mode == QuickModes.SYSTEM_OFF:
-                    return ActiveMode(HotWater.MIN_TARGET_TEMP,
+                    return ActiveMode(constants.FROST_PROTECTION_TEMP,
                                       self.quick_mode)
 
                 if self.quick_mode == QuickModes.ONE_DAY_AWAY:
-                    return ActiveMode(HotWater.MIN_TARGET_TEMP,
+                    return ActiveMode(constants.FROST_PROTECTION_TEMP,
                                       self.quick_mode)
 
             return hot_water.active_mode
