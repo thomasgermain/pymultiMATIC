@@ -172,7 +172,7 @@ class SystemTest(unittest.TestCase):
         active_mode = system.get_active_mode_hot_water()
 
         self.assertEqual(QuickModes.HOLIDAY, active_mode.current_mode)
-        self.assertEqual(HotWater.MIN_TARGET_TEMP,
+        self.assertEqual(constants.FROST_PROTECTION_TEMP,
                          active_mode.target_temperature)
 
     def test_get_active_mode_zone(self) -> None:
