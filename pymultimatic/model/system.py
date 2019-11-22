@@ -4,9 +4,9 @@ from typing import List, Optional, Dict
 
 import attr
 
-from pymultimatic.model import constants
 from . import ActiveMode, HolidayMode, HotWater, Room, Zone, BoilerStatus, \
-    Circulation, QuickMode, QuickModes, Error, SystemStatus
+    Circulation, QuickMode, QuickModes, Error, SystemStatus, BoilerInfo, \
+    constants
 
 
 # pylint: disable=too-many-instance-attributes
@@ -28,6 +28,8 @@ class System:
         quick_mode (QuickMode):  If any quick mode is running, it's available
             here.
         errors (List[Error]): If there are errors, you can find them here.
+        boiler_info (BoilerInfo): Information (pressure, temperature) about
+            the boiler
     """
 
     holiday_mode = attr.ib(type=HolidayMode)
@@ -40,6 +42,7 @@ class System:
     outdoor_temperature = attr.ib(type=Optional[float])
     quick_mode = attr.ib(type=Optional[QuickMode])
     errors = attr.ib(type=List[Error])
+    boiler_info = attr.ib(type=Optional[BoilerInfo])
     _zones = attr.ib(type=Dict[str, Zone], default=dict(), init=False)
     _rooms = attr.ib(type=Dict[str, Room], default=dict(), init=False)
 

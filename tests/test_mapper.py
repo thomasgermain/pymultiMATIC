@@ -256,10 +256,8 @@ class MapperTest(unittest.TestCase):
         """Test map boiler status."""
         with open(testutil.path('files/responses/hvacstate'), 'r') as file:
             hvac = json.loads(file.read())
-        with open(testutil.path('files/responses/livereport'), 'r') as file:
-            raw_livereport = json.loads(file.read())
 
-        boiler_status = mapper.map_boiler_status(hvac, raw_livereport)
+        boiler_status = mapper.map_boiler_status(hvac)
         self.assertEqual("...", boiler_status.hint)
         self.assertEqual("...", boiler_status.description)
         self.assertEqual("S.8", boiler_status.status_code)
@@ -269,8 +267,6 @@ class MapperTest(unittest.TestCase):
         self.assertFalse(boiler_status.is_error)
         self.assertEqual(datetime.fromtimestamp(1545896904282/1000),
                          boiler_status.timestamp)
-        self.assertEqual(1.9, boiler_status.water_pressure)
-        self.assertEqual(38, boiler_status.current_temperature)
 
     def test_system_status(self) -> None:
         """Test map system status."""
@@ -286,7 +282,7 @@ class MapperTest(unittest.TestCase):
         with open(testutil.path('files/responses/hvacstate'), 'r') as file:
             hvac = json.loads(file.read())
 
-        boiler_status = mapper.map_boiler_status(hvac, None)
+        boiler_status = mapper.map_boiler_status(hvac)
         self.assertEqual("...", boiler_status.hint)
         self.assertEqual("...", boiler_status.description)
         self.assertEqual("S.8", boiler_status.status_code)
@@ -296,8 +292,6 @@ class MapperTest(unittest.TestCase):
         self.assertFalse(boiler_status.is_error)
         self.assertEqual(datetime.fromtimestamp(1545896904282/1000),
                          boiler_status.timestamp)
-        self.assertIsNone(boiler_status.water_pressure)
-        self.assertIsNone(boiler_status.current_temperature)
 
     def test_boiler_status_empty(self) -> None:
         """Test map empty boiler status."""
@@ -305,7 +299,7 @@ class MapperTest(unittest.TestCase):
                 as file:
             hvac = json.loads(file.read())
 
-        boiler_status = mapper.map_boiler_status(hvac, None)
+        boiler_status = mapper.map_boiler_status(hvac)
         self.assertIsNone(boiler_status)
 
     def test_hot_water_alone(self) -> None:
@@ -366,3 +360,16 @@ class MapperTest(unittest.TestCase):
         self.assertEqual('Défaut : Bus de communication eBus', errors[0].title)
         self.assertEqual('VR920', errors[0].device_name)
         self.assertEqual('F.900', errors[0].status_code)
+
+    def test_boiler_info(self) -> None:
+        with open(testutil.path('files/responses/livereport'), 'r') \
+                as file:
+            livereport = json.loads(file.read())
+
+        boiler_info = mapper.map_boiler_info(livereport)
+        self.assertEqual(1.9, boiler_info.water_pressure)
+        self.assertEqual(38, boiler_info.current_temperature)
+
+    def test_boiler_info_no_livereport(self) -> None:
+        boiler_info = mapper.map_boiler_info(None)
+        self.assertIsNone(boiler_info)

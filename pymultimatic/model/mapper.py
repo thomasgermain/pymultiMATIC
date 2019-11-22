@@ -5,7 +5,7 @@ from typing import Optional, List, Any
 from . import BoilerStatus, Circulation, Device, HolidayMode, HotWater, \
     QuickMode, QuickModes, QuickVeto, Room, TimeProgram, TimeProgramDay, \
     TimePeriodSetting, Zone, OperatingModes, Error, SystemStatus, SyncState, \
-    SettingModes
+    SettingModes, BoilerInfo
 
 
 _DATE_FORMAT = "%Y-%m-%d"
@@ -156,8 +156,8 @@ def map_holiday_mode(full_system) -> HolidayMode:
     return mode
 
 
-def map_boiler_status(hvac_state, live_report) -> Optional[BoilerStatus]:
-    """Map *boiler status*."""
+def map_boiler_status(hvac_state) -> Optional[BoilerStatus]:
+    """Map *boiler status."""
     if hvac_state:
         hvac_state_info = _find_hvac_message_status(hvac_state)
         if hvac_state_info:
@@ -167,12 +167,18 @@ def map_boiler_status(hvac_state, live_report) -> Optional[BoilerStatus]:
             title = str(hvac_state_info.get("title"))
             description = str(hvac_state_info.get("description"))
             hint = str(hvac_state_info.get("hint"))
-            water_pressure = _find_water_pressure_report(live_report)
-            boiler_temperature = _find_boiler_temperature_report(live_report)
-
             return BoilerStatus(device_name, title, code, description,
-                                last_update, hint, water_pressure,
-                                boiler_temperature)
+                                last_update, hint)
+
+    return None
+
+
+def map_boiler_info(live_report) -> Optional[BoilerInfo]:
+    """Map boiler info"""
+    if live_report:
+        water_pressure = _find_water_pressure_report(live_report)
+        boiler_temperature = _find_boiler_temperature_report(live_report)
+        return BoilerInfo(water_pressure, boiler_temperature)
     return None
 
 
