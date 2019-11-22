@@ -87,6 +87,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#error">Error</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#boilerstatus">BoilerStatus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#boilerinfo">BoilerInfo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#systemstatus">SystemStatus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#syncstate">SyncState</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#timeperiodsetting">TimePeriodSetting</a></li>
@@ -142,17 +143,13 @@
 <h2>BoilerStatus<a class="headerlink" href="#boilerstatus" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymultimatic.model.status.BoilerStatus">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">BoilerStatus</code><span class="sig-paren">(</span><em class="sig-param">device_name: str, title: str, status_code: str, description: str, timestamp: datetime.datetime, hint: str, water_pressure: Optional[float], current_temperature: Optional[float]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.BoilerStatus" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">BoilerStatus</code><span class="sig-paren">(</span><em class="sig-param">device_name: str</em>, <em class="sig-param">title: str</em>, <em class="sig-param">status_code: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">timestamp: datetime.datetime</em>, <em class="sig-param">hint: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.BoilerStatus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Status of the boiler. This is sent with an error format, but in this
 case, it’s more like a status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>hint</strong> (<em>str</em>) – Directly coming from the API, most of the time the value is
-<code class="docutils literal notranslate"><span class="pre">...</span></code></p></li>
-<li><p><strong>water_pressure</strong> (<em>float</em>) – Water pressure in bar</p></li>
-<li><p><strong>current_temperature</strong> (<em>float</em>) – Current temperature of the boiler.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>hint</strong> (<em>str</em>) – Directly coming from the API, most of the time the value is
+<code class="docutils literal notranslate"><span class="pre">...</span></code></p>
 </dd>
 </dl>
 <dl class="method">
@@ -166,6 +163,23 @@ case, it’s more like a status.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="boilerinfo">
+<h2>BoilerInfo<a class="headerlink" href="#boilerinfo" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.boilerinfo.BoilerInfo">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.boilerinfo.</code><code class="sig-name descname">BoilerInfo</code><span class="sig-paren">(</span><em class="sig-param">water_pressure: Optional[float], current_temperature: Optional[float]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.boilerinfo.BoilerInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Information about the boiler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>water_pressure</strong> (<em>float</em>) – Water pressure in bar</p></li>
+<li><p><strong>current_temperature</strong> (<em>float</em>) – Current temperature of the boiler.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

@@ -1,6 +1,5 @@
 """Grouping status"""
 from datetime import datetime
-from typing import Optional
 import attr
 
 
@@ -33,13 +32,9 @@ class BoilerStatus(Error):
     Args:
         hint (str): Directly coming from the API, most of the time the value is
             ``...``
-        water_pressure (float): Water pressure in bar
-        current_temperature (float): Current temperature of the boiler.
     """
 
     hint = attr.ib(type=str)
-    water_pressure = attr.ib(type=Optional[float])
-    current_temperature = attr.ib(type=Optional[float])
 
     @property
     def is_error(self) -> bool:
