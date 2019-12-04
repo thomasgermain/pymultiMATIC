@@ -373,3 +373,12 @@ class MapperTest(unittest.TestCase):
     def test_boiler_info_no_livereport(self) -> None:
         boiler_info = mapper.map_boiler_info(None)
         self.assertIsNone(boiler_info)
+
+    def test_boiler_info_flow_temperature_vf1(self) -> None:
+        with open(testutil.path(
+                'files/responses/livereport_FlowTemperatureVF1'), 'r') as file:
+            livereport = json.loads(file.read())
+
+        boiler_info = mapper.map_boiler_info(livereport)
+        self.assertEqual(1.9, boiler_info.water_pressure)
+        self.assertEqual(41, boiler_info.current_temperature)

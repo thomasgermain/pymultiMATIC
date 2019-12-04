@@ -379,7 +379,8 @@ def _find_boiler_temperature_report(live_report) -> Optional[float]:
         for device in live_report.get("body", dict()).get("devices", list()):
             for report in device.get("reports", list()):
                 if report.get("associated_device_function") == "HEATING" \
-                        and report.get("_id") == "FlowTemperatureSensor":
+                        and (report.get("_id") == "FlowTemperatureSensor"
+                             or report.get("_id") == "FlowTemperatureVF1"):
                     return float(report.get("value"))
     return None
 
