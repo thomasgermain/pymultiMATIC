@@ -286,7 +286,7 @@ class SystemManager:
         """
         self._connector.put(urls.room_quick_veto(room_id),
                             payloads.room_quick_veto(
-                                quick_veto.target_temperature,
+                                self._round(quick_veto.target_temperature),
                                 quick_veto.remaining_duration))
 
     def remove_room_quick_veto(self, room_id: str) -> None:
@@ -310,7 +310,7 @@ class SystemManager:
         """
         self._connector.put(urls.zone_quick_veto(zone_id),
                             payloads.zone_quick_veto(
-                                quick_veto.target_temperature))
+                                self._round(quick_veto.target_temperature)))
 
     def remove_zone_quick_veto(self, zone_id: str) -> None:
         """Remove the :class:`~pymultimatic.model.mode.QuickVeto` from a
@@ -395,7 +395,7 @@ class SystemManager:
         """
         self._connector.put(urls.system_holiday_mode(),
                             payloads.holiday_mode(True, start_date, end_date,
-                                                  temperature))
+                                                  self._round(temperature)))
 
     def remove_holiday_mode(self) -> None:
         """Remove :class:`~pymultimatic.model.mode.HolidayMode`.

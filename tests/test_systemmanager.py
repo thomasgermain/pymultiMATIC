@@ -294,7 +294,7 @@ class SystemManagerTest(unittest.TestCase):
         url = urls.system_holiday_mode()
         responses.add(responses.PUT, url.format(serial_number=serial),
                       status=200)
-        payload = payloads.holiday_mode(True, tomorrow, after_tomorrow, 15)
+        payload = payloads.holiday_mode(True, tomorrow, after_tomorrow, 15.0)
 
         self.manager.set_holiday_mode(tomorrow, after_tomorrow, 15)
         self.assertEqual(json.dumps(payload),
@@ -404,6 +404,50 @@ class SystemManagerTest(unittest.TestCase):
             self.assertEqual(500, exc.response.status_code)
 
         self.assertEqual(url, responses.calls[-1].request.url)
+
+    @responses.activate
+    def test_quick_veto_temperature_room_rounded(self) -> None:
+        serial = testutil.mock_full_auth_success()
+
+        url = urls.room_quick_veto('0').format(serial_number=serial)
+        responses.add(responses.PUT, url, status=200)
+
+        qveto = QuickVeto(1, 22.7)
+        self.manager.set_room_quick_veto('0', qveto)
+
+        self.assertEqual(url, responses.calls[-1].request.url)
+        self.assertEqual(22.5, json.loads(responses.calls[-1].request
+                                          .body)['temperatureSetpoint'])
+
+    @responses.activate
+    def test_quick_veto_temperature_zone_rounded(self) -> None:
+        serial = testutil.mock_full_auth_success()
+
+        url = urls.zone_quick_veto('zone1').format(serial_number=serial)
+        responses.add(responses.PUT, url, status=200)
+
+        qveto = QuickVeto(1, 22.7)
+        self.manager.set_zone_quick_veto('zone1', qveto)
+
+        self.assertEqual(url, responses.calls[-1].request.url)
+        self.assertEqual(22.5, json.loads(responses.calls[-1].request
+                                          .body)['setpoint_temperature'])
+
+    @responses.activate
+    def test_holiday_mode_temperature_rounded(self) -> None:
+        serial = testutil.mock_full_auth_success()
+
+        url = urls.system_holiday_mode().format(serial_number=serial)
+        responses.add(responses.PUT, url, status=200)
+
+        tomorrow = date.today() + timedelta(days=1)
+        after_tomorrow = tomorrow + timedelta(days=1)
+
+        self.manager.set_holiday_mode(tomorrow, after_tomorrow, 22.7)
+
+        self.assertEqual(url, responses.calls[-1].request.url)
+        self.assertEqual(22.5, json.loads(responses.calls[-1].request
+                                          .body)['temperature_setpoint'])
 
     # pylint: disable=no-self-use,too-many-arguments
     def _mock_urls(self, hvacstate_data: Any, livereport_data: Any,
