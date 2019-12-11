@@ -307,7 +307,7 @@ class SystemTest(unittest.TestCase):
         active_mode = system.get_active_mode_zone(zone)
 
         self.assertEqual(QuickModes.ONE_DAY_AWAY, active_mode.current_mode)
-        self.assertEqual(zone.target_min_temperature,
+        self.assertEqual(Zone.MIN_TARGET_TEMP,
                          active_mode.target_temperature)
 
     def test_get_active_mode_zone_quick_mode_party(self) -> None:

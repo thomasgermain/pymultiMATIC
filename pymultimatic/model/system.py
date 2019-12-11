@@ -107,7 +107,7 @@ class System:
                 mode = ActiveMode(Zone.MIN_TARGET_TEMP, self.quick_mode)
 
             if self.quick_mode == QuickModes.ONE_DAY_AWAY:
-                mode = ActiveMode(zone.target_min_temperature, self.quick_mode)
+                mode = ActiveMode(Zone.MIN_TARGET_TEMP, self.quick_mode)
 
             if self.quick_mode == QuickModes.SYSTEM_OFF:
                 mode = ActiveMode(Zone.MIN_TARGET_TEMP, self.quick_mode)
