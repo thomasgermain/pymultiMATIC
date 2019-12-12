@@ -6,7 +6,7 @@ import attr
 
 from . import ActiveMode, HolidayMode, HotWater, Room, Zone, BoilerStatus, \
     Circulation, QuickMode, QuickModes, Error, SystemStatus, BoilerInfo, \
-    constants
+    constants, SettingModes
 
 
 # pylint: disable=too-many-instance-attributes
@@ -117,8 +117,11 @@ class System:
                 sunday = today - datetime.timedelta(days=today.weekday() - 6)
 
                 time_program = zone.time_program.get_for(sunday)
-                mode = ActiveMode(time_program.target_temperature,
-                                  self.quick_mode)
+                target_temp = zone.target_temperature
+                if time_program.setting == SettingModes.NIGHT:
+                    target_temp = zone.target_min_temperature
+
+                mode = ActiveMode(target_temp, self.quick_mode)
 
             if self.quick_mode == QuickModes.PARTY:
                 mode = ActiveMode(zone.target_temperature, self.quick_mode)

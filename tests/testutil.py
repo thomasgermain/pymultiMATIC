@@ -59,7 +59,11 @@ def mock_logout() -> None:
 def default_time_program(mode: Optional[SettingMode] = SettingModes.ON,
                          temperature: Optional[float] = None) \
         -> TimeProgram:
-    timeprogram_day_setting = TimePeriodSetting('00:00', temperature, mode)
+
+    if mode in [SettingModes.DAY, SettingModes.NIGHT]:
+        timeprogram_day_setting = TimePeriodSetting('00:00', None, mode)
+    else:
+        timeprogram_day_setting = TimePeriodSetting('00:00', temperature, mode)
 
     timeprogram_day = TimeProgramDay([timeprogram_day_setting])
     timeprogram_days = {

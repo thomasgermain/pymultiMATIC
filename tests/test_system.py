@@ -277,9 +277,9 @@ class SystemTest(unittest.TestCase):
         """Test get active mode for zone one day home."""
 
         timeprogram_day_setting_sunday = \
-            TimePeriodSetting('00:00', 25, SettingModes.DAY)
+            TimePeriodSetting('00:00', None, SettingModes.NIGHT)
 
-        timeprogram = testutil.default_time_program(SettingModes.DAY, 20)
+        timeprogram = testutil.default_time_program(SettingModes.DAY, None)
         timeprogram.days['sunday'] = \
             TimeProgramDay([timeprogram_day_setting_sunday])
 
@@ -290,10 +290,28 @@ class SystemTest(unittest.TestCase):
 
         active_mode = system.get_active_mode_zone(zone)
 
-        self.assertEqual(QuickModes.ONE_DAY_AT_HOME,
-                         active_mode.current_mode)
-        self.assertEqual(timeprogram_day_setting_sunday.target_temperature,
-                         active_mode.target_temperature)
+        self.assertEqual(QuickModes.ONE_DAY_AT_HOME, active_mode.current_mode)
+        self.assertEqual(18, active_mode.target_temperature)
+
+    def test_get_active_mode_zone_quick_mode_one_day_home_day(self) -> None:
+        """Test get active mode for zone one day home."""
+
+        timeprogram_day_setting_sunday = \
+            TimePeriodSetting('00:00', None, SettingModes.DAY)
+
+        timeprogram = testutil.default_time_program(SettingModes.NIGHT, None)
+        timeprogram.days['sunday'] = \
+            TimeProgramDay([timeprogram_day_setting_sunday])
+
+        zone = Zone('1', 'Test', timeprogram, 20, 20, OperatingModes.AUTO,
+                    None, 18, 'STANDBY', False)
+        system = System(None, None, None, [zone], None, None, None, 5,
+                        QuickModes.ONE_DAY_AT_HOME, [], None)
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(QuickModes.ONE_DAY_AT_HOME, active_mode.current_mode)
+        self.assertEqual(20, active_mode.target_temperature)
 
     def test_get_active_mode_zone_quick_mode_one_day_away(self) -> None:
         """Test get active mode for zone one day away."""

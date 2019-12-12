@@ -1,7 +1,7 @@
-attrs>=19.0.0,<20.0.0
-responses>=0.10.0,<1.0.0
-requests>=2.20.0,<3.0.0
-jsonpickle>=1.0,<2.0
-pytest
-sphinx
-guzzle_sphinx_theme
+attrs==19.3.0
+responses==0.10.7
+requests==2.22.0
+jsonpickle==1.2
+pytest==5.2.1
+sphinx==2.2.2
+guzzle_sphinx_theme==0.7.11
