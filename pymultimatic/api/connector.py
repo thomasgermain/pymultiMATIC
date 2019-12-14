@@ -242,31 +242,39 @@ class ApiConnector:
             return response.json()
         return None
 
-    def _authentication(self, force_login: bool = False) -> bool:
+    # pylint: disable=broad-except
+    def _authentication(self, force: bool = True) -> bool:
         try:
-            if force_login:
+            if force:
                 self._clear_session()
 
+            self._session = self._create_or_load_session()
+            self._serial_number = self._load_serial_number_from_file()
+
             if not self._session.cookies:
-                self._session = self._create_or_load_session()
-                self._serial_number = self._load_serial_number_from_file()
+                _LOGGER.info('No previous session found, will try to log '
+                             'in with username: %s and smartphoneId: %s',
+                             self._user, self._smartphone_id)
 
-                if not self._session.cookies:
-                    _LOGGER.info('No previous session found, will try to log '
-                                 'in with username: %s and smartphoneId: %s',
-                                 self._user, self._smartphone_id)
-
-                    auth_token = self._request_token()
-                    self._get_cookies(auth_token)
+                auth_token = self._request_token()
+                self._get_cookies(auth_token)
+                self._get_serial_number()
 
             if not self._serial_number:
                 self._get_serial_number()
 
             return True
-        except ApiError:
-            raise
+        except ApiError as exc:
+            if force:
+                raise ApiError('Cannot authenticate', exc.response,
+                               exc.payload) from exc
+            _LOGGER.warning('Cannot authenticate after 1 try', exc_info=True)
+            return self._authentication(True)
         except Exception as exc:
-            raise ApiError('Error during login', None) from exc
+            if force:
+                raise ApiError('Cannot authenticate', None, None) from exc
+            _LOGGER.warning('Cannot authenticate after 1 try', exc_info=True)
+            return self._authentication(True)
 
     def _request_token(self) -> str:
         params = {
@@ -288,7 +296,9 @@ class ApiConnector:
         except ApiError:
             raise
         except Exception as exc:
-            raise ApiError('Error during authentication', None) from exc
+            params['password'] = '*****'
+            raise ApiError('Error during authentication', None, params)\
+                from exc
 
     def _get_cookies(self, auth_token: str) -> None:
         params = {
@@ -312,7 +322,9 @@ class ApiConnector:
         except ApiError:
             raise
         except Exception as exc:
-            raise ApiError('Error while getting cookies', None) from exc
+            params["authToken"] = "******"
+            raise ApiError('Cannot get cookies', None, params)\
+                from exc
 
     def _get_serial_number(self) -> None:
         try:
