@@ -1,13 +1,14 @@
 """Test for connector."""
 import json
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 from responses import mock as responses  # type: ignore
 
 from tests import testutil
 from pymultimatic.api import urls, ApiError, ApiConnector
 
 
+# pylint: disable=no-member
 class ConnectorTest(unittest.TestCase):
     """Test class."""
 
@@ -43,7 +44,8 @@ class ConnectorTest(unittest.TestCase):
         responses.add(responses.POST, urls.new_token(), status=401)
 
         self.assertFalse(self.connector.login())
-        self.assertEqual(1, len(responses.calls))
+        self.assertEqual(2, len(responses.calls))
+        self.assertEqual(urls.new_token(), responses.calls[0].request.url)
         self.assertEqual(urls.new_token(), responses.calls[0].request.url)
 
     @responses.activate
@@ -109,7 +111,10 @@ class ConnectorTest(unittest.TestCase):
             self.connector.get(urls.facilities_list())
             self.fail("Error expected")
         except ApiError as exc:
-            self.assertEqual("Cannot get cookies", exc.message)
+            self.assertIsInstance(exc.__cause__, ApiError)
+            self.assertEqual("Cannot get cookies",
+                             exc.__cause__.message)  # type: ignore
+            self.assertEqual("Cannot authenticate", exc.message)
 
     @responses.activate
     def test_cookie_failed_exception(self) -> None:
@@ -120,8 +125,11 @@ class ConnectorTest(unittest.TestCase):
             self.connector.get(urls.facilities_list())
             self.fail("Error expected")
         except ApiError as exc:
-            self.assertEqual("Error while getting cookies", exc.message)
-            self.assertIsNone(exc.response)
+            self.assertIsInstance(exc.__cause__, ApiError)
+            self.assertEqual("Cannot get cookies",
+                             exc.__cause__.message)  # type: ignore
+            self.assertIsNone(exc.__cause__.response)  # type: ignore
+            self.assertEqual("Cannot authenticate", exc.message)
 
     @responses.activate
     def test_login_wrong_authentication(self) -> None:
@@ -136,7 +144,11 @@ class ConnectorTest(unittest.TestCase):
             self.connector.get(urls.facilities_list())
             self.fail("Error expected")
         except ApiError as exc:
-            self.assertEqual("Authentication failed", exc.message)
+            self.assertIsInstance(exc.__cause__, ApiError)
+            self.assertEqual("Authentication failed",
+                             exc.__cause__.message)  # type: ignore
+            self.assertIsNotNone(exc.__cause__.response)  # type: ignore
+            self.assertEqual("Cannot authenticate", exc.message)
 
     @responses.activate
     def test_put(self) -> None:
@@ -184,8 +196,11 @@ class ConnectorTest(unittest.TestCase):
             self.connector.get('')
             self.fail("Error expected")
         except ApiError as exc:
-            self.assertEqual("Cannot get serial number", exc.message)
-            self.assertIsNone(exc.response)
+            self.assertIsInstance(exc.__cause__, ApiError)
+            self.assertEqual("Cannot get serial number",
+                             exc.__cause__.message)  # type: ignore
+            self.assertIsNone(exc.__cause__.response)  # type: ignore
+            self.assertEqual("Cannot authenticate", exc.message)
 
     @responses.activate
     def test_cannot_get_serial_bad_request(self) -> None:
@@ -200,8 +215,11 @@ class ConnectorTest(unittest.TestCase):
             self.connector.get('')
             self.fail("Error expected")
         except ApiError as exc:
-            self.assertEqual("Cannot get serial number", exc.message)
-            self.assertIsNotNone(exc.response)
+            self.assertIsInstance(exc.__cause__, ApiError)
+            self.assertEqual("Cannot get serial number",
+                             exc.__cause__.message)  # type: ignore
+            self.assertIsNotNone(exc.__cause__.response)  # type: ignore
+            self.assertEqual("Cannot authenticate", exc.message)
             self.assertEqual(400, exc.response.status_code)
 
     @responses.activate
@@ -248,7 +266,7 @@ class ConnectorTest(unittest.TestCase):
             self.fail("Error expected")
         except ApiError as exc:
             self.assertIsNone(exc.response)
-            self.assertEqual('Error during authentication', exc.message)
+            self.assertEqual('Cannot authenticate', exc.message)
 
     @responses.activate
     def test_login_error(self) -> None:
@@ -258,7 +276,7 @@ class ConnectorTest(unittest.TestCase):
             self.fail("Error expected")
         except ApiError as exc:
             self.assertIsNone(exc.response)
-            self.assertEqual('Error during authentication', exc.message)
+            self.assertEqual('Cannot authenticate', exc.message)
 
     @responses.activate
     def test_login_catch_exception(self) -> None:
@@ -274,7 +292,7 @@ class ConnectorTest(unittest.TestCase):
             self.connector.get('')
         except ApiError as exc:
             self.assertIsNone(exc.response)
-            self.assertEqual('Error during login', exc.message)
+            self.assertEqual('Cannot authenticate', exc.message)
 
     @responses.activate
     def test_login_once(self) -> None:
@@ -321,7 +339,8 @@ class ConnectorTest(unittest.TestCase):
         # Do nothing on clear session, otherwise it will delete files
         # in tests/files/session
         self.connector._clear_session = Mock()  # type: ignore
-        self.connector._serial_number = None
+        none = MagicMock(return_value=None)
+        self.connector._load_serial_number_from_file = none   # type: ignore
 
         self.connector.get(urls.facilities_list())
 
