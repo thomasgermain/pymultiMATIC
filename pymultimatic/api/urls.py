@@ -289,7 +289,7 @@ def emf_report_device(device_id: str, energy_type: str, function: str,
                                     device_id=device_id)
 
     query_params = {
-        'energy_type': energy_type,
+        'energyType': energy_type,
         'function': function,
         'timeRange': time_range,
         'start': start,
