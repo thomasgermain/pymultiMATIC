@@ -337,7 +337,7 @@ system.</p></li>
 <h2>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymultimatic.model.system.System">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.system.</code><code class="sig-name descname">System</code><span class="sig-paren">(</span><em class="sig-param">holiday_mode: pymultimatic.model.mode.HolidayMode, system_status: pymultimatic.model.status.SystemStatus, boiler_status: Optional[pymultimatic.model.status.BoilerStatus], zones: List[pymultimatic.model.component.Zone], rooms: List[pymultimatic.model.component.Room], hot_water: Optional[pymultimatic.model.component.HotWater], circulation: Optional[pymultimatic.model.component.Circulation], outdoor_temperature: Optional[float], quick_mode: Optional[pymultimatic.model.mode.QuickMode], errors: List[pymultimatic.model.status.Error], boiler_info: Optional[pymultimatic.model.boilerinfo.BoilerInfo]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.system.System" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.system.</code><code class="sig-name descname">System</code><span class="sig-paren">(</span><em class="sig-param">holiday_mode: pymultimatic.model.mode.HolidayMode, system_status: pymultimatic.model.status.SystemStatus, boiler_status: Optional[pymultimatic.model.status.BoilerStatus], zones: List[pymultimatic.model.component.Zone], rooms: List[pymultimatic.model.component.Room], hot_water: Optional[pymultimatic.model.component.HotWater], circulation: Optional[pymultimatic.model.component.Circulation], outdoor_temperature: Optional[float], quick_mode: Optional[pymultimatic.model.mode.QuickMode], errors: List[pymultimatic.model.status.Error], boiler_info: Optional[pymultimatic.model.info.BoilerInfo], system_info: pymultimatic.model.info.SystemInfo</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.system.System" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class represents the main class to manipulate vaillant system. It
 groups all the information about the system.</p>
 <dl class="field-list simple">
@@ -355,8 +355,9 @@ here.</p></li>
 <li><p><strong>quick_mode</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickMode" title="pymultimatic.model.mode.QuickMode"><em>QuickMode</em></a>) – If any quick mode is running, it’s available
 here.</p></li>
 <li><p><strong>errors</strong> (<em>List</em><em>[</em><a class="reference internal" href="model.html#pymultimatic.model.status.Error" title="pymultimatic.model.status.Error"><em>Error</em></a><em>]</em>) – If there are errors, you can find them here.</p></li>
-<li><p><strong>boiler_info</strong> (<a class="reference internal" href="model.html#pymultimatic.model.boilerinfo.BoilerInfo" title="pymultimatic.model.boilerinfo.BoilerInfo"><em>BoilerInfo</em></a>) – Information (pressure, temperature) about
-the boiler</p></li>
+<li><p><strong>boiler_info</strong> (<a class="reference internal" href="model.html#pymultimatic.model.info.BoilerInfo" title="pymultimatic.model.info.BoilerInfo"><em>BoilerInfo</em></a>) – Information (pressure, temperature) about
+the boiler.</p></li>
+<li><p><strong>system_info</strong> (<a class="reference internal" href="model.html#pymultimatic.model.info.SystemInfo" title="pymultimatic.model.info.SystemInfo"><em>SystemInfo</em></a>) – Information about the system.</p></li>
 </ul>
 </dd>
 </dl>

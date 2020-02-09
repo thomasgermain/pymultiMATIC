@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#error">Error</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#boilerstatus">BoilerStatus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#boilerinfo">BoilerInfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">BoilerInfo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#systemstatus">SystemStatus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#syncstate">SyncState</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#timeperiodsetting">TimePeriodSetting</a></li>
@@ -169,14 +170,34 @@ case, it’s more like a status.</p>
 <div class="section" id="boilerinfo">
 <h2>BoilerInfo<a class="headerlink" href="#boilerinfo" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="pymultimatic.model.boilerinfo.BoilerInfo">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.boilerinfo.</code><code class="sig-name descname">BoilerInfo</code><span class="sig-paren">(</span><em class="sig-param">water_pressure: Optional[float], current_temperature: Optional[float]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.boilerinfo.BoilerInfo" title="Permalink to this definition">¶</a></dt>
+<dt id="pymultimatic.model.info.BoilerInfo">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.info.</code><code class="sig-name descname">BoilerInfo</code><span class="sig-paren">(</span><em class="sig-param">water_pressure: Optional[float], current_temperature: Optional[float]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.info.BoilerInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Information about the boiler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>water_pressure</strong> (<em>float</em>) – Water pressure in bar</p></li>
 <li><p><strong>current_temperature</strong> (<em>float</em>) – Current temperature of the boiler.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="id1">
+<h2>BoilerInfo<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.info.SystemInfo">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.info.</code><code class="sig-name descname">SystemInfo</code><span class="sig-paren">(</span><em class="sig-param">serial_number: str</em>, <em class="sig-param">name: str</em>, <em class="sig-param">mac_ethernet: str</em>, <em class="sig-param">mac_wifi: str</em>, <em class="sig-param">firmware: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.info.SystemInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Information about the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>serial_number</strong> (<em>str</em>) – Serial number of the installation.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the installation.</p></li>
+<li><p><strong>mac_ethernet</strong> (<em>str</em>) – Mac address of ethernet.</p></li>
+<li><p><strong>mac_wifi</strong> (<em>str</em>) – Mac address of wifi.</p></li>
+<li><p><strong>firmware</strong> (<em>str</em>) – Firmware version.</p></li>
 </ul>
 </dd>
 </dl>

@@ -15,7 +15,13 @@ BoilerStatus
 
 BoilerInfo
 ************
-.. autoclass:: pymultimatic.model.boilerinfo.BoilerInfo
+.. autoclass:: pymultimatic.model.info.BoilerInfo
+   :members:
+
+
+BoilerInfo
+************
+.. autoclass:: pymultimatic.model.info.SystemInfo
    :members:
 
 SystemStatus

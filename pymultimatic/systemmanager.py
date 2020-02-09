@@ -59,10 +59,12 @@ class SystemManager:
         full_system = self._connector.get(urls.system())
         live_report = self._connector.get(urls.live_report())
         hvac_state = self._connector.get(urls.hvac())
+        facilities = self._connector.get(urls.facilities_list())
 
         holiday_mode = mapper.map_holiday_mode(full_system)
         boiler_status = mapper.map_boiler_status(hvac_state)
         system_status = mapper.map_system_status(hvac_state)
+        system_info = mapper.map_system_info(facilities)
 
         zones = mapper.map_zones(full_system)
 
@@ -82,7 +84,7 @@ class SystemManager:
 
         return System(holiday_mode, system_status, boiler_status, zones, rooms,
                       hot_water, circulation, outdoor_temp, quick_mode, errors,
-                      boiler_info)
+                      boiler_info, system_info)
 
     def get_hot_water(self, dhw_id: str) -> Optional[HotWater]:
         """Get the :class:`~pymultimatic.model.component.HotWater`

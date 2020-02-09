@@ -6,7 +6,7 @@ import attr
 
 from . import ActiveMode, HolidayMode, HotWater, Room, Zone, BoilerStatus, \
     Circulation, QuickMode, QuickModes, Error, SystemStatus, BoilerInfo, \
-    constants, SettingModes
+    constants, SettingModes, SystemInfo
 
 
 # pylint: disable=too-many-instance-attributes
@@ -29,7 +29,8 @@ class System:
             here.
         errors (List[Error]): If there are errors, you can find them here.
         boiler_info (BoilerInfo): Information (pressure, temperature) about
-            the boiler
+            the boiler.
+        system_info (SystemInfo): Information about the system.
     """
 
     holiday_mode = attr.ib(type=HolidayMode)
@@ -43,6 +44,7 @@ class System:
     quick_mode = attr.ib(type=Optional[QuickMode])
     errors = attr.ib(type=List[Error])
     boiler_info = attr.ib(type=Optional[BoilerInfo])
+    system_info = attr.ib(type=SystemInfo)
     _zones = attr.ib(type=Dict[str, Zone], default=dict(), init=False)
     _rooms = attr.ib(type=Dict[str, Room], default=dict(), init=False)
 
