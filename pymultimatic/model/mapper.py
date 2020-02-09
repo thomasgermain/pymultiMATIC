@@ -189,7 +189,7 @@ def map_system_status(hvac_state) -> SystemStatus:
     return SystemStatus(online, update)
 
 
-def map_system_info(facilities) -> SystemInfo:
+def map_system_info(facilities, gateway) -> SystemInfo:
     """Map *system info*."""
     facility = facilities.get("body", dict()).get("facilitiesList", list())[0]
 
@@ -200,8 +200,9 @@ def map_system_info(facilities) -> SystemInfo:
     mac_wifi = facility.get("networkInformation", dict())\
         .get("macAddressWifiAccessPoint")
     firmware = facility.get("firmwareVersion", None)
+    gateway = gateway.get("body", dict()).get("gatewayType", None)
 
-    return SystemInfo(serial, name, mac_ethernet, mac_wifi, firmware)
+    return SystemInfo(gateway, serial, name, mac_ethernet, mac_wifi, firmware)
 
 
 def map_zones(full_system) -> List[Zone]:

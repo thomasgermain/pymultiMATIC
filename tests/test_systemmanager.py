@@ -42,8 +42,11 @@ class SystemManagerTest(unittest.TestCase):
         with open(testutil.path('files/responses/facilities'), 'r') as file:
             facilities = json.loads(file.read())
 
+        with open(testutil.path('files/responses/gateway'), 'r') as file:
+            gateway = json.loads(file.read())
+
         self._mock_urls(hvacstate_data, livereport_data, rooms_data, serial,
-                        system_data, facilities)
+                        system_data, facilities, gateway)
 
         system = self.manager.get_system()
 
@@ -455,7 +458,7 @@ class SystemManagerTest(unittest.TestCase):
     # pylint: disable=no-self-use,too-many-arguments
     def _mock_urls(self, hvacstate_data: Any, livereport_data: Any,
                    rooms_data: Any, serial: str, system_data: Any,
-                   facilities: Any = None) -> None:
+                   facilities: Any = None, gateway: Any = None) -> None:
         responses.add(responses.GET, urls.live_report()
                       .format(serial_number=serial), json=livereport_data,
                       status=200)
@@ -471,3 +474,8 @@ class SystemManagerTest(unittest.TestCase):
             responses.add(responses.GET,
                           urls.facilities_list(), json=facilities,
                           status=200)
+
+        if gateway:
+            responses.add(responses.GET,
+                          urls.gateway_type().format(serial_number=serial),
+                          json=gateway, status=200)
