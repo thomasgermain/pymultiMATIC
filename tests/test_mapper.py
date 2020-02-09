@@ -382,3 +382,15 @@ class MapperTest(unittest.TestCase):
         boiler_info = mapper.map_boiler_info(livereport)
         self.assertEqual(1.9, boiler_info.water_pressure)
         self.assertEqual(41, boiler_info.current_temperature)
+
+    def test_map_system_info(self) -> None:
+        with open(testutil.path(
+                'files/responses/facilities'), 'r') as file:
+            facilities = json.loads(file.read())
+
+        sys_info = mapper.map_system_info(facilities)
+        self.assertEqual('1234567890123456789012345678',
+                         sys_info.serial_number)
+        self.assertEqual('Home', sys_info.name)
+        self.assertEqual('01:23:45:67:89:AB', sys_info.mac_ethernet)
+        self.assertEqual('1.2.3', sys_info.firmware)

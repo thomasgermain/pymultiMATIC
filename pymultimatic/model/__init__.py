@@ -5,6 +5,6 @@ from .mode import Mode, OperatingMode, OperatingModes, QuickMode, QuickModes, \
 from .timeprogram import TimeProgram, TimeProgramDay, TimePeriodSetting
 from .component import Component, Circulation, HotWater, Device, Room, Zone
 from .status import Error, BoilerStatus, SystemStatus
-from .boilerinfo import BoilerInfo
+from .info import BoilerInfo, SystemInfo
 from .system import System
 from .syncstate import SyncState

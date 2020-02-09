@@ -5,8 +5,7 @@ from typing import Optional, List, Any
 from . import BoilerStatus, Circulation, Device, HolidayMode, HotWater, \
     QuickMode, QuickModes, QuickVeto, Room, TimeProgram, TimeProgramDay, \
     TimePeriodSetting, Zone, OperatingModes, Error, SystemStatus, SyncState, \
-    SettingModes, BoilerInfo
-
+    SettingModes, BoilerInfo, SystemInfo
 
 _DATE_FORMAT = "%Y-%m-%d"
 
@@ -188,6 +187,21 @@ def map_system_status(hvac_state) -> SystemStatus:
     online = meta.get('onlineStatus', dict()).get('status')
     update = meta.get('firmwareUpdateStatus', dict()).get('status')
     return SystemStatus(online, update)
+
+
+def map_system_info(facilities) -> SystemInfo:
+    """Map *system info*."""
+    facility = facilities.get("body", dict()).get("facilitiesList", list())[0]
+
+    serial = facility.get("serialNumber", None)
+    name = facility.get("name", None)
+    mac_ethernet = facility.get("networkInformation", dict())\
+        .get("macAddressEthernet")
+    mac_wifi = facility.get("networkInformation", dict())\
+        .get("macAddressWifiAccessPoint")
+    firmware = facility.get("firmwareVersion", None)
+
+    return SystemInfo(serial, name, mac_ethernet, mac_wifi, firmware)
 
 
 def map_zones(full_system) -> List[Zone]:
