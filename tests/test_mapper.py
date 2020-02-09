@@ -387,10 +387,14 @@ class MapperTest(unittest.TestCase):
         with open(testutil.path(
                 'files/responses/facilities'), 'r') as file:
             facilities = json.loads(file.read())
+        with open(testutil.path(
+                'files/responses/gateway'), 'r') as file:
+            gateway = json.loads(file.read())
 
-        sys_info = mapper.map_system_info(facilities)
+        sys_info = mapper.map_system_info(facilities, gateway)
         self.assertEqual('1234567890123456789012345678',
                          sys_info.serial_number)
         self.assertEqual('Home', sys_info.name)
         self.assertEqual('01:23:45:67:89:AB', sys_info.mac_ethernet)
         self.assertEqual('1.2.3', sys_info.firmware)
+        self.assertEqual('VR920', sys_info.gateway)

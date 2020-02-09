@@ -50,8 +50,8 @@ class SystemManager:
     # pylint: disable=too-many-locals
     def get_system(self) -> System:
         """Get the full :class:`~pymultimatic.model.system.System`. It may
-        take some times, it actually does 3 or 4 API calls, depending on your
-        system configuration.
+        take some times, it actually does multiples API calls, depending on
+        your system configuration.
 
         Returns:
             System: the full system.
@@ -60,11 +60,12 @@ class SystemManager:
         live_report = self._connector.get(urls.live_report())
         hvac_state = self._connector.get(urls.hvac())
         facilities = self._connector.get(urls.facilities_list())
+        gateway = self._connector.get(urls.gateway_type())
 
         holiday_mode = mapper.map_holiday_mode(full_system)
         boiler_status = mapper.map_boiler_status(hvac_state)
         system_status = mapper.map_system_status(hvac_state)
-        system_info = mapper.map_system_info(facilities)
+        system_info = mapper.map_system_info(facilities, gateway)
 
         zones = mapper.map_zones(full_system)
 

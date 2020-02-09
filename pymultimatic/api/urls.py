@@ -15,6 +15,7 @@ _LOGOUT = _BASE_AUTHENTICATE + '/logout'
 """Facility details"""
 _FACILITIES_LIST = _BASE + '/facilities'
 _FACILITIES = _FACILITIES_LIST + '/{serial_number}'
+_GATEWAY_TYPE = _FACILITIES + '/public/v1/gatewayType'
 _FACILITIES_DETAILS = _FACILITIES + '/system/v1/details'
 _FACILITIES_STATUS = _FACILITIES + '/system/v1/status'
 _FACILITIES_SETTINGS = _FACILITIES + '/storage'
@@ -136,6 +137,11 @@ def facilities_list() -> str:
         For now, the connector only handle one serial number.
     """
     return _FACILITIES_LIST
+
+
+def gateway_type() -> str:
+    """Url to get the gateway type (VR900, VR920, etc.)."""
+    return _GATEWAY_TYPE
 
 
 def rbr_underfloor_heating_status() -> str:

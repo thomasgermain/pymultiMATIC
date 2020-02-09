@@ -112,5 +112,4 @@ You can find a deeper documentation [here](https://thomasgermain.github.io/pymul
 ## Todo's
 - Move ApiConnector to async
 - Handling ventilation
-- Handling missing information when VRC700 (and/or boiler) is shutdown 
-(e.g. TimeProgram are not coming anymore from the API if boiler is down)
+- Moving some constructors (System) to **kwargs

@@ -23,6 +23,7 @@ class SystemInfo:
     """"Information about the system.
 
     Args:
+        gateway (str): Gateway type;
         serial_number (str): Serial number of the installation.
         name (str): Name of the installation.
         mac_ethernet (str): Mac address of ethernet.
@@ -30,6 +31,7 @@ class SystemInfo:
         firmware (str): Firmware version.
     """
 
+    gateway = attr.ib(type=str)
     serial_number = attr.ib(type=str)
     name = attr.ib(type=str)
     mac_ethernet = attr.ib(type=str)
