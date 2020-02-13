@@ -28,6 +28,10 @@ class PayloadsTest(unittest.TestCase):
                 payload = function[1](**args)
                 self._assert_function_call(payload)
 
+        payload = payloads.room_quick_veto(15, None)
+        self._assert_function_call(payload)
+        assert payload["duration"] == 180
+
     def _get_args_name(self, function: Any) -> Dict[str, Any]:
         args: Dict[str, Any] = {}
         params = inspect.signature(function).parameters

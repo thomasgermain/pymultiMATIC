@@ -1,11 +1,12 @@
 """Mappers from json to model classes."""
 from datetime import datetime
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Tuple
 
-from . import BoilerStatus, Circulation, Device, HolidayMode, HotWater, \
-    QuickMode, QuickModes, QuickVeto, Room, TimeProgram, TimeProgramDay, \
-    TimePeriodSetting, Zone, OperatingModes, Error, SystemStatus, SyncState, \
-    SettingModes, BoilerInfo, SystemInfo
+from . import (BoilerStatus, Circulation, Device, HolidayMode, HotWater,
+               QuickMode, QuickModes, QuickVeto, Room, TimeProgram,
+               TimeProgramDay, TimePeriodSetting, OperatingModes, Error,
+               SyncState, SettingModes, SystemInfo, Dhw, OperatingMode, Zone,
+               ZoneHeating, ZoneCooling, Report, Ventilation)
 
 _DATE_FORMAT = "%Y-%m-%d"
 
@@ -13,7 +14,7 @@ _DATE_FORMAT = "%Y-%m-%d"
 def map_quick_mode(full_system) -> Optional[QuickMode]:
     """Map *quick mode*."""
     if full_system:
-        quick_mode = full_system.get("body", dict())\
+        quick_mode = full_system.get("body", dict()) \
             .get("configuration", dict()).get("quickmode")
         if quick_mode:
             mode = QuickModes.get(quick_mode.get("quickmode"))
@@ -25,7 +26,7 @@ def map_quick_mode(full_system) -> Optional[QuickMode]:
 def map_outdoor_temp(full_system) -> Optional[float]:
     """get *outdoor_temperature*."""
     if full_system:
-        raw_temp = full_system.get("body", dict()).get("status", dict())\
+        raw_temp = full_system.get("body", dict()).get("status", dict()) \
             .get('outside_temperature')
         if raw_temp is not None:
             return float(raw_temp)
@@ -52,14 +53,14 @@ def map_room(raw_room) -> Optional[Room]:
         if raw_room:
             config = raw_room.get("configuration", dict())
 
-            component_id = raw_room.get("roomIndex")
+            func = _map_function(raw_room)
+
+            room_id = raw_room.get("roomIndex")
             child_lock = config.get("childLock")
-            target_temp = config.get("temperatureSetpoint")
             current_temp = config.get("currentTemperature")
             devices = map_devices(config.get("devices"))
             window_open = config.get("isWindowOpen")
             name = config.get("name")
-            operation_mode = OperatingModes.get(config.get("operationMode"))
             humidity = config.get('currentHumidity')
 
             raw_quick_veto = config.get("quickVeto")
@@ -69,11 +70,17 @@ def map_room(raw_room) -> Optional[Room]:
                     raw_quick_veto.get("remainingDuration"),
                     config.get("temperatureSetpoint"))
 
-            time_program = map_time_program(raw_room.get("timeprogram"))
-
-            return Room(component_id, name, time_program, current_temp,
-                        target_temp, operation_mode, quick_veto,
-                        child_lock, window_open, devices, humidity)
+            return Room(id=room_id,
+                        name=name,
+                        time_program=func[0],
+                        temperature=current_temp,
+                        target_high=func[2],
+                        operating_mode=func[1],
+                        quick_veto=quick_veto,
+                        child_lock=child_lock,
+                        window_open=window_open,
+                        devices=devices,
+                        humidity=humidity)
     return None
 
 
@@ -94,7 +101,7 @@ def map_devices(raw_devices) -> List[Device]:
     return devices
 
 
-def map_time_program(raw_time_program, key: Optional[str] = None)\
+def map_time_program(raw_time_program, key: Optional[str] = None) \
         -> TimeProgram:
     """Map *time program*."""
     result = {}
@@ -140,13 +147,13 @@ def map_holiday_mode(full_system) -> HolidayMode:
     """Map *holiday mode*."""
     mode = HolidayMode(False)
     if full_system:
-        raw_holiday_mode = full_system.get("body", dict())\
+        raw_holiday_mode = full_system.get("body", dict()) \
             .get("configuration", dict()).get("holidaymode")
 
         if raw_holiday_mode:
             mode.is_active = bool(raw_holiday_mode.get("active"))
-            mode.target_temperature = float(raw_holiday_mode
-                                            .get("temperature_setpoint"))
+            mode.target = float(raw_holiday_mode
+                                .get("temperature_setpoint"))
             mode.start_date = datetime.strptime(
                 raw_holiday_mode.get("start_date"), _DATE_FORMAT).date()
             mode.end_date = datetime.strptime(
@@ -172,37 +179,31 @@ def map_boiler_status(hvac_state) -> Optional[BoilerStatus]:
     return None
 
 
-def map_boiler_info(live_report) -> Optional[BoilerInfo]:
-    """Map boiler info"""
-    if live_report:
-        water_pressure = _find_water_pressure_report(live_report)
-        boiler_temperature = _find_boiler_temperature_report(live_report)
-        return BoilerInfo(water_pressure, boiler_temperature)
-    return None
-
-
-def map_system_status(hvac_state) -> SystemStatus:
+def _map_status(hvac_state) -> Tuple[str, str]:
     """Map *system status*."""
     meta = hvac_state.get('meta', dict())
     online = meta.get('onlineStatus', dict()).get('status')
     update = meta.get('firmwareUpdateStatus', dict()).get('status')
-    return SystemStatus(online, update)
+    return online, update
 
 
-def map_system_info(facilities, gateway) -> SystemInfo:
+def map_system_info(facilities, gateway, hvac) -> SystemInfo:
     """Map *system info*."""
-    facility = facilities.get("body", dict()).get("facilitiesList", list())[0]
+    serial = map_serial_number(facilities)
 
-    serial = facility.get("serialNumber", None)
+    facility = facilities.get("body", dict()).get("facilitiesList", list())[0]
     name = facility.get("name", None)
-    mac_ethernet = facility.get("networkInformation", dict())\
+    mac_ethernet = facility.get("networkInformation", dict()) \
         .get("macAddressEthernet")
-    mac_wifi = facility.get("networkInformation", dict())\
+    mac_wifi = facility.get("networkInformation", dict()) \
         .get("macAddressWifiAccessPoint")
     firmware = facility.get("firmwareVersion", None)
     gateway = gateway.get("body", dict()).get("gatewayType", None)
 
-    return SystemInfo(gateway, serial, name, mac_ethernet, mac_wifi, firmware)
+    online, update = _map_status(hvac)
+
+    return SystemInfo(gateway, serial, name, mac_ethernet, mac_wifi, firmware,
+                      online, update)
 
 
 def map_zones(full_system) -> List[Zone]:
@@ -225,30 +226,74 @@ def map_zone(raw_zone) -> Optional[Zone]:
         raw_zone = raw_zone_body
 
     if raw_zone:
-        heating = raw_zone.get("heating", dict())
-        configuration = raw_zone.get("configuration", dict())
-        heating_configuration = heating.get("configuration", dict())
-
         zone_id = raw_zone.get("_id")
-        operation_mode = OperatingModes.get(heating_configuration.get("mode"))
-        target_temp = heating_configuration.get("setpoint_temperature")
-        target_min_temp = heating_configuration.get("setback_temperature")
-        time_program = map_time_program(heating.get("timeprogram"), "setting")
-
+        configuration = raw_zone.get("configuration", dict())
         name = configuration.get("name", "").strip()
-        current_temperature = configuration.get("inside_temperature")
+        temperature = configuration.get("inside_temperature")
         active_function = configuration.get("active_function")
-
         quick_veto = _map_quick_veto_zone(configuration.get("quick_veto"))
-
         rbr = raw_zone.get("currently_controlled_by", dict())\
-                      .get("name", "") == "RBR"
+            .get("name", "") == "RBR"
 
-        return Zone(zone_id, name, time_program, current_temperature,
-                    target_temp, operation_mode, quick_veto,
-                    target_min_temp, active_function, rbr)
+        raw_heating = raw_zone.get("heating", dict())
+        raw_cooling = raw_zone.get("cooling", dict())
 
+        zone_cooling = None
+        func = _map_function(raw_heating, "setting")
+        zone_heating = ZoneHeating(func[0], func[1], func[2], func[3])
+
+        if raw_cooling:
+            func = _map_function(raw_cooling, "setting")
+            zone_cooling = ZoneCooling(func[0], func[1], func[2], func[3])
+
+        return Zone(id=zone_id, name=name,  # type: ignore
+                    temperature=temperature,
+                    quick_veto=quick_veto, active_function=active_function,
+                    rbr=rbr, heating=zone_heating, cooling=zone_cooling)
     return None
+
+
+def map_ventilation(system) -> Optional[Ventilation]:
+    """Maps *ventilation*."""
+    ventilation = None
+    if system:
+        fans = system.get('body', dict()).get('ventilation', list())
+        if fans:
+            func = _map_function(fans[0].get('fan', dict()), 'setting')
+            fan_id = fans[0].get("_id")
+            ventilation = Ventilation(id=fan_id, name='Ventilation',
+                                      time_program=func[0],
+                                      operating_mode=func[1],
+                                      target_high=func[2], target_low=func[3])
+
+    return ventilation
+
+
+def _map_function(
+        raw,
+        tp_key=None) -> Tuple[TimeProgram, OperatingMode, float, float]:
+    conf = raw.get("configuration", dict())
+    mode = conf.get('mode')
+    if not mode:
+        mode = conf.get('operation_mode')
+        if not mode:
+            mode = conf.get('operationMode')
+
+    operating_mode = OperatingModes.get(mode)
+    target_high = conf.get("setpoint_temperature", None)
+    if not target_high:
+        target_high = conf.get("temperature_setpoint", None)
+        if not target_high:
+            target_high = conf.get("temperatureSetpoint", None)
+        if not target_high:
+            target_high = conf.get("day_level", None)
+
+    target_low = conf.get("setback_temperature", None)
+    if not target_low:
+        target_low = conf.get("night_level", None)
+    time_program = map_time_program(raw.get("timeprogram"), tp_key)
+
+    return time_program, operating_mode, target_high, target_low
 
 
 def map_hot_water(full_system, live_report) -> Optional[HotWater]:
@@ -276,6 +321,13 @@ def map_hot_water_alone(raw_hot_water, dhw_id: str, live_report) \
     return None
 
 
+def map_dhw(full_system, live_report) -> Dhw:
+    """Map *dhw*."""
+    circulation = map_circulation(full_system)
+    hotwater = map_hot_water(full_system, live_report)
+    return Dhw(hotwater=hotwater, circulation=circulation)
+
+
 def map_circulation(full_system) -> Optional[Circulation]:
     """Map *circulation*."""
     if full_system:
@@ -290,7 +342,7 @@ def map_circulation(full_system) -> Optional[Circulation]:
     return None
 
 
-def map_circulation_alone(raw_circulation, dhw_id: str)\
+def map_circulation_alone(raw_circulation, dhw_id: str) \
         -> Optional[Circulation]:
     """Map *circulation*."""
     if raw_circulation:
@@ -314,7 +366,7 @@ def map_errors(hvac_state) -> List[Error]:
 
 
 def map_hvac_sync_state(hvac_state) -> Optional[SyncState]:
-    """Map """
+    """Map sync state."""
     if hvac_state:
         states = hvac_state.get('meta', dict()).get('syncState', list())
         if states:
@@ -322,54 +374,66 @@ def map_hvac_sync_state(hvac_state) -> Optional[SyncState]:
     return None
 
 
+def map_serial_number(facilities) -> str:
+    """Map serial number."""
+    facility = facilities.get("body", dict()).get("facilitiesList", list())[0]
+    return str(facility.get("serialNumber", None))
+
+
 def _map_state(raw_state) -> Optional[SyncState]:
-    if raw_state:
-        state = str(raw_state.get('state'))
-        timestamp = _datetime_mandatory(raw_state.get('timestamp'))
-        link = raw_state.get('link', dict()).get('resourceLink')
-        return SyncState(state, timestamp, link)
-    return None
+    state = str(raw_state.get('state'))
+    timestamp = _datetime_mandatory(raw_state.get('timestamp'))
+    link = raw_state.get('link', dict()).get('resourceLink')
+    return SyncState(state, timestamp, link)
 
 
-def _map_hot_water(raw_hot_water, dhw_id: str, live_report) \
-        -> Optional[HotWater]:
-    if raw_hot_water:
-        target_temp = raw_hot_water.get("configuration", dict())\
-            .get("temperature_setpoint")
+def map_reports(live_report) -> List[Report]:
+    """Maps *Reports*."""
+    reports = []
 
-        raw_operation_mode = raw_hot_water.get("configuration", dict())\
-            .get("operation_mode")
+    if live_report:
+        for device in live_report.get("body", dict()).get("devices", list()):
+            device_id = device.get("_id")
+            device_name = device.get("name")
 
-        operation_mode = OperatingModes.get(raw_operation_mode)
+            for report in device.get("reports", list()):
+                report_id = report.get("_id")
+                name = report.get("name")
+                value = report.get("value")
+                unit = report.get("unit")
+                report = Report(id=report_id, value=value, name=name,
+                                unit=unit, device_id=device_id,
+                                device_name=device_name)
+                reports.append(report)
 
-        time_program = map_time_program(raw_hot_water.get("timeprogram",
-                                                          dict()), "mode")
-
-        current_temp = None
-        name = None
-
-        if live_report:
-            dhw_report = _find_dhw_temperature_report(live_report)
-
-            if dhw_report:
-                current_temp = dhw_report.get("value")
-                name = dhw_report.get("name")
-
-        return HotWater(dhw_id, name, time_program, current_temp, target_temp,
-                        operation_mode)
-    return None
+    return reports
 
 
-def _map_circulation(raw_circulation, circulation_id: str) -> Circulation:
-    name = "Circulation"
-    time_program = map_time_program(raw_circulation.get("timeprogram"),
-                                    "setting")
-    raw_operation_mode = raw_circulation.get("configuration", dict())\
-        .get("operationMode")
+def _map_hot_water(raw_hot_water, dhw_id: str, report) -> Optional[HotWater]:
+    func = _map_function(raw_hot_water, "mode")
 
-    operation_mode = OperatingModes.get(raw_operation_mode)
+    current_temp = None
 
-    return Circulation(circulation_id, name, time_program, operation_mode)
+    if report:
+        dhw_report = _find_dhw_temperature_report(report)
+        if dhw_report:
+            current_temp = dhw_report.get("value")
+
+    return HotWater(id=dhw_id,
+                    name='hotwater',
+                    time_program=func[0],
+                    temperature=current_temp,
+                    target_high=func[2],
+                    operating_mode=func[1])
+
+
+def _map_circulation(raw_circulation, dhw_id: str) -> Circulation:
+    func = _map_function(raw_circulation, "setting")
+
+    return Circulation(id=dhw_id,
+                       name='Circulation',
+                       time_program=func[0],
+                       operating_mode=func[1])
 
 
 def _find_hvac_message_status(hvac_state) -> Optional[Any]:
@@ -379,42 +443,20 @@ def _find_hvac_message_status(hvac_state) -> Optional[Any]:
     return None
 
 
-def _find_water_pressure_report(live_report) -> Optional[float]:
-    if live_report:
-        for device in live_report.get("body", dict()).get("devices", list()):
-            for report in device.get("reports", list()):
-                if report.get("associated_device_function") == "HEATING" \
-                        and report.get("_id") == "WaterPressureSensor":
-                    return float(report.get("value"))
-    return None
-
-
-def _find_boiler_temperature_report(live_report) -> Optional[float]:
-    if live_report:
-        for device in live_report.get("body", dict()).get("devices", list()):
-            for report in device.get("reports", list()):
-                if report.get("associated_device_function") == "HEATING" \
-                        and (report.get("_id") == "FlowTemperatureSensor"
-                             or report.get("_id") == "FlowTemperatureVF1"):
-                    return float(report.get("value"))
-    return None
-
-
 def _find_dhw_temperature_report(live_report) -> Optional[Any]:
-    if live_report:
-        for device in live_report.get("body", dict()).get("devices", list()):
-            for report in device.get("reports", list()):
-                if report.get("associated_device_function") == "DHW" \
-                        and report.get("_id") == \
-                        "DomesticHotWaterTankTemperature":
-                    return report
+    for device in live_report.get("body", dict()).get("devices", list()):
+        for report in device.get("reports", list()):
+            if report.get("associated_device_function") == "DHW" \
+                    and report.get("_id") == \
+                    "DomesticHotWaterTankTemperature":
+                return report
     return None
 
 
 def _map_quick_veto_zone(raw_quick_veto) -> Optional[QuickVeto]:
     if raw_quick_veto and raw_quick_veto.get("active"):
         # No way to find start_date, Quick veto on zone lasts 6 hours
-        return QuickVeto(None, raw_quick_veto.get("setpoint_temperature"))
+        return QuickVeto(target=raw_quick_veto.get("setpoint_temperature"))
     return None
 
 

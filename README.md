@@ -35,10 +35,11 @@ The connector able to reuse an already existing session (cookies). Two files are
 
 Here is an example how to use it:
 ```python
-from pymultimatic.api import ApiConnector, urls
-   
-connector = ApiConnector('user', 'pass')
-connector.get(urls.facilities_list()) 
+from pymultimatic.api import Connector, urls
+
+session = ...  # aiohttp.ClientSession
+connector = Connector('user', 'pass', session)
+json = await connector.get(urls.facilities_list()) 
 ```
 to get some information about your installation, this returns the raw response, something like this:
 ```json
@@ -69,10 +70,10 @@ to get some information about your installation, this returns the raw response, 
 
 Basically, you can use 
 ```python
-from pymultimatic.api import ApiConnector
+from pymultimatic.api import Connector, urls
    
-connector = ApiConnector('user', 'pass')
-connector.get('') 
+connector = Connector('user', 'pass')
+connector.request('get', urls.system(serial='123')) 
 ```
 with urls from `pymultimatic.api.urls`
 
@@ -80,24 +81,25 @@ I would recommend using this layer if you only want to retrieve basic data (outd
 
 #### 2. SystemManager
 This layer allows you to interact in a more friendly way with the system and compute some data for you.
-The underlying `ApiConnector` is hidden and raw responses are mapped to more useful objects.
+The underlying `Connector` is hidden and raw responses are mapped to more useful objects.
 
 
 Here is an example:
 ```python
 from pymultimatic.systemmanager import SystemManager
 from pymultimatic.model import OperatingModes
-   
-manager = SystemManager('user', 'pass')
+
+session = ...  # aiohttp.ClientSession 
+manager = SystemManager('user', 'pass', session)
 
 # get the complete system
-system = manager.get_system()
+system = await manager.get_system()
 
 # set the hot water target temperature to 55
-manager.set_hot_water_setpoint_temperature('dhw_id', 55)
+await manager.set_hot_water_setpoint_temperature('dhw_id', 55)
 
 # set the zone operation mode to 'AUTO'
-manager.set_zone_operating_mode('zone_id', OperatingModes.AUTO)
+await manager.set_zone_operating_mode('zone_id', OperatingModes.AUTO)
 ```
 
 The main object to manipulate is `pymultimatic.model.System`, which is grouping all the information about your system.
@@ -110,6 +112,6 @@ This layer is hiding you  this complexity.
 You can find a deeper documentation [here](https://thomasgermain.github.io/pymultiMATIC/).
 
 ## Todo's
-- Move ApiConnector to async
 - Handling ventilation
+- SysFlow instead of boiler
 - Moving some constructors (System) to **kwargs

@@ -1,351 +1,109 @@
-"""Test for connector."""
-import json
-import unittest
-from unittest.mock import Mock, MagicMock
-from responses import mock as responses  # type: ignore
+from unittest import mock
 
-from tests import testutil
-from pymultimatic.api import urls, ApiError, ApiConnector
+import pytest
+from aioresponses import aioresponses
+
+from pymultimatic.api import urls, ApiError, Connector
 
 
-# pylint: disable=no-member
-class ConnectorTest(unittest.TestCase):
-    """Test class."""
+@pytest.mark.asyncio
+# pylint: disable=unused-argument
+async def test_login_success(connector: Connector, resp: aioresponses) -> None:
+    assert await connector.login()
+    assert await connector.is_logged()
+    assert await connector.login()
 
-    def setUp(self) -> None:
-        """setup."""
-        self.connector = ApiConnector('user', 'pass', 'pymultimatic',
-                                      testutil.temp_path())
 
-    @responses.activate
-    def tearDown(self) -> None:
-        """tear down."""
-        if self.connector:
-            testutil.mock_logout()
-            self.connector.logout()
+@pytest.mark.asyncio
+async def test_login_auth_error(connector: Connector,
+                                raw_resp: aioresponses) -> None:
+    raw_resp.post(urls.new_token(), status=200,
+                  payload={'body': {'authToken': '123'}})
+    raw_resp.post(urls.authenticate(), status=401)
 
-    @responses.activate
-    def test_login(self) -> None:
-        """Test calls done during login."""
-        testutil.mock_full_auth_success()
+    try:
+        await connector.login()
+        assert False
+    except ApiError as err:
+        assert str(err.response.url) == urls.authenticate()
 
-        self.connector.get(urls.facilities_list())
-        self.assertEqual(4, len(responses.calls))
-        self.assertEqual(urls.new_token(), responses.calls[0].request.url)
-        self.assertEqual(urls.authenticate(), responses.calls[1].request.url)
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[2].request.url)
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[3].request.url)
+    assert not await connector.is_logged()
 
-    @responses.activate
-    def test_check_login_wrong_not_force(self) -> None:
-        """Test login with wrong credentials."""
-        responses.add(responses.POST, urls.new_token(), status=401)
 
-        self.assertFalse(self.connector.login())
-        self.assertEqual(2, len(responses.calls))
-        self.assertEqual(urls.new_token(), responses.calls[0].request.url)
-        self.assertEqual(urls.new_token(), responses.calls[0].request.url)
+@pytest.mark.asyncio
+async def test_login_login_error(connector: Connector,
+                                 raw_resp: aioresponses) -> None:
+    raw_resp.post(urls.new_token(), status=401)
 
-    @responses.activate
-    def test_check_login_wrong_force(self) -> None:
-        """Test login with wrong credentials."""
-        responses.add(responses.POST, urls.new_token(), status=401)
+    try:
+        await connector.login()
+        assert False
+    except ApiError as err:
+        assert str(err.response.url) == urls.new_token()
 
-        self.assertFalse(self.connector.login(True))
-        self.assertEqual(1, len(responses.calls))
-        self.assertEqual(urls.new_token(), responses.calls[0].request.url)
+    assert not await connector.is_logged()
 
-    @responses.activate
-    def test_check_login_ok(self) -> None:
-        """Test login with correct credentials."""
-        testutil.mock_full_auth_success()
 
-        self.assertTrue(self.connector.login())
-        self.assertEqual(3, len(responses.calls))
-        self.assertTrue(self.connector.login())
-        self.assertEqual(3, len(responses.calls))
+@pytest.mark.asyncio
+async def test_auto_login_before_request(connector: Connector,
+                                         resp: aioresponses) -> None:
+    with mock.patch.object(connector, 'login', wraps=connector.login)\
+            as mock_login:
+        mock_payload = {'test': 'test'}
+        resp.get(urls.system(serial='123'), status=401)
+        resp.get(urls.system(serial='123'), status=200, payload=mock_payload)
 
-    @responses.activate
-    def test_check_login_ok_force(self) -> None:
-        """Test login with correct credentials and force re-authentication."""
-        testutil.mock_full_auth_success()
+        assert not await connector.is_logged()
+        payload = await connector.get(urls.system(serial='123'))
+        assert payload == mock_payload
+        assert await connector.is_logged()
+        mock_login.assert_called_once()
 
-        self.assertTrue(self.connector.login())
-        self.assertEqual(3, len(responses.calls))
-        self.assertTrue(self.connector.login(True))
-        self.assertEqual(6, len(responses.calls))
 
-    @responses.activate
-    def test_check_login_unknown_error(self) -> None:
-        """Check login with unknown error (like no internet connection)."""
-        self.assertFalse(self.connector.login(False))
-
-    @responses.activate
-    def test_re_login(self) -> None:
-        """Test ensure connector tries to re-login in case of HTTP 401."""
-        serial_number = testutil.mock_full_auth_success()
-
-        repeaters_url = urls.repeaters().format(serial_number=serial_number)
-        responses.add(responses.GET, repeaters_url, status=401)
+@pytest.mark.asyncio
+async def test_login_error_before_request(connector: Connector,
+                                          raw_resp: aioresponses) -> None:
+    with mock.patch.object(connector, 'login', wraps=connector.login)\
+            as mock_login:
+        raw_resp.post(urls.new_token(), status=401)
+        raw_resp.get(urls.system(serial='123'), status=401)
 
         try:
-            self.connector.get(urls.repeaters())
-            self.fail('Error expected')
-        except ApiError as exc:
-            self.assertEqual(8, len(responses.calls))
-            self.assertEqual(401, exc.response.status_code)
-            self.assertEqual(repeaters_url, exc.response.url)
-            self.assertEqual(repeaters_url, responses.calls[3].request.url)
-            self.assertEqual(repeaters_url, responses.calls[7].request.url)
+            await connector.get(urls.system(serial='123'))
+            assert False
+        except ApiError as err:
+            assert str(err.response.url) == urls.new_token()
+        mock_login.assert_called_once()
+        assert not await connector.is_logged()
 
-    @responses.activate
-    def test_cookie_failed(self) -> None:
-        """Test cannot get cookies."""
-        testutil.mock_token_success()
 
-        responses.add(responses.POST, urls.authenticate(), status=401)
+@pytest.mark.asyncio
+async def test_delete(connector: Connector, resp: aioresponses) -> None:
+    url = urls.facilities_list(serial='123')
 
-        try:
-            self.connector.get(urls.facilities_list())
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertIsInstance(exc.__cause__, ApiError)
-            self.assertEqual("Cannot get cookies",
-                             exc.__cause__.message)  # type: ignore
-            self.assertEqual("Cannot authenticate", exc.message)
+    resp.delete(url=url, status=200)
+    await connector.delete(url)
 
-    @responses.activate
-    def test_cookie_failed_exception(self) -> None:
-        """Test cannot get cookie, unknown exception."""
-        testutil.mock_token_success()
 
-        try:
-            self.connector.get(urls.facilities_list())
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertIsInstance(exc.__cause__, ApiError)
-            self.assertEqual("Cannot get cookies",
-                             exc.__cause__.message)  # type: ignore
-            self.assertIsNone(exc.__cause__.response)  # type: ignore
-            self.assertEqual("Cannot authenticate", exc.message)
+@pytest.mark.asyncio
+async def test_put(connector: Connector, resp: aioresponses) -> None:
+    url = urls.facilities_list(serial='123')
 
-    @responses.activate
-    def test_login_wrong_authentication(self) -> None:
-        """Test with real response sent from API."""
-        with open(testutil.path('files/responses/wrong_token'), 'r') as file:
-            token_data = json.loads(file.read())
+    resp.put(url=url, status=200)
+    await connector.put(url)
 
-        responses.add(responses.POST, urls.new_token(), json=token_data,
-                      status=401)
 
-        try:
-            self.connector.get(urls.facilities_list())
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertIsInstance(exc.__cause__, ApiError)
-            self.assertEqual("Authentication failed",
-                             exc.__cause__.message)  # type: ignore
-            self.assertIsNotNone(exc.__cause__.response)  # type: ignore
-            self.assertEqual("Cannot authenticate", exc.message)
+@pytest.mark.asyncio
+async def test_get(connector: Connector, resp: aioresponses) -> None:
+    url = urls.facilities_list(serial='123')
 
-    @responses.activate
-    def test_put(self) -> None:
-        """Test ensure put is working as expected."""
-        serial = testutil.mock_full_auth_success()
+    resp.get(url=url, status=200)
+    await connector.get(url)
 
-        responses.add(responses.PUT, urls.rooms().format(serial_number=serial),
-                      json='', status=200)
-        self.connector.put(urls.rooms())
 
-        self.assertEqual(4, len(responses.calls))
-        self.assertEqual('PUT', responses.calls[3].request.method)
+@pytest.mark.asyncio
+async def test_post(connector: Connector, resp: aioresponses) -> None:
+    url = urls.facilities_list(serial='123')
 
-    @responses.activate
-    def test_post(self) -> None:
-        """Test ensure post is working as expected."""
-        serial = testutil.mock_full_auth_success()
-
-        responses.add(responses.POST, urls.rooms()
-                      .format(serial_number=serial), json='', status=200)
-        self.connector.post(urls.rooms())
-
-        self.assertEqual(4, len(responses.calls))
-        self.assertEqual('POST', responses.calls[3].request.method)
-
-    @responses.activate
-    def test_delete(self) -> None:
-        """Test ensure delete is working as expected."""
-        serial = testutil.mock_full_auth_success()
-
-        responses.add(responses.DELETE, urls.rooms()
-                      .format(serial_number=serial), json='', status=200)
-        self.connector.delete(urls.rooms())
-
-        self.assertEqual(4, len(responses.calls))
-        self.assertEqual('DELETE', responses.calls[3].request.method)
-
-    @responses.activate
-    def test_cannot_get_serial(self) -> None:
-        """Test error while getting serial."""
-        testutil.mock_authentication_success()
-        testutil.mock_token_success()
-
-        try:
-            self.connector.get('')
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertIsInstance(exc.__cause__, ApiError)
-            self.assertEqual("Cannot get serial number",
-                             exc.__cause__.message)  # type: ignore
-            self.assertIsNone(exc.__cause__.response)  # type: ignore
-            self.assertEqual("Cannot authenticate", exc.message)
-
-    @responses.activate
-    def test_cannot_get_serial_bad_request(self) -> None:
-        """Test bad request while getting serial."""
-        testutil.mock_authentication_success()
-        testutil.mock_token_success()
-
-        responses.add(responses.GET, urls.facilities_list(), json='',
-                      status=400)
-
-        try:
-            self.connector.get('')
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertIsInstance(exc.__cause__, ApiError)
-            self.assertEqual("Cannot get serial number",
-                             exc.__cause__.message)  # type: ignore
-            self.assertIsNotNone(exc.__cause__.response)  # type: ignore
-            self.assertEqual("Cannot authenticate", exc.message)
-            self.assertEqual(400, exc.response.status_code)
-
-    @responses.activate
-    def test_logout_failed(self) -> None:
-        """Test cannot logout."""
-        testutil.mock_full_auth_success()
-
-        try:
-            self.connector.logout()
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertEqual("Error during logout", exc.message)
-            self.assertIsNone(self.connector._serial_number)
-            self.assertEqual(0, len(self.connector._session.cookies))
-
-    @responses.activate
-    def test_call_empty_response_success(self) -> None:
-        """Test to ensure the connector returns the response body correctly."""
-        serial = testutil.mock_full_auth_success()
-
-        responses.add(responses.GET, urls.rooms().format(serial_number=serial),
-                      status=200)
-
-        result = self.connector.get(urls.rooms())
-        self.assertEqual(None, result)
-
-    @responses.activate
-    def test_call_error(self) -> None:
-        """Test error handling is correct on error."""
-        serial = testutil.mock_full_auth_success()
-
-        try:
-            self.connector.get(urls.rooms())
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertEqual("Cannot GET url: " + urls.rooms()
-                             .format(serial_number=serial), exc.message)
-
-    @responses.activate
-    def test_request_token_error(self) -> None:
-        """Test to ensure error handling is correct."""
-        try:
-            self.connector.get('')
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertIsNone(exc.response)
-            self.assertEqual('Cannot authenticate', exc.message)
-
-    @responses.activate
-    def test_login_error(self) -> None:
-        """Test to ensure error handling is correct."""
-        try:
-            self.connector.get('')
-            self.fail("Error expected")
-        except ApiError as exc:
-            self.assertIsNone(exc.response)
-            self.assertEqual('Cannot authenticate', exc.message)
-
-    @responses.activate
-    def test_login_catch_exception(self) -> None:
-        """Test to ensure error handling is correct."""
-        testutil.mock_full_auth_success()
-
-        error = Mock(side_effect=Exception('Test exception'))
-        self.connector._create_or_load_session = error  # type: ignore
-
-        self.connector._session.cookies = None
-
-        try:
-            self.connector.get('')
-        except ApiError as exc:
-            self.assertIsNone(exc.response)
-            self.assertEqual('Cannot authenticate', exc.message)
-
-    @responses.activate
-    def test_login_once(self) -> None:
-        """Test to ensure login only occurs once."""
-        testutil.mock_full_auth_success()
-
-        self.connector.get(urls.facilities_list())
-        self.connector.get(urls.facilities_list())
-        self.assertEqual(5, len(responses.calls))
-        self.assertEqual(urls.new_token(), responses.calls[0].request.url)
-        self.assertEqual(urls.authenticate(), responses.calls[1].request.url)
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[2].request.url)
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[3].request.url)
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[4].request.url)
-
-    @responses.activate
-    def test_login_loaded_session(self) -> None:
-        """Test to ensure no authentication if cookies are already there."""
-
-        testutil.mock_full_auth_success()
-        self.connector = ApiConnector('user', 'pass', 'pymultimatic',
-                                      testutil.path('./files/session'))
-
-        # Do nothing on clear session, otherwise it will delete files
-        # in tests/files/session
-        self.connector._clear_session = Mock()  # type: ignore
-
-        self.connector.get(urls.facilities_list())
-
-        self.assertEqual(1, len(responses.calls))
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[0].request.url)
-
-    @responses.activate
-    def test_login_loaded_session_no_serial(self) -> None:
-        """Test to ensure serial is loaded or find from the API."""
-        testutil.mock_full_auth_success()
-        self.connector = ApiConnector('user', 'pass', 'pymultimatic',
-                                      testutil.path('./files/session'))
-
-        # Do nothing on clear session, otherwise it will delete files
-        # in tests/files/session
-        self.connector._clear_session = Mock()  # type: ignore
-        none = MagicMock(return_value=None)
-        self.connector._load_serial_number_from_file = none   # type: ignore
-
-        self.connector.get(urls.facilities_list())
-
-        self.assertEqual(2, len(responses.calls))
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[0].request.url)
-        self.assertEqual(urls.facilities_list(),
-                         responses.calls[1].request.url)
+    resp.post(url=url, status=200)
+    await connector.post(url)

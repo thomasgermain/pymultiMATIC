@@ -87,9 +87,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#error">Error</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#boilerstatus">BoilerStatus</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#boilerinfo">BoilerInfo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id1">BoilerInfo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#systemstatus">SystemStatus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#systeminfo">SystemInfo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#syncstate">SyncState</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#timeperiodsetting">TimePeriodSetting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#timeprogramday">TimeProgramDay</a></li>
@@ -167,28 +165,11 @@ case, it’s more like a status.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="boilerinfo">
-<h2>BoilerInfo<a class="headerlink" href="#boilerinfo" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="systeminfo">
+<h2>SystemInfo<a class="headerlink" href="#systeminfo" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="pymultimatic.model.info.BoilerInfo">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.info.</code><code class="sig-name descname">BoilerInfo</code><span class="sig-paren">(</span><em class="sig-param">water_pressure: Optional[float], current_temperature: Optional[float]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.info.BoilerInfo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Information about the boiler.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>water_pressure</strong> (<em>float</em>) – Water pressure in bar</p></li>
-<li><p><strong>current_temperature</strong> (<em>float</em>) – Current temperature of the boiler.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="id1">
-<h2>BoilerInfo<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pymultimatic.model.info.SystemInfo">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.info.</code><code class="sig-name descname">SystemInfo</code><span class="sig-paren">(</span><em class="sig-param">gateway: str</em>, <em class="sig-param">serial_number: str</em>, <em class="sig-param">name: str</em>, <em class="sig-param">mac_ethernet: str</em>, <em class="sig-param">mac_wifi: str</em>, <em class="sig-param">firmware: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.info.SystemInfo" title="Permalink to this definition">¶</a></dt>
+<dt id="pymultimatic.model.system.SystemInfo">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.system.</code><code class="sig-name descname">SystemInfo</code><span class="sig-paren">(</span><em class="sig-param">gateway: str</em>, <em class="sig-param">serial_number: str</em>, <em class="sig-param">name: str</em>, <em class="sig-param">mac_ethernet: str</em>, <em class="sig-param">mac_wifi: str</em>, <em class="sig-param">firmware: str</em>, <em class="sig-param">online: str</em>, <em class="sig-param">update: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.system.SystemInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>“Information about the system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -199,21 +180,14 @@ case, it’s more like a status.</p>
 <li><p><strong>mac_ethernet</strong> (<em>str</em>) – Mac address of ethernet.</p></li>
 <li><p><strong>mac_wifi</strong> (<em>str</em>) – Mac address of wifi.</p></li>
 <li><p><strong>firmware</strong> (<em>str</em>) – Firmware version.</p></li>
+<li><p><strong>online</strong> (<em>str</em>) – Indicate if the system is connected to the cloud.</p></li>
+<li><p><strong>update</strong> (<em>str</em>) – Indicate if there is available update.</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-</div>
-<div class="section" id="systemstatus">
-<h2>SystemStatus<a class="headerlink" href="#systemstatus" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pymultimatic.model.status.SystemStatus">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">SystemStatus</code><span class="sig-paren">(</span><em class="sig-param">online_status: str</em>, <em class="sig-param">update_status: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.SystemStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Status of the system.</p>
 <dl class="method">
-<dt id="pymultimatic.model.status.SystemStatus.is_online">
-<em class="property">property </em><code class="sig-name descname">is_online</code><a class="headerlink" href="#pymultimatic.model.status.SystemStatus.is_online" title="Permalink to this definition">¶</a></dt>
+<dt id="pymultimatic.model.system.SystemInfo.is_online">
+<em class="property">property </em><code class="sig-name descname">is_online</code><a class="headerlink" href="#pymultimatic.model.system.SystemInfo.is_online" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the system is connected to the internet.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -223,8 +197,8 @@ case, it’s more like a status.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pymultimatic.model.status.SystemStatus.is_up_to_date">
-<em class="property">property </em><code class="sig-name descname">is_up_to_date</code><a class="headerlink" href="#pymultimatic.model.status.SystemStatus.is_up_to_date" title="Permalink to this definition">¶</a></dt>
+<dt id="pymultimatic.model.system.SystemInfo.is_up_to_date">
+<em class="property">property </em><code class="sig-name descname">is_up_to_date</code><a class="headerlink" href="#pymultimatic.model.system.SystemInfo.is_up_to_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the system is up to date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -307,7 +281,7 @@ for is synced or not.</p>
 <dt id="pymultimatic.model.timeprogram.TimePeriodSetting">
 <em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimePeriodSetting</code><span class="sig-paren">(</span><em class="sig-param">start_time: str, target_temperature: Optional[float], setting: Optional[pymultimatic.model.mode.SettingMode]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a period setting, defining what the
-<a class="reference internal" href="components.html#pymultimatic.model.component.Component" title="pymultimatic.model.component.Component"><code class="xref py py-class docutils literal notranslate"><span class="pre">Component</span></code></a> should do when on
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Component</span></code> should do when on
 <a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingModes.AUTO" title="pymultimatic.model.mode.OperatingModes.AUTO"><code class="xref py py-class docutils literal notranslate"><span class="pre">AUTO</span></code></a>.</p>
 <p>There is not end of the period, the end of the period is equal to the start
 time of the next period.</p>
@@ -316,10 +290,10 @@ time of the next period.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>start_time</strong> (<em>str</em>) – Start time of the period, format is HH:mm.</p></li>
 <li><p><strong>target_temperature</strong> (<em>float</em>) – Target temperature to reach during this</p></li>
-<li><p><strong>period</strong><strong>, </strong><strong>target temperature is only available for</strong> (<em>time</em>) – <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p></li>
+<li><p><strong>period</strong><strong>, </strong><strong>target temperature is only available for</strong> (<em>time</em>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code>.</p></li>
 <li><p><strong>setting</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingMode" title="pymultimatic.model.mode.SettingMode"><em>SettingMode</em></a>) – The setting configured, see
 <a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingModes" title="pymultimatic.model.mode.SettingModes"><code class="xref py py-class docutils literal notranslate"><span class="pre">SettingModes</span></code></a>, this is not
-available for a <a class="reference internal" href="components.html#pymultimatic.model.component.Room" title="pymultimatic.model.component.Room"><code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code></a>.</p></li>
+available for a <code class="xref py py-class docutils literal notranslate"><span class="pre">Room</span></code>.</p></li>
 </ul>
 </dd>
 </dl>

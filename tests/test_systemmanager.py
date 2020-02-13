@@ -1,481 +1,578 @@
 import json
-import unittest
 from datetime import date, timedelta
-from typing import Any
+from typing import Any, List, Dict, AsyncGenerator
 
-from responses import mock as responses  # type: ignore
+from unittest import mock
+import pytest
+from aiohttp import ClientSession
+from aioresponses import aioresponses
 
-from tests import testutil
-from pymultimatic.api import urls, payloads, ApiError
+from tests.conftest import mock_auth, path
+from pymultimatic.api import urls, payloads, ApiError, Connector
 from pymultimatic.model import OperatingModes, QuickModes, QuickVeto, \
-    constants
+    constants, mapper
 from pymultimatic.systemmanager import SystemManager
 
+SERIAL = mapper.map_serial_number(
+    json.loads(open(path('files/responses/facilities')).read()))
 
-class SystemManagerTest(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self.manager = SystemManager('user', 'pass', 'pymultimatic',
-                                     testutil.temp_path())
+@pytest.fixture(name='resp', autouse=True)
+async def fixture_resp(resp: aioresponses)\
+        -> AsyncGenerator[aioresponses, None]:
+    with open(path('files/responses/facilities'), 'r') as file:
+        facilities = json.loads(file.read())
+        resp.get(urls.facilities_list(), payload=facilities, status=200)
+    yield resp
 
-    @responses.activate
-    def test_login_ok(self) -> None:
-        testutil.mock_full_auth_success()
-        self.assertTrue(self.manager.login())
 
-    @responses.activate
-    def test_system(self) -> None:
-        serial = testutil.mock_full_auth_success()
+@pytest.fixture(name='manager')
+async def fixture_manager(session: ClientSession,
+                          connector: Connector) \
+        -> AsyncGenerator[SystemManager, None]:
+    manager = SystemManager('user', 'pass', session, 'pymultiMATIC', SERIAL)
+    await connector.login()
+    with mock.patch.object(connector, 'request', wraps=connector.request):
+        manager._connector = connector
+        yield manager
 
-        with open(testutil.path('files/responses/livereport'), 'r') as file:
-            livereport_data = json.loads(file.read())
 
-        with open(testutil.path('files/responses/rooms'), 'r') as file:
-            rooms_data = json.loads(file.read())
+@pytest.mark.asyncio
+async def test_system(manager: SystemManager, resp: aioresponses) -> None:
+    with open(path('files/responses/livereport'), 'r') as file:
+        livereport_data = json.loads(file.read())
 
-        with open(testutil.path('files/responses/systemcontrol'), 'r') as file:
-            system_data = json.loads(file.read())
+    with open(path('files/responses/rooms'), 'r') as file:
+        rooms_data = json.loads(file.read())
 
-        with open(testutil.path('files/responses/hvacstate'), 'r') as file:
-            hvacstate_data = json.loads(file.read())
+    with open(path('files/responses/systemcontrol'), 'r') as file:
+        system_data = json.loads(file.read())
 
-        with open(testutil.path('files/responses/facilities'), 'r') as file:
-            facilities = json.loads(file.read())
+    with open(path('files/responses/hvacstate'), 'r') as file:
+        hvacstate_data = json.loads(file.read())
 
-        with open(testutil.path('files/responses/gateway'), 'r') as file:
-            gateway = json.loads(file.read())
+    with open(path('files/responses/facilities'), 'r') as file:
+        facilities = json.loads(file.read())
 
-        self._mock_urls(hvacstate_data, livereport_data, rooms_data, serial,
-                        system_data, facilities, gateway)
+    with open(path('files/responses/gateway'), 'r') as file:
+        gateway = json.loads(file.read())
 
-        system = self.manager.get_system()
+    _mock_urls(resp, hvacstate_data, livereport_data, rooms_data,
+               system_data, facilities, gateway)
 
-        self.assertIsNotNone(system)
+    system = await manager.get_system()
 
-        self.assertEqual(2, len(system.zones))
-        self.assertEqual(4, len(system.rooms))
+    assert system is not None
 
-    @responses.activate
-    def test_get_hot_water(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    assert len(system.zones) == 2
+    assert len(system.rooms) == 4
+    _assert_calls(6, manager)
+    assert manager._fixed_serial
 
-        with open(testutil.path('files/responses/livereport'), 'r') as file:
-            livereport_data = json.loads(file.read())
 
-        with open(testutil.path('files/responses/hotwater'), 'r') as file:
-            raw_hotwater = json.loads(file.read())
+@pytest.mark.asyncio
+async def test_get_hot_water(manager: SystemManager,
+                             resp: aioresponses) -> None:
+    with open(path('files/responses/livereport'), 'r') as file:
+        livereport_data = json.loads(file.read())
 
-        responses.add(responses.GET, urls.hot_water('Control_DHW')
-                      .format(serial_number=serial), json=raw_hotwater,
-                      status=200)
+    with open(path('files/responses/hotwater'), 'r') as file:
+        raw_hotwater = json.loads(file.read())
 
-        responses.add(responses.GET, urls.live_report()
-                      .format(serial_number=serial), json=livereport_data,
-                      status=200)
+    dhw_url = urls.hot_water(id='Control_DHW', serial=SERIAL)
+    resp.get(dhw_url,
+             payload=raw_hotwater, status=200)
 
-        hot_water = self.manager.get_hot_water('Control_DHW')
+    report_url = urls.live_report(serial=SERIAL)
+    resp.get(report_url, payload=livereport_data, status=200)
 
-        self.assertIsNotNone(hot_water)
+    hot_water = await manager.get_hot_water('Control_DHW')
 
-        self.assertEqual(urls.live_report().format(serial_number=serial),
-                         responses.calls[-1].request.url)
-        self.assertEqual(urls.hot_water('Control_DHW')
-                         .format(serial_number=serial),
-                         responses.calls[-2].request.url)
+    assert hot_water is not None
+    _assert_calls(2, manager, [dhw_url, report_url])
 
-    @responses.activate
-    def test_set_hot_water_setpoint_temperature(self) -> None:
-        serial = testutil.mock_full_auth_success()
 
-        url = urls.hot_water_temperature_setpoint('id')
-        payload = payloads.hotwater_temperature_setpoint(60.0)
+@pytest.mark.asyncio
+async def test_set_hot_water_setpoint_temperature(manager: SystemManager,
+                                                  resp: aioresponses) -> None:
+    url = urls.hot_water_temperature_setpoint(id='id', serial=SERIAL)
+    payload = payloads.hotwater_temperature_setpoint(60.0)
 
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
+    resp.put(url, status=200)
 
-        self.manager.set_hot_water_setpoint_temperature('id', 60)
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+    await manager.set_hot_water_setpoint_temperature('id', 60)
 
-    @responses.activate
-    def test_set_hot_water_setpoint_temperature_number_to_round(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    _assert_calls(1, manager, [url], [payload])
 
-        url = urls.hot_water_temperature_setpoint('id')
-        payload = payloads.hotwater_temperature_setpoint(60.5)
 
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
+@pytest.mark.asyncio
+async def test_set_hot_water_setpoint_temp_number_to_round(
+        manager: SystemManager, resp: aioresponses) -> None:
+    url = urls.hot_water_temperature_setpoint(serial=SERIAL, id='id')
+    payload = payloads.hotwater_temperature_setpoint(60.5)
 
-        self.manager.set_hot_water_setpoint_temperature('id', 60.4)
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+    resp.put(url, status=200)
 
-    @responses.activate
-    def test_set_quick_mode_no_current_quick_mode(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    await manager.set_hot_water_setpoint_temperature('id', 60.4)
+    _assert_calls(1, manager, [url], [payload])
 
-        url = urls.system_quickmode()
-        payload = payloads.quickmode(QuickModes.VENTILATION_BOOST.name)
 
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
+@pytest.mark.asyncio
+async def test_set_quick_mode_no_current_quick_mode(
+        manager: SystemManager, resp: aioresponses) -> None:
+    url = urls.system_quickmode(serial=SERIAL)
+    payload = payloads.quickmode(QuickModes.VENTILATION_BOOST.name)
 
-        self.manager.set_quick_mode(QuickModes.VENTILATION_BOOST)
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+    resp.put(url, status=200)
 
-    @responses.activate
-    def test_logout(self) -> None:
-        testutil.mock_logout()
-        self.manager.logout()
+    await manager.set_quick_mode(QuickModes.VENTILATION_BOOST)
+    _assert_calls(1, manager, [url], [payload])
 
-        self.assertEqual(urls.logout(), responses.calls[-1].request.url)
 
-    @responses.activate
-    def test_set_quick_veto_room(self) -> None:
-        serial_number = testutil.mock_full_auth_success()
-        url = urls.room_quick_veto('1').format(serial_number=serial_number)
+@pytest.mark.asyncio
+async def test_logout(manager: SystemManager) -> None:
+    await manager.logout()
+    _assert_calls(1, manager, [urls.logout()])
 
-        quick_veto = QuickVeto(100, 25)
-        responses.add(responses.PUT, url, status=200)
 
-        self.manager.set_room_quick_veto('1', quick_veto)
-        self.assertEqual(url, responses.calls[-1].request.url)
+@pytest.mark.asyncio
+async def test_set_quick_veto_room(manager: SystemManager,
+                                   resp: aioresponses) -> None:
+    url = urls.room_quick_veto(serial=SERIAL, id='1')
 
-    def test_set_hot_water_operation_mode_wrong_mode(self) -> None:
-        self.manager.\
-            set_hot_water_operating_mode('hotwater', OperatingModes.NIGHT)
+    quick_veto = QuickVeto(100, 25)
+    resp.put(url, status=200)
 
-    @responses.activate
-    def test_set_hot_water_operation_mode_heating_mode(self) -> None:
-        serial_number = testutil.mock_full_auth_success()
+    await manager.set_room_quick_veto('1', quick_veto)
+    _assert_calls(1, manager, [url])
 
-        url = urls.hot_water_operating_mode('hotwater')\
-            .format(serial_number=serial_number)
 
-        responses.add(responses.PUT, url, status=200)
-        self.manager.set_hot_water_operating_mode('hotwater',
-                                                  OperatingModes.ON)
-        self.assertEqual(url, responses.calls[-1].request.url)
+@pytest.mark.asyncio
+async def test_set_hot_water_operation_mode_wrong_mode(
+        manager: SystemManager) -> None:
+    await manager. \
+        set_hot_water_operating_mode('hotwater', OperatingModes.NIGHT)
 
-    @responses.activate
-    def test_set_quick_veto_zone(self) -> None:
-        serial_number = testutil.mock_full_auth_success()
-        url = urls.zone_quick_veto("Zone1").format(serial_number=serial_number)
+    _assert_calls(0, manager)
 
-        quick_veto = QuickVeto(100, 25)
-        responses.add(responses.PUT, url, status=200)
 
-        self.manager.set_zone_quick_veto('Zone1', quick_veto)
-        self.assertEqual(url, responses.calls[-1].request.url)
+@pytest.mark.asyncio
+async def test_set_hot_water_operation_mode_heating_mode(
+        manager: SystemManager, resp: aioresponses) -> None:
+    url = urls.hot_water_operating_mode(serial=SERIAL, id='hotwater')
 
-    @responses.activate
-    def test_set_room_operation_mode_heating_mode(self) -> None:
-        serial_number = testutil.mock_full_auth_success()
+    resp.put(url, status=200)
+    await manager.set_hot_water_operating_mode('hotwater', OperatingModes.ON)
+    _assert_calls(1, manager, [url])
 
-        url = urls.room_operating_mode('1').format(serial_number=serial_number)
 
-        responses.add(responses.PUT, url, status=200)
-        self.manager.set_room_operating_mode('1', OperatingModes.AUTO)
-        self.assertEqual(url, responses.calls[-1].request.url)
+@pytest.mark.asyncio
+async def test_set_quick_veto_zone(manager: SystemManager,
+                                   resp: aioresponses) -> None:
+    url = urls.zone_quick_veto(id="Zone1", serial=SERIAL)
 
-    def test_set_room_operation_mode_no_new_mode(self) -> None:
-        self.manager.set_room_operating_mode('1', None)
+    quick_veto = QuickVeto(duration=100, target=25)
+    resp.put(url, status=200)
 
-    def test_set_room_operation_mode_wrong_mode(self) -> None:
-        self.manager.set_room_operating_mode('1', OperatingModes.NIGHT)
+    await manager.set_zone_quick_veto('Zone1', quick_veto)
+    _assert_calls(1, manager, [url])
 
-    @responses.activate
-    def test_set_zone_operation_mode_heating_mode(self) -> None:
-        serial_number = testutil.mock_full_auth_success()
 
-        url = urls.zone_heating_mode('Zone1')\
-            .format(serial_number=serial_number)
+@pytest.mark.asyncio
+async def test_set_room_operation_mode_heating_mode(
+        manager: SystemManager,
+        resp: aioresponses) -> None:
+    url = urls.room_operating_mode(id="1", serial=SERIAL)
+    print(url)
 
-        responses.add(responses.PUT, url, status=200)
-        self.manager.set_zone_operating_mode('Zone1', OperatingModes.AUTO)
-        self.assertEqual(url, responses.calls[-1].request.url)
+    resp.put(url, status=200)
+    await manager.set_room_operating_mode('1', OperatingModes.AUTO)
+    _assert_calls(1, manager, [url])
 
-    def test_set_zone_operation_mode_no_new_mode(self) -> None:
-        self.manager.set_zone_operating_mode('Zone1', None)
 
-    def test_set_zone_operation_mode_no_zone(self) -> None:
-        self.manager.set_zone_operating_mode(None, OperatingModes.MANUAL)
+@pytest.mark.asyncio
+async def test_set_room_operation_mode_no_new_mode(
+        manager: SystemManager) -> None:
+    await manager.set_room_operating_mode('1', None)
+    _assert_calls(0, manager)
 
-    def test_set_zone_operation_mode_wrong_mode(self) -> None:
-        self.manager.set_zone_operating_mode('Zone1', OperatingModes.ON)
 
-    @responses.activate
-    def test_get_room(self) -> None:
-        serial = testutil.mock_full_auth_success()
+@pytest.mark.asyncio
+async def test_set_room_operation_mode_wrong_mode(
+        manager: SystemManager) -> None:
+    await manager.set_room_operating_mode('1', OperatingModes.NIGHT)
 
-        with open(testutil.path('files/responses/room'), 'r') as file:
-            raw_rooms = json.loads(file.read())
 
-        responses.add(responses.GET, urls.room('1')
-                      .format(serial_number=serial), json=raw_rooms,
-                      status=200)
+@pytest.mark.asyncio
+async def test_set_zone_operation_mode_heating_mode(
+        manager: SystemManager, resp: aioresponses) -> None:
+    url = urls.zone_heating_mode(id='Zone1', serial=SERIAL)
 
-        new_room = self.manager.get_room('1')
-        self.assertIsNotNone(new_room)
+    resp.put(url, status=200)
+    await manager.set_zone_operating_mode('Zone1', OperatingModes.AUTO)
+    _assert_calls(1, manager, [url])
 
-    @responses.activate
-    def test_get_zone(self) -> None:
-        serial = testutil.mock_full_auth_success()
 
-        with open(testutil.path('files/responses/zone'), 'r') as file:
-            raw_zone = json.loads(file.read())
+@pytest.mark.asyncio
+async def test_set_zone_operation_mode_no_new_mode(
+        manager: SystemManager) -> None:
+    await manager.set_zone_operating_mode('Zone1', None)
+    _assert_calls(0, manager)
 
-        responses.add(responses.GET, urls.zone('Control_ZO2')
-                      .format(serial_number=serial), json=raw_zone,
-                      status=200)
 
-        new_zone = self.manager.get_zone('Control_ZO2')
-        self.assertIsNotNone(new_zone)
+@pytest.mark.asyncio
+async def test_set_zone_operation_mode_no_zone(manager: SystemManager) -> None:
+    await manager.set_zone_operating_mode(None, OperatingModes.MANUAL)
+    _assert_calls(0, manager)
 
-    @responses.activate
-    def test_get_circulation(self) -> None:
-        serial_number = testutil.mock_full_auth_success()
 
-        with open(testutil.path('files/responses/circulation'), 'r') as file:
-            raw_circulation = json.loads(file.read())
+@pytest.mark.asyncio
+async def test_set_zone_operation_mode_wrong_mode(
+        manager: SystemManager) -> None:
+    await manager.set_zone_operating_mode('Zone1', OperatingModes.ON)
+    _assert_calls(0, manager)
 
-        responses.add(responses.GET, urls.circulation('id_dhw')
-                      .format(serial_number=serial_number),
-                      json=raw_circulation, status=200)
 
-        new_circulation = self.manager.get_circulation('id_dhw')
-        self.assertIsNotNone(new_circulation)
+@pytest.mark.asyncio
+async def test_get_room(manager: SystemManager, resp: aioresponses) -> None:
+    with open(path('files/responses/room'), 'r') as file:
+        raw_rooms = json.loads(file.read())
 
-    @responses.activate
-    def test_set_room_setpoint_temperature(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    resp.get(urls.room(id='1', serial=SERIAL), payload=raw_rooms, status=200)
 
-        url = urls.room_temperature_setpoint('1')
-        payload = payloads.room_temperature_setpoint(22.0)
+    new_room = await manager.get_room('1')
+    assert new_room is not None
 
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
 
-        self.manager.set_room_setpoint_temperature('1', 22)
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+@pytest.mark.asyncio
+async def test_get_zone(manager: SystemManager, resp: aioresponses) -> None:
+    with open(path('files/responses/zone'), 'r') as file:
+        raw_zone = json.loads(file.read())
 
-    @responses.activate
-    def test_set_zone_setpoint_temperature(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    url = urls.zone(serial=SERIAL, id='Control_ZO2')
+    resp.get(url, payload=raw_zone, status=200)
 
-        url = urls.zone_heating_setpoint_temperature('Zone1')
-        payload = payloads.zone_temperature_setpoint(25.5)
+    new_zone = await manager.get_zone('Control_ZO2')
+    assert new_zone is not None
+    _assert_calls(1, manager, [url])
 
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
 
-        self.manager.set_zone_setpoint_temperature('Zone1', 25.5)
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+@pytest.mark.asyncio
+async def test_get_circulation(manager: SystemManager,
+                               resp: aioresponses) -> None:
+    with open(path('files/responses/circulation'), 'r') as file:
+        raw_circulation = json.loads(file.read())
 
-    @responses.activate
-    def test_set_zone_setback_temperature(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    url = urls.circulation(id='id_dhw', serial=SERIAL)
+    resp.get(url, payload=raw_circulation, status=200)
 
-        url = urls.zone_heating_setback_temperature('Zone1')
-        payload = payloads.zone_temperature_setback(18.0)
+    new_circulation = await manager.get_circulation('id_dhw')
+    assert new_circulation is not None
+    _assert_calls(1, manager, [url])
 
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
 
-        self.manager.set_zone_setback_temperature('Zone1', 18)
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+@pytest.mark.asyncio
+async def test_set_room_setpoint_temperature(manager: SystemManager,
+                                             resp: aioresponses) -> None:
+    url = urls.room_temperature_setpoint(id='1', serial=SERIAL)
+    payload = payloads.room_temperature_setpoint(22.0)
+    resp.put(url, status=200)
 
-    @responses.activate
-    def test_set_holiday_mode(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    await manager.set_room_setpoint_temperature('1', 22)
+    _assert_calls(1, manager, [url], [payload])
 
-        tomorrow = date.today() + timedelta(days=1)
-        after_tomorrow = tomorrow + timedelta(days=1)
 
-        url = urls.system_holiday_mode()
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
-        payload = payloads.holiday_mode(True, tomorrow, after_tomorrow, 15.0)
+@pytest.mark.asyncio
+async def test_set_zone_setpoint_temperature(manager: SystemManager,
+                                             resp: aioresponses) -> None:
+    url = urls.zone_heating_setpoint_temperature(id='Zone1', serial=SERIAL)
+    payload = payloads.zone_temperature_setpoint(25.5)
 
-        self.manager.set_holiday_mode(tomorrow, after_tomorrow, 15)
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+    resp.put(url, status=200)
 
-    @responses.activate
-    def test_remove_holiday_mode(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    await manager.set_zone_setpoint_temperature('Zone1', 25.5)
+    _assert_calls(1, manager, [url], [payload])
 
-        yesterday = date.today() - timedelta(days=1)
-        before_yesterday = yesterday - timedelta(days=1)
 
-        url = urls.system_holiday_mode()
-        responses.add(responses.PUT, url.format(serial_number=serial),
-                      status=200)
-        payload = payloads.holiday_mode(False, before_yesterday, yesterday,
-                                        constants.FROST_PROTECTION_TEMP)
+@pytest.mark.asyncio
+async def test_set_zone_setback_temperature(manager: SystemManager,
+                                            resp: aioresponses) -> None:
+    url = urls.zone_heating_setback_temperature(id='Zone1', serial=SERIAL)
+    payload = payloads.zone_temperature_setback(18.0)
 
-        self.manager.remove_holiday_mode()
-        self.assertEqual(json.dumps(payload),
-                         responses.calls[-1].request.body.decode('utf-8'))
+    resp.put(url, status=200)
 
-    @responses.activate
-    def test_remove_zone_quick_veto(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    await manager.set_zone_setback_temperature('Zone1', 18)
+    _assert_calls(1, manager, [url], [payload])
 
-        url = urls.zone_quick_veto('id').format(serial_number=serial)
-        responses.add(responses.DELETE, url, status=200)
 
-        self.manager.remove_zone_quick_veto('id')
-        self.assertEqual(url, responses.calls[-1].request.url)
+@pytest.mark.asyncio
+async def test_set_holiday_mode(manager: SystemManager,
+                                resp: aioresponses) -> None:
+    tomorrow = date.today() + timedelta(days=1)
+    after_tomorrow = tomorrow + timedelta(days=1)
 
-    @responses.activate
-    def test_remove_room_quick_veto(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    url = urls.system_holiday_mode(serial=SERIAL)
+    resp.put(url, status=200)
+    payload = payloads.holiday_mode(True, tomorrow, after_tomorrow, 15.0)
 
-        url = urls.room_quick_veto('1').format(serial_number=serial)
-        responses.add(responses.DELETE, url, status=200)
+    await manager.set_holiday_mode(tomorrow, after_tomorrow, 15)
+    _assert_calls(1, manager, [url], [payload])
 
-        self.manager.remove_room_quick_veto('1')
-        self.assertEqual(url, responses.calls[-1].request.url)
 
-    @responses.activate
-    def test_request_hvac_update(self) -> None:
-        serial = testutil.mock_full_auth_success()
+@pytest.mark.asyncio
+async def test_remove_holiday_mode(manager: SystemManager,
+                                   resp: aioresponses) -> None:
+    yesterday = date.today() - timedelta(days=1)
+    before_yesterday = yesterday - timedelta(days=1)
 
-        url_update = urls.hvac_update().format(serial_number=serial)
-        responses.add(responses.PUT, url_update, status=200)
+    url = urls.system_holiday_mode(serial=SERIAL)
+    resp.put(url, status=200)
+    payload = payloads.holiday_mode(False, before_yesterday, yesterday,
+                                    constants.FROST_PROTECTION_TEMP)
 
-        with open(testutil.path('files/responses/hvacstate'), 'r') as file:
-            hvacstate_data = json.loads(file.read())
+    await manager.remove_holiday_mode()
+    _assert_calls(1, manager, [url], [payload])
 
-        url_hvac = urls.hvac().format(serial_number=serial)
-        responses.add(responses.GET, url_hvac, json=hvacstate_data, status=200)
 
-        self.manager.request_hvac_update()
-        self.assertEqual(url_update, responses.calls[-1].request.url)
-        self.assertEqual(url_hvac, responses.calls[-2].request.url)
+@pytest.mark.asyncio
+async def test_remove_zone_quick_veto(manager: SystemManager,
+                                      resp: aioresponses) -> None:
+    url = urls.zone_quick_veto(id='id', serial=SERIAL)
+    resp.delete(url, status=200)
 
-    @responses.activate
-    def test_request_hvac_not_sync(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    await manager.remove_zone_quick_veto('id')
+    _assert_calls(1, manager, [url])
 
-        url_update = urls.hvac_update().format(serial_number=serial)
-        responses.add(responses.PUT, url_update, status=200)
 
-        with open(testutil.path('files/responses/hvacstate_pending'), 'r') \
-                as file:
-            hvacstate_data = json.loads(file.read())
+@pytest.mark.asyncio
+async def test_remove_room_quick_veto(manager: SystemManager,
+                                      resp: aioresponses) -> None:
+    url = urls.room_quick_veto(id='1', serial=SERIAL)
+    resp.delete(url, status=200)
 
-        url_hvac = urls.hvac().format(serial_number=serial)
-        responses.add(responses.GET, url_hvac, json=hvacstate_data, status=200)
+    await manager.remove_room_quick_veto('1')
+    _assert_calls(1, manager, [url])
 
-        self.manager.request_hvac_update()
-        self.assertEqual(url_hvac, responses.calls[-1].request.url)
 
-    @responses.activate
-    def test_remove_quick_mode(self) -> None:
-        serial = testutil.mock_full_auth_success()
+@pytest.mark.asyncio
+async def test_request_hvac_update(manager: SystemManager,
+                                   resp: aioresponses) -> None:
+    url_update = urls.hvac_update(serial=SERIAL)
+    resp.put(url_update, status=200)
 
-        url = urls.system_quickmode().format(serial_number=serial)
-        responses.add(responses.DELETE, url, status=200)
+    with open(path('files/responses/hvacstate'), 'r') as file:
+        hvacstate_data = json.loads(file.read())
 
-        self.manager.remove_quick_mode()
-        self.assertEqual(url, responses.calls[-1].request.url)
+    url_hvac = urls.hvac(serial=SERIAL)
+    resp.get(url_hvac, payload=hvacstate_data, status=200)
 
-    @responses.activate
-    def test_remove_quick_mode_no_active_quick_mode(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    await manager.request_hvac_update()
 
-        url = urls.system_quickmode().format(serial_number=serial)
-        responses.add(responses.DELETE, url, status=409)
+    _assert_calls(2, manager, [url_hvac, url_update])
 
-        self.manager.remove_quick_mode()
-        self.assertEqual(url, responses.calls[-1].request.url)
 
-    @responses.activate
-    def test_remove_quick_mode_error(self) -> None:
-        serial = testutil.mock_full_auth_success()
+@pytest.mark.asyncio
+async def test_request_hvac_not_sync(manager: SystemManager,
+                                     resp: aioresponses) -> None:
+    url_update = urls.hvac_update(serial=SERIAL)
+    resp.put(url_update, status=200)
 
-        url = urls.system_quickmode().format(serial_number=serial)
-        responses.add(responses.DELETE, url, status=500)
+    with open(path('files/responses/hvacstate_pending'), 'r') as file:
+        hvacstate_data = json.loads(file.read())
 
-        try:
-            self.manager.remove_quick_mode()
-        except ApiError as exc:
-            self.assertEqual(500, exc.response.status_code)
+    url_hvac = urls.hvac(serial=SERIAL)
+    resp.get(url_hvac, payload=hvacstate_data, status=200)
 
-        self.assertEqual(url, responses.calls[-1].request.url)
+    await manager.request_hvac_update()
+    _assert_calls(1, manager, [url_hvac])
 
-    @responses.activate
-    def test_quick_veto_temperature_room_rounded(self) -> None:
-        serial = testutil.mock_full_auth_success()
 
-        url = urls.room_quick_veto('0').format(serial_number=serial)
-        responses.add(responses.PUT, url, status=200)
+@pytest.mark.asyncio
+async def test_remove_quick_mode(manager: SystemManager,
+                                 resp: aioresponses) -> None:
+    url = urls.system_quickmode(serial=SERIAL)
+    resp.delete(url, status=200)
 
-        qveto = QuickVeto(1, 22.7)
-        self.manager.set_room_quick_veto('0', qveto)
+    await manager.remove_quick_mode()
+    _assert_calls(1, manager, [url])
 
-        self.assertEqual(url, responses.calls[-1].request.url)
-        self.assertEqual(22.5, json.loads(responses.calls[-1].request
-                                          .body)['temperatureSetpoint'])
 
-    @responses.activate
-    def test_quick_veto_temperature_zone_rounded(self) -> None:
-        serial = testutil.mock_full_auth_success()
+@pytest.mark.asyncio
+async def test_remove_quick_mode_no_active_quick_mode(
+        manager: SystemManager,
+        resp: aioresponses) -> None:
+    url = urls.system_quickmode(serial=SERIAL)
+    resp.delete(url, status=409)
 
-        url = urls.zone_quick_veto('zone1').format(serial_number=serial)
-        responses.add(responses.PUT, url, status=200)
+    await manager.remove_quick_mode()
+    _assert_calls(1, manager, [url])
 
-        qveto = QuickVeto(1, 22.7)
-        self.manager.set_zone_quick_veto('zone1', qveto)
 
-        self.assertEqual(url, responses.calls[-1].request.url)
-        self.assertEqual(22.5, json.loads(responses.calls[-1].request
-                                          .body)['setpoint_temperature'])
+@pytest.mark.asyncio
+async def test_remove_quick_mode_error(manager: SystemManager,
+                                       resp: aioresponses) -> None:
+    url = urls.system_quickmode(serial=SERIAL)
+    resp.delete(url, status=500)
 
-    @responses.activate
-    def test_holiday_mode_temperature_rounded(self) -> None:
-        serial = testutil.mock_full_auth_success()
+    try:
+        await manager.remove_quick_mode()
+        assert False
+    except ApiError as exc:
+        assert exc.response.status == 500
 
-        url = urls.system_holiday_mode().format(serial_number=serial)
-        responses.add(responses.PUT, url, status=200)
+    _assert_calls(1, manager, [url])
 
-        tomorrow = date.today() + timedelta(days=1)
-        after_tomorrow = tomorrow + timedelta(days=1)
 
-        self.manager.set_holiday_mode(tomorrow, after_tomorrow, 22.7)
+@pytest.mark.asyncio
+async def test_quick_veto_temperature_room_rounded(manager: SystemManager,
+                                                   resp: aioresponses) -> None:
+    url = urls.room_quick_veto(id='0', serial=SERIAL)
+    payload = payloads.room_quick_veto(22.5, 180)
+    resp.put(url, status=200)
 
-        self.assertEqual(url, responses.calls[-1].request.url)
-        self.assertEqual(22.5, json.loads(responses.calls[-1].request
-                                          .body)['temperature_setpoint'])
+    qveto = QuickVeto(180, 22.7)
+    await manager.set_room_quick_veto('0', qveto)
 
-    # pylint: disable=no-self-use,too-many-arguments
-    def _mock_urls(self, hvacstate_data: Any, livereport_data: Any,
-                   rooms_data: Any, serial: str, system_data: Any,
-                   facilities: Any = None, gateway: Any = None) -> None:
-        responses.add(responses.GET, urls.live_report()
-                      .format(serial_number=serial), json=livereport_data,
-                      status=200)
-        responses.add(responses.GET, urls.rooms().format(serial_number=serial),
-                      json=rooms_data, status=200)
-        responses.add(responses.GET, urls.system()
-                      .format(serial_number=serial), json=system_data,
-                      status=200)
-        responses.add(responses.GET, urls.hvac().format(serial_number=serial),
-                      json=hvacstate_data, status=200)
+    _assert_calls(1, manager, [url], [payload])
 
-        if facilities:
-            responses.add(responses.GET,
-                          urls.facilities_list(), json=facilities,
-                          status=200)
 
-        if gateway:
-            responses.add(responses.GET,
-                          urls.gateway_type().format(serial_number=serial),
-                          json=gateway, status=200)
+@pytest.mark.asyncio
+async def test_quick_veto_temperature_zone_rounded(manager: SystemManager,
+                                                   resp: aioresponses) -> None:
+    url = urls.zone_quick_veto(id='zone1', serial=SERIAL)
+    payload = payloads.zone_quick_veto(22.5)
+    resp.put(url, status=200)
+
+    qveto = QuickVeto(duration=35, target=22.7)
+    await manager.set_zone_quick_veto('zone1', qveto)
+
+    _assert_calls(1, manager, [url], [payload])
+
+
+@pytest.mark.asyncio
+async def test_holiday_mode_temperature_rounded(manager: SystemManager,
+                                                resp: aioresponses) -> None:
+    url = urls.system_holiday_mode(serial=SERIAL)
+    resp.put(url, status=200)
+
+    tomorrow = date.today() + timedelta(days=1)
+    after_tomorrow = tomorrow + timedelta(days=1)
+
+    payload = payloads.holiday_mode(True, tomorrow, after_tomorrow, 22.5)
+
+    await manager.set_holiday_mode(tomorrow, after_tomorrow, 22.7)
+
+    _assert_calls(1, manager, [url], [payload])
+
+
+@pytest.mark.asyncio
+async def test_serial_not_fixed(session: ClientSession) -> None:
+    manager = SystemManager('user', 'pass', session, 'pymultiMATIC')
+    assert not manager._fixed_serial
+
+
+@pytest.mark.asyncio
+async def test_serial_not_fixed_login(session: ClientSession,
+                                      resp: aioresponses) -> None:
+    manager = SystemManager('user', 'pass', session, 'pymultiMATIC')
+
+    with open(path('files/responses/zone'), 'r') as file:
+        raw_zone = json.loads(file.read())
+
+    url = urls.zone(serial=SERIAL, id='zone')
+    resp.get(url, payload=raw_zone, status=200)
+
+    await manager.get_zone('zone')
+    assert manager._serial == SERIAL
+    assert not manager._fixed_serial
+
+
+@pytest.mark.asyncio
+async def test_serial_not_fixed_relogin(session: ClientSession,
+                                        connector: Connector,
+                                        resp: aioresponses) -> None:
+    manager = SystemManager('user', 'pass', session, 'pymultiMATIC')
+
+    with open(path('files/responses/zone'), 'r') as file:
+        raw_zone = json.loads(file.read())
+
+    with open(path('files/responses/facilities'), 'r') as file:
+        facilities = json.loads(file.read())
+
+    facilities["body"]["facilitiesList"][0]["serialNumber"] = '123'
+
+    url_zone1 = urls.zone(serial=SERIAL, id='zone')
+    url_zone2 = urls.zone(serial='123', id='zone')
+
+    url_facilities = urls.facilities_list(serial=SERIAL)
+
+    resp.get(url_zone1, payload=raw_zone, status=200)
+    resp.get(url_zone2, payload=raw_zone, status=200)
+    resp.get(url_facilities, payload=facilities, status=200)
+
+    mock_auth(resp)
+
+    await manager.get_zone('zone')
+    assert manager._serial == SERIAL
+    assert not manager._fixed_serial
+
+    connector._clear_cookies()
+
+    await manager.get_zone('zone')
+    assert manager._serial == '123'
+
+
+@pytest.mark.asyncio
+async def test_login(session: ClientSession) -> None:
+    manager = SystemManager('user', 'pass', session, 'pymultiMATIC')
+    assert await manager.login()
+
+
+@pytest.mark.asyncio
+async def test_logout_serial_not_fixed(session: ClientSession) -> None:
+    manager = SystemManager('user', 'pass', session, 'pymultiMATIC')
+    assert await manager.login()
+    await manager.logout()
+    assert manager._serial is None
+
+
+# pylint: disable=no-self-use,too-many-arguments
+def _mock_urls(resp: aioresponses, hvacstate_data: Any, livereport_data: Any,
+               rooms_data: Any, system_data: Any,
+               facilities: Any = None, gateway: Any = None) -> None:
+    resp.get(urls.live_report(serial=SERIAL), payload=livereport_data,
+             status=200)
+    resp.get(urls.rooms(serial=SERIAL), payload=rooms_data, status=200)
+    resp.get(urls.system(serial=SERIAL), payload=system_data, status=200)
+    resp.get(urls.hvac(serial=SERIAL), payload=hvacstate_data, status=200)
+
+    if facilities:
+        resp.get(urls.facilities_list(), payload=facilities, status=200)
+
+    if gateway:
+        resp.get(urls.gateway_type(serial=SERIAL), payload=gateway, status=200)
+
+
+def _assert_calls(count: int, manager: SystemManager,
+                  expected_urls: List[str] = None,
+                  expected_payloads: List[Any] = None) -> None:
+    calls = manager._connector.request.call_args_list  # type: ignore
+    assert count == len(calls)
+
+    actual_urls: List[str] = []
+    actual_payloads: List[Dict[str, Any]] = []
+
+    for call in calls:
+        # pylint: disable=unused-variable
+        (args, kwargs) = call
+        actual_urls.append(args[1])
+        actual_payloads.append(args[2])
+
+    if expected_urls:
+        diff = [x for x in expected_urls if x not in actual_urls]
+        assert not diff
+
+    if expected_payloads:
+        diff = [x for x in expected_payloads if x not in actual_payloads]
+        assert not diff

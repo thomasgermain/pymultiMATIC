@@ -1,22 +1,20 @@
 """Low level connector module."""
 import logging
-import os
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 import attr
-import requests
-from requests import Response
+import aiohttp
+from yarl import URL
 
 from . import ApiError, urls, defaults
-from ..util import fileutils
 
 _LOGGER = logging.getLogger('Connector')
 
-_JSON_CONTENT_TYPE_HEADER = {'content-type': 'application/json'}
+HEADER = {'content-type': 'application/json'}
 
 
 @attr.s
-class ApiConnector:
+class Connector:
     """This is the low level smart.vaillant.com API connector.
 
     This is returning the raw JSON from responses or an
@@ -28,59 +26,61 @@ class ApiConnector:
 
     On following calls, the connector will re-use the cookie received from the
     API. If the connector receives an HTTP 401, it will clear the cookie and
-    try to login before raising an `~pymultimatic.api.error.ApiError`. This
+    try to re-login before raising an `~pymultimatic.api.error.ApiError`. This
     also means the connector is able to reconnect automatically when cookie is
     outdated.
 
     Please use :mod:`~pymultimatic.api.urls` in order to generate URL to be
-    passed to the connector.
+    passed to the connector.64:36
 
     Args:
         user (str): User to login with.
         password (str): Password associated with the user.
+        session: (aiohttp.ClientSession): Session.
         smartphone_id (str): This is required by the API to login.
-        file_path: (str): Path where cookie is/will be stored.
     """
 
     _user = attr.ib(type=str)
     _password = attr.ib(type=str, repr=False)
+    _session = attr.ib(type=aiohttp.ClientSession)
     _smartphone_id = attr.ib(type=str, default=defaults.SMARTPHONE_ID)
-    _file_path = attr.ib(type=str, default=defaults.FILES_PATH)
-    _serial_number = attr.ib(type=Optional[str], default=None, init=False)
-    _session = attr.ib(type=requests.Session, default=None, init=False)
 
-    def __attrs_post_init__(self) -> None:
-        self._file_path = os.path.expanduser(self._file_path)
-        self._serial_number = self._load_serial_number_from_file()
-        self._session = self._create_or_load_session()
-
-    def login(self, force_login: bool = False) -> bool:
+    async def login(self, force: bool = False) -> bool:
         """Log in to the API.
 
-        By default, the ``connector`` will try to use cookie located under
-        :attr:`file_path`.
+        By default, the ``connector`` will try to re-use cookies
 
         Args:
-            force_login (bool): If set to ``True``, the connector will clear
+            force (bool): If set to ``True``, the connector will clear
                 the cookie (if any) and start a new authentication, otherwise
                 it will re-use the existing cookie.
 
         Returns:
             bool: True/False if authentication succeeded or not.
         """
-        try:
-            return self._authentication(force_login)
-        except ApiError:
-            return False
+        if force:
+            self._clear_cookies()
 
-    def logout(self) -> None:
+        if self._get_cookies():
+            return True
+
+        token = await self._token()
+        await self._authenticate(token)
+        return True
+
+    async def is_logged(self) -> bool:
+        """Check if the connector is already logged in.
+
+        It relies in the presence of cookies.
+        """
+        return len(self._get_cookies()) > 0
+
+    async def logout(self) -> bool:
         """Get logged out of the API.
 
         It first sends a ``logout`` request to the API (it means cookies are
-        invalidated).
-
-        Second, cookies will be cleared, regardless of the result of the
-        ``logout`` request.
+        invalidated), then cookies will be cleared, regardless of the result
+        of the ``logout`` request.
 
         The connector will have to request a new token and ask for cookies if
         a new request is done.
@@ -89,299 +89,77 @@ class ApiConnector:
         Raises:
             ApiError: When something went wrong with the API call.
         """
-        response = None
         try:
-            response = self._session.request('POST', urls.logout())
-        except Exception as exc:
-            raise ApiError("Error during logout", response) from exc
-        finally:
-            self._clear_session()
-
-    def query(self, url: str, method: str = 'GET',
-              payload: Optional[Dict[str, Any]] = None) -> Optional[Any]:
-        """Call the vaillant API url with the chosen method, please use
-        :mod:`~pymultimatic.api.urls` in order to generate the URL to be
-        passed to the connector.
-
-        Args:
-            url (str): URL to call.
-            method (str): HTTP method.
-            payload (Dict[str, Any]): Payload to send.
-
-        Returns:
-            JSON response.
-
-        Raises:
-            ApiError: When something went wrong with the API call.
-        """
-
-        return self._safe_call(method, url, payload)
-
-    def get(self, url: str) -> Optional[Any]:
-        """Create a GET call to a vaillant API, please use
-        :mod:`~pymultimatic.api.urls` in order to generate the URL to be
-        passed to the connector.
-
-        Args:
-            url (str): URL to call.
-
-        Returns:
-            JSON response.
-
-        Raises:
-            ApiError: When something went wrong with the API call
-        """
-        return self.query(url)
-
-    def put(self, url: str, payload: Optional[Dict[str, Any]] = None) \
-            -> Optional[Any]:
-        """Create a PUT call to a vaillant API, please use
-        :mod:`~pymultimatic.api.urls` in order to generate the URL to be
-        passed to the connector.
-
-        Args:
-            url (str): URL to call.
-            payload (Dict[str, Any]): Payload to send.
-
-        Returns:
-            JSON response.
-
-        Raises:
-            ApiError: When something went wrong with the API call
-        """
-        return self.query(url, 'PUT', payload)
-
-    def post(self, url: str, payload: Optional[Dict[str, Any]] = None) \
-            -> Optional[Any]:
-        """Create a POST call to a vaillant API, please use
-        :mod:`~pymultimatic.api.urls` in order to generate the URL to be
-        passed to the connector.
-
-        Args:
-            url (str): URL to call.
-            payload (Dict[str, Any]): Payload to send.
-
-        Returns:
-            JSON response.
-
-        Raises:
-            ApiError: When something went wrong with the API call
-        """
-        return self.query(url, 'POST', payload)
-
-    def delete(self, url: str) -> Optional[Any]:
-        """Create a DELETE call to a vaillant API, please use
-        :mod:`~pymultimatic.api.urls` in order to generate the URL to be
-        passed to the connector.
-
-        Args:
-            url (str): URL to call.
-
-        Returns:
-            JSON response.
-
-        Raises:
-            ApiError: When something went wrong with the API call
-        """
-        return self.query(url, 'DELETE')
-
-    def _safe_call(self, method: str, url: str,
-                   payload: Optional[Dict[str, Any]] = None,
-                   re_login: bool = False) -> Optional[Any]:
-        """Call the API using selected :attr:`method`, attr:`url` and
-        :attr:`payload`.
-
-        This is ``safe`` in a sense the connector ensure you are logged in.
-
-        The replacement of ``serial_number`` placeholder in
-        :mod:`~pymultimatic.api.urls` is done here.
-        """
-        response: Optional[Response] = None
-        safe_url: Optional[str] = None
-
-        try:
-            self._authentication(re_login)
-
-            safe_url = url.format(serial_number=self._serial_number)
-            header = None if payload is None else _JSON_CONTENT_TYPE_HEADER
-            response = self._session.request(method,
-                                             safe_url,
-                                             json=payload,
-                                             headers=header)
-
-            if response is not None:
-                if response.status_code > 399:
-                    if not re_login and response.status_code == 401:
-                        _LOGGER.debug('Call to %s failed with HTTP 401, '
-                                      'will try to re-login', safe_url)
-                        return self._safe_call(method, url, payload, True)
-
-                    raise ApiError(
-                        'Received error from server url: {} and method {}'
-                        .format(safe_url, method),
-                        response,
-                        payload)
-
-                return self._return_json(response)
-
-            raise ApiError('Cannot {} url: {}'.format(method, safe_url),
-                           response,
-                           payload)
-        except ApiError:
-            raise
-        except Exception as exc:
-            raise ApiError(
-                'Cannot {} url: {}'
-                .format(method, safe_url if safe_url else url),
-                response,
-                payload) from exc
-
-    # pylint: disable=no-self-use
-    def _return_json(self, response: Response) -> Optional[Any]:
-        if response.text:
-            return response.json()
-        return None
-
-    # pylint: disable=broad-except
-    def _authentication(self, force: bool = True) -> bool:
-        try:
-            if force:
-                self._clear_session()
-
-            self._session = self._create_or_load_session()
-            self._serial_number = self._load_serial_number_from_file()
-
-            if not self._session.cookies:
-                _LOGGER.info('No previous session found, will try to log '
-                             'in with username: %s and smartphoneId: %s',
-                             self._user, self._smartphone_id)
-
-                auth_token = self._request_token()
-                self._get_cookies(auth_token)
-                self._get_serial_number()
-
-            if not self._serial_number:
-                self._get_serial_number()
-
+            if self._get_cookies():
+                await self.post(urls.logout())
             return True
-        except ApiError as exc:
-            if force:
-                raise ApiError('Cannot authenticate', exc.response,
-                               exc.payload) from exc
-            _LOGGER.warning('Cannot authenticate after 1 try', exc_info=True)
-            return self._authentication(True)
-        except Exception as exc:
-            if force:
-                raise ApiError('Cannot authenticate', None, None) from exc
-            _LOGGER.warning('Cannot authenticate after 1 try', exc_info=True)
-            return self._authentication(True)
+        finally:
+            self._clear_cookies()
 
-    def _request_token(self) -> str:
+    async def _token(self) -> str:
         params = {
             "smartphoneId": self._smartphone_id,
             "username": self._user,
             "password": self._password
         }
 
-        try:
-            response = self._session.post(urls.new_token(), json=params,
-                                          headers=_JSON_CONTENT_TYPE_HEADER)
-            if response.status_code == 200:
-                _LOGGER.debug('Token generation successful')
-                return str(response.json()['body']['authToken'])
+        token_res = await self._session.post(url=urls.new_token(),
+                                             json=params,
+                                             headers=HEADER)
+        if token_res.status == 200:
+            json = await token_res.json()
+            return str(json['body']['authToken'])
+        raise ApiError('Login/password invalid', response=token_res)
 
-            params['password'] = '*****'
-            raise ApiError('Authentication failed', response, params)
-
-        except ApiError:
-            raise
-        except Exception as exc:
-            params['password'] = '*****'
-            raise ApiError('Error during authentication', None, params)\
-                from exc
-
-    def _get_cookies(self, auth_token: str) -> None:
+    async def _authenticate(self, token: str) -> None:
         params = {
             "smartphoneId": self._smartphone_id,
             "username": self._user,
-            "authToken": auth_token
+            "authToken": token
         }
 
-        try:
-            response = self._session.post(urls.authenticate(), json=params,
-                                          headers=_JSON_CONTENT_TYPE_HEADER)
+        auth_res = await self._session.post(url=urls.authenticate(),
+                                            json=params,
+                                            headers=HEADER)
 
-            if response.status_code == 200:
-                self._session.cookies = response.cookies
-                _LOGGER.debug('Cookie successfully retrieved %s',
-                              self._session.cookies)
-                self._save_cookies_to_file()
-            else:
-                params["authToken"] = "******"
-                raise ApiError('Cannot get cookies', response, params)
-        except ApiError:
-            raise
-        except Exception as exc:
-            params["authToken"] = "******"
-            raise ApiError('Cannot get cookies', None, params)\
-                from exc
+        if auth_res.status > 399:
+            raise ApiError("Unable to authenticate", response=auth_res)
 
-    def _get_serial_number(self) -> None:
-        try:
-            response = self._session.get(urls.facilities_list())
+    def _get_cookies(self) -> Dict[Any, Any]:
+        return self._session.cookie_jar.filter_cookies(URL(urls.base()))
 
-            if response.status_code == 200:
-                _LOGGER.debug('Serial number successfully retrieved')
-                self._serial_number = \
-                    response.json()['body']['facilitiesList'][0][
-                        'serialNumber']
-                self._save_serial_number_to_file()
-            else:
-                raise ApiError('Cannot get serial number', response)
-        except ApiError:
-            raise
-        except Exception as exc:
-            raise ApiError('Cannot get serial number', None) from exc
+    def _clear_cookies(self) -> None:
+        self._session.cookie_jar.clear()
 
-    def _create_or_load_session(self) -> requests.Session:
-        session = requests.Session()
-        cookies = self._load_cookies_from_file()
-        _LOGGER.debug('Found cookies %s', cookies)
-        if cookies is not None:
-            session.cookies = cookies
-        return session
+    async def get(self, url: str,
+                  payload: Optional[Dict[str, Any]] = None) -> Any:
+        """Do a get against vaillant API."""
+        return await self.request('get', url, payload)
 
-    def _clear_session(self) -> None:
-        self._clear_cookie()
-        self._clear_serial_number()
-        self._session.close()
-        self._session = requests.session()
-        fileutils.delete_dir(self._file_path)
+    async def delete(self, url: str,
+                     payload: Optional[Dict[str, Any]] = None) -> Any:
+        """Do a delete against vaillant API."""
+        return await self.request('delete', url, payload)
 
-    def _save_cookies_to_file(self) -> None:
-        fileutils.save_to_file(self._session.cookies, self._file_path,
-                               defaults.COOKIE_FILE_NAME)
+    async def put(self, url: str,
+                  payload: Optional[Dict[str, Any]] = None) -> Any:
+        """Do a put against vaillant API."""
+        return await self.request('put', url, payload)
 
-    def _save_serial_number_to_file(self) -> None:
-        fileutils.save_to_file(self._serial_number, self._file_path,
-                               defaults.SERIAL_NUMBER_FILE_NAME)
+    async def post(self, url: str,
+                   payload: Optional[Dict[str, Any]] = None) -> Any:
+        """Do a post against vaillant API."""
+        return await self.request('post', url, payload)
 
-    def _load_cookies_from_file(self) -> Any:
-        return fileutils.load_from_file(self._file_path,
-                                        defaults.COOKIE_FILE_NAME)
+    async def request(self, method: str, url: str,
+                      payload: Optional[Dict[str, Any]] = None) -> Any:
+        """Do a request against vaillant API."""
+        async with self._session.request(method, url, data=payload) as resp:
+            if resp.status == 401:
+                await self.login(True)
+                return await self.request(method, url, payload)
 
-    def _load_serial_number_from_file(self) -> Optional[str]:
-        result = fileutils.load_from_file(self._file_path,
-                                          defaults.SERIAL_NUMBER_FILE_NAME)
+            if resp.status > 399:
+                raise ApiError('Cannot ' + method + ' ' + url, response=resp)
 
-        if result:
-            return str(result)
-        return None
-
-    def _clear_cookie(self) -> None:
-        fileutils.delete_file(self._file_path, defaults.COOKIE_FILE_NAME)
-
-    def _clear_serial_number(self) -> None:
-        fileutils.delete_file(self._file_path,
-                              defaults.SERIAL_NUMBER_FILE_NAME)
-        self._serial_number = None
+            return await resp.json()

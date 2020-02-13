@@ -12,21 +12,9 @@ BoilerStatus
 .. autoclass:: pymultimatic.model.status.BoilerStatus
    :members:
 
-
-BoilerInfo
+SystemInfo
 ************
-.. autoclass:: pymultimatic.model.info.BoilerInfo
-   :members:
-
-
-BoilerInfo
-************
-.. autoclass:: pymultimatic.model.info.SystemInfo
-   :members:
-
-SystemStatus
-************
-.. autoclass:: pymultimatic.model.status.SystemStatus
+.. autoclass:: pymultimatic.model.system.SystemInfo
    :members:
 
 SyncState
