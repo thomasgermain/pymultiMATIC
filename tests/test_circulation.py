@@ -1,8 +1,8 @@
 """Tests for circulation."""
 import unittest
 
-from tests import testutil
-from pymultimatic.model import Circulation, OperatingModes
+from pymultimatic.model import OperatingModes
+from tests.conftest import _circulation
 
 
 class CirculationTest(unittest.TestCase):
@@ -10,12 +10,22 @@ class CirculationTest(unittest.TestCase):
 
     def test_get_active_mode_on(self) -> None:
         """Get active mode when operation mode is ON."""
-        circulation = Circulation('id', 'Test',
-                                  testutil.default_time_program(),
-                                  OperatingModes.ON)
+        circulation = _circulation()
+        circulation.operating_mode = OperatingModes.ON
 
         active_mode = circulation.active_mode
 
-        self.assertEqual(OperatingModes.ON, active_mode.current_mode)
-        self.assertIsNone(active_mode.target_temperature)
-        self.assertIsNone(active_mode.sub_mode)
+        self.assertEqual(OperatingModes.ON, active_mode.current)
+        self.assertIsNone(active_mode.target)
+        self.assertIsNone(active_mode.sub)
+
+    def test_get_active_mode_off(self) -> None:
+        """Get active mode when operation mode is OFF."""
+        circulation = _circulation()
+        circulation.operating_mode = OperatingModes.OFF
+
+        active_mode = circulation.active_mode
+
+        self.assertEqual(OperatingModes.OFF, active_mode.current)
+        self.assertIsNone(active_mode.target)
+        self.assertIsNone(active_mode.sub)

@@ -3,7 +3,6 @@ from datetime import datetime
 import attr
 
 
-# pylint: disable=too-few-public-methods
 @attr.s
 class Error:
     """Errors coming from your system.
@@ -23,7 +22,6 @@ class Error:
     timestamp = attr.ib(type=datetime)
 
 
-# pylint: disable=too-few-public-methods
 @attr.s
 class BoilerStatus(Error):
     """Status of the boiler. This is sent with an error format, but in this
@@ -41,21 +39,3 @@ class BoilerStatus(Error):
         """bool: Checks if there is an error at boiler side."""
         return self.status_code is not None \
             and (self.status_code.startswith('F') or self.status_code == 'con')
-
-
-@attr.s
-class SystemStatus:
-    """Status of the system."""
-
-    online_status = attr.ib(type=str)
-    update_status = attr.ib(type=str)
-
-    @property
-    def is_online(self) -> bool:
-        """bool: Checks if the system is connected to the internet."""
-        return self.online_status == 'ONLINE'
-
-    @property
-    def is_up_to_date(self) -> bool:
-        """bool: Checks if the system is up to date."""
-        return self.update_status == 'UPDATE_NOT_PENDING'

@@ -6,21 +6,18 @@ os:
 python:
 - '3.6'
 - '3.7'
+- '3.8'
 
 install:
 - pip install -r requirements.txt
-- pip install pylint
-- pip install mypy
-- pip install pycodestyle
-- pip install coveralls
 
 script:
-- pylint pymultimatic
+- pylint --rcfile=pymultimatic/.pylintrc pymultimatic
 - pycodestyle pymultimatic
 - mypy --strict pymultimatic
 - pylint --rcfile=tests/.pylintrc tests
 - pycodestyle tests
-- mypy --strict tests
+- mypy --strict --ignore-missing-import tests
 - coverage run --source=pymultimatic setup.py pytest
 - (cd docs && make ci-build)
 - (cd docs && chmod +x html-diff.sh && ./html-diff.sh)

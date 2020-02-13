@@ -2,6 +2,7 @@
 import unittest
 
 from pymultimatic.model import Room, OperatingModes
+from tests.conftest import _room
 
 
 class RoomTest(unittest.TestCase):
@@ -9,22 +10,23 @@ class RoomTest(unittest.TestCase):
 
     def test_get_active_mode_manual(self) -> None:
         """Test active mode manual."""
-        room = Room('1', 'Test', None, 5.0, 7.0, OperatingModes.MANUAL, None,
-                    True, False, [])
+        room = _room()
+        room.operating_mode = OperatingModes.MANUAL
+        room.target_high = 5
 
         active_mode = room.active_mode
 
-        self.assertEqual(OperatingModes.MANUAL, active_mode.current_mode)
-        self.assertEqual(7.0, active_mode.target_temperature)
-        self.assertIsNone(active_mode.sub_mode)
+        self.assertEqual(OperatingModes.MANUAL, active_mode.current)
+        self.assertEqual(5, active_mode.target)
+        self.assertIsNone(active_mode.sub)
 
     def test_get_active_mode_off(self) -> None:
         """Test active mode off."""
-        hot_water = Room('1', 'Test', None, 5.0, 7.0, OperatingModes.OFF, None,
-                         True, False, [])
+        room = _room()
+        room.operating_mode = OperatingModes.OFF
 
-        active_mode = hot_water.active_mode
+        active_mode = room.active_mode
 
-        self.assertEqual(OperatingModes.OFF, active_mode.current_mode)
-        self.assertEqual(Room.MIN_TARGET_TEMP, active_mode.target_temperature)
-        self.assertIsNone(active_mode.sub_mode)
+        self.assertEqual(OperatingModes.OFF, active_mode.current)
+        self.assertEqual(Room.MIN_TARGET_TEMP, active_mode.target)
+        self.assertIsNone(active_mode.sub)

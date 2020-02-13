@@ -19,7 +19,6 @@ def _to_absolute_minutes(start_time: str) -> int:
     return hour + minute
 
 
-# pylint: disable=too-few-public-methods
 @attr.s
 class TimePeriodSetting:
     """This is a period setting, defining what the
@@ -58,7 +57,7 @@ class TimePeriodSetting:
     # pylint: disable=unused-argument, no-self-use
     @start_time.validator
     def _validate_start_time(self, attribute: Any, value: Any) -> None:
-        validator = re.compile('[0-9]{2}:[0-9]{2}')
+        validator = re.compile('[0-9]{1,2}:[0-9]{2}')
         if not validator.match(value):
             raise ValueError(value)
 
@@ -67,7 +66,6 @@ class TimePeriodSetting:
                                  self.setting)
 
 
-# pylint: disable=too-few-public-methods
 @attr.s
 class TimeProgramDay:
     """This is a day, this is basically a list of :class:`TimePeriodSetting`.
@@ -79,7 +77,6 @@ class TimeProgramDay:
     settings = attr.ib(type=List[TimePeriodSetting])
 
 
-# pylint: disable=too-few-public-methods
 @attr.s
 class TimeProgram:
     """This is the full time program, a week, reflecting the configuration done

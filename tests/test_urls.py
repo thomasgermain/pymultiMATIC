@@ -1,6 +1,5 @@
 import unittest
 import inspect
-from typing import List, Any, Tuple
 
 from pymultimatic.api import urls
 
@@ -12,28 +11,26 @@ class TestUrls(unittest.TestCase):
 
         self.assertTrue(len(functions_list) > 0)
 
+        not_called = 0
         for function in functions_list:
-            args_name = self._get_args_name(function[1])
+            params = inspect.signature(function[1]).parameters.items()
+            values = {
+                'serial': '123',
+                'id': '456',
+                'sgtin': '789',
+                'device_id': '111',
+                'report_id': '222',
+            }
+            if len(params) > 1:
+                values.update({
+                    'energy_type': 'type',
+                    'function': 'func',
+                    'time_range': 'range',
+                    'start': 'start',
+                    'offset': 'offset',
+                })
+                not_called += 1
 
-            if not args_name:
-                url = function[1]()
-                self._assert_function_call(url)
-            else:
-                args = ['test'] * len(args_name)
+            function[1](**values)
 
-                f_kwargs = dict(zip(args_name, args))
-                url = function[1](**f_kwargs)
-                self._assert_function_call(url)
-
-    # pylint: disable=no-self-use
-    def _get_args_name(self, func: Any) -> List[str]:
-        names: List[str] = []
-        item: Tuple[str, Any]
-        for item in inspect.signature(func).parameters.items():
-            names.append(item[0])
-        return names
-
-    def _assert_function_call(self, url: str) -> None:
-        clean_url = url.replace('{serial_number}', '')
-        self.assertNotIn('{', clean_url)
-        self.assertNotIn('}', clean_url)
+        assert not_called == 1

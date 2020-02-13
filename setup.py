@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='pymultiMATIC',
-      version='0.0.13',
+      version='0.1.0a',
       description='Python interface with Vaillant multiMATIC',
       long_description_content_type='text/markdown',
       long_description=long_description,
@@ -20,9 +20,9 @@ setup(name='pymultiMATIC',
       zip_safe=False,
       setup_requires=["pytest-runner"],
       install_requires=[
-          "requests==2.22.0",
-          "jsonpickle==1.2",
-          "attrs==19.3.0"
+          "yarl==1.4.2",
+          "attrs==19.3.0",
+          "aiohttp==3.6.2"
       ],
       classifiers=[
           'License :: OSI Approved :: MIT License',

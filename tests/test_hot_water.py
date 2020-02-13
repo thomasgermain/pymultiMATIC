@@ -1,8 +1,8 @@
 """Test for hot water."""
 import unittest
 
-from tests import testutil
-from pymultimatic.model import HotWater, OperatingModes, constants
+from pymultimatic.model import OperatingModes, constants
+from tests.conftest import _hotwater
 
 
 class HotWaterTest(unittest.TestCase):
@@ -10,23 +10,23 @@ class HotWaterTest(unittest.TestCase):
 
     def test_get_active_mode_on(self) -> None:
         """Test active mode on."""
-        hot_water = HotWater('id', 'Test', testutil.default_time_program(),
-                             5.0, 7.0, OperatingModes.ON)
+        hot_water = _hotwater()
+        hot_water.operating_mode = OperatingModes.ON
 
         active_mode = hot_water.active_mode
 
-        self.assertEqual(OperatingModes.ON, active_mode.current_mode)
-        self.assertEqual(7.0, active_mode.target_temperature)
-        self.assertIsNone(active_mode.sub_mode)
+        self.assertEqual(OperatingModes.ON, active_mode.current)
+        self.assertEqual(hot_water.target_high, active_mode.target)
+        self.assertIsNone(active_mode.sub)
 
     def test_get_active_mode_off(self) -> None:
         """Test active mode off."""
-        hot_water = HotWater('id', 'Test', testutil.default_time_program(),
-                             5.0, 7.0, OperatingModes.OFF)
+        hot_water = _hotwater()
+        hot_water.operating_mode = OperatingModes.OFF
 
         active_mode = hot_water.active_mode
 
-        self.assertEqual(OperatingModes.OFF, active_mode.current_mode)
+        self.assertEqual(OperatingModes.OFF, active_mode.current)
         self.assertEqual(constants.FROST_PROTECTION_TEMP,
-                         active_mode.target_temperature)
-        self.assertIsNone(active_mode.sub_mode)
+                         active_mode.target)
+        self.assertIsNone(active_mode.sub)

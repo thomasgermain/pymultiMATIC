@@ -4,9 +4,45 @@ from typing import List, Optional, Dict
 
 import attr
 
-from . import ActiveMode, HolidayMode, HotWater, Room, Zone, BoilerStatus, \
-    Circulation, QuickMode, QuickModes, Error, SystemStatus, BoilerInfo, \
-    constants, SettingModes, SystemInfo
+from . import (ActiveMode, HolidayMode, Room, Zone, BoilerStatus,
+               QuickMode, QuickModes, Error, constants, SettingModes, HotWater,
+               Circulation, Dhw, Report, Ventilation)
+
+
+# pylint: disable=too-many-instance-attributes
+@attr.s
+class SystemInfo:
+    """"Information about the system.
+
+    Args:
+        gateway (str): Gateway type;
+        serial_number (str): Serial number of the installation.
+        name (str): Name of the installation.
+        mac_ethernet (str): Mac address of ethernet.
+        mac_wifi (str): Mac address of wifi.
+        firmware (str): Firmware version.
+        online (str): Indicate if the system is connected to the cloud.
+        update (str): Indicate if there is available update.
+    """
+
+    gateway = attr.ib(type=str)
+    serial_number = attr.ib(type=str)
+    name = attr.ib(type=str)
+    mac_ethernet = attr.ib(type=str)
+    mac_wifi = attr.ib(type=str)
+    firmware = attr.ib(type=str)
+    online = attr.ib(type=str)
+    update = attr.ib(type=str)
+
+    @property
+    def is_online(self) -> bool:
+        """bool: Checks if the system is connected to the internet."""
+        return self.online == 'ONLINE'
+
+    @property
+    def is_up_to_date(self) -> bool:
+        """bool: Checks if the system is up to date."""
+        return self.update == 'UPDATE_NOT_PENDING'
 
 
 # pylint: disable=too-many-instance-attributes
@@ -16,48 +52,45 @@ class System:
     groups all the information about the system.
 
     Args:
-        holiday_mode (HolidayMode): Holiday mode.
-        system_status (SystemStatus): Status of the system.
-        boiler_status (BoilerStatus): Status of the boiler.
-        zones (List[Zone]): List of zone.
-        rooms (List[Room]): List of room.
-        hot_water (HotWater): If hot water is present, it's available here.
-        circulation (Circulation): If circulation is present, it's available
-            here.
-        outdoor_temperature (float): Outdoor temperature
+        holiday (HolidayMode): Holiday mode.
         quick_mode (QuickMode):  If any quick mode is running, it's available
             here.
+        info (SystemInfo): Status/ information about the system.
+        zones (List[Zone]): List of zone.
+        rooms (List[Room]): List of room.
+        dhw (Dhw): If Dhw is available, you can find hot water and circulation.
+        reports (List[Report]): sensor value coming from livereport.
+        outdoor_temperature (float): Outdoor temperature
+        boiler_status (BoilerStatus): Status of the boiler.
         errors (List[Error]): If there are errors, you can find them here.
-        boiler_info (BoilerInfo): Information (pressure, temperature) about
-            the boiler.
-        system_info (SystemInfo): Information about the system.
     """
 
-    holiday_mode = attr.ib(type=HolidayMode)
-    system_status = attr.ib(type=SystemStatus)
-    boiler_status = attr.ib(type=Optional[BoilerStatus])
-    zones = attr.ib(type=List[Zone])
-    rooms = attr.ib(type=List[Room])
-    hot_water = attr.ib(type=Optional[HotWater])
-    circulation = attr.ib(type=Optional[Circulation])
-    outdoor_temperature = attr.ib(type=Optional[float])
-    quick_mode = attr.ib(type=Optional[QuickMode])
-    errors = attr.ib(type=List[Error])
-    boiler_info = attr.ib(type=Optional[BoilerInfo])
-    system_info = attr.ib(type=SystemInfo)
+    holiday = attr.ib(type=HolidayMode, default=None)
+    quick_mode = attr.ib(type=Optional[QuickMode], default=None)
+    info = attr.ib(type=SystemInfo, default=None)
+    zones = attr.ib(type=List[Zone], default=[])
+    rooms = attr.ib(type=List[Room], default=[])
+    dhw = attr.ib(type=Optional[Dhw], default=None)
+    reports = attr.ib(type=List[Report], default=[])
+    outdoor_temperature = attr.ib(type=Optional[float], default=None)
+    boiler_status = attr.ib(type=Optional[BoilerStatus], default=None)
+    errors = attr.ib(type=List[Error], default=[])
+    ventilation = attr.ib(type=Optional[Ventilation], default=None)
     _zones = attr.ib(type=Dict[str, Zone], default=dict(), init=False)
     _rooms = attr.ib(type=Dict[str, Room], default=dict(), init=False)
 
     def __attrs_post_init__(self) -> None:
         """Post init from attrs."""
-        if self.holiday_mode is None:
-            self.holiday_mode = HolidayMode(False)
+        if self.holiday is None:
+            self.holiday = HolidayMode(False)
 
-        if self.zones:
-            self._zones = dict((zone.id, zone) for zone in self.zones)
+        self.zones = self.zones if self.zones else []
+        self._zones = dict((zone.id, zone) for zone in self.zones)
 
-        if self.rooms:
-            self._rooms = dict((room.id, room) for room in self.rooms)
+        self.rooms = self.rooms if self.rooms else []
+        self._rooms = dict((room.id, room) for room in self.rooms)
+
+        self.errors = self.errors if self.errors else []
 
     def set_zone(self, zone_id: str, zone: Zone) -> None:
         """Set :class:`~pymultimatic.model.component.Zone` for the given id.
@@ -100,8 +133,8 @@ class System:
         mode: ActiveMode = zone.active_mode
 
         # Holiday mode takes precedence over everything
-        if self.holiday_mode.active_mode:
-            mode = self.holiday_mode.active_mode
+        if self.holiday.active_mode:
+            mode = self.holiday.active_mode
 
         # Global system quick mode takes over zone settings
         if self.quick_mode and self.quick_mode.for_zone:
@@ -115,18 +148,22 @@ class System:
                 mode = ActiveMode(Zone.MIN_TARGET_TEMP, self.quick_mode)
 
             if self.quick_mode == QuickModes.ONE_DAY_AT_HOME:
-                today = datetime.datetime.now()
-                sunday = today - datetime.timedelta(days=today.weekday() - 6)
+                if zone.heating:
+                    today = datetime.datetime.now()
+                    sunday = today - datetime.timedelta(
+                        days=today.weekday() - 6)
 
-                time_program = zone.time_program.get_for(sunday)
-                target_temp = zone.target_temperature
-                if time_program.setting == SettingModes.NIGHT:
-                    target_temp = zone.target_min_temperature
+                    time_program = zone.heating.time_program.get_for(sunday)
+                    target_temp = zone.heating.target_high
+                    if time_program.setting == SettingModes.NIGHT:
+                        target_temp = zone.heating.target_low
 
-                mode = ActiveMode(target_temp, self.quick_mode)
+                    mode = ActiveMode(target_temp, self.quick_mode)
 
             if self.quick_mode == QuickModes.PARTY:
-                mode = ActiveMode(zone.target_temperature, self.quick_mode)
+                if zone.heating:
+                    mode = ActiveMode(zone.heating.target_high,
+                                      self.quick_mode)
 
         return mode
 
@@ -143,8 +180,8 @@ class System:
             ActiveMode: The active mode.
         """
         # Holiday mode takes precedence over everything
-        if self.holiday_mode.active_mode:
-            return self.holiday_mode.active_mode
+        if self.holiday.active_mode:
+            return self.holiday.active_mode
 
         # Global system quick mode takes over room settings
         if self.quick_mode and self.quick_mode.for_room:
@@ -153,9 +190,9 @@ class System:
 
         return room.active_mode
 
-    def get_active_mode_circulation(self,
-                                    circulation: Optional[Circulation] = None)\
-            -> Optional[ActiveMode]:
+    def get_active_mode_circulation(
+            self,
+            circulation: Optional[Circulation] = None) -> Optional[ActiveMode]:
         """Get the current
         :class:`~pymultimatic.model.mode.ActiveMode` for a
         :class:`~pymultimatic.model.component.Circulation`. This is the only
@@ -169,13 +206,13 @@ class System:
         Returns:
             ActiveMode: The active mode.
         """
-        if not circulation:
-            circulation = self.circulation
+        if not circulation and self.dhw and self.dhw.circulation:
+            circulation = self.dhw.circulation
 
         if circulation:
-            if self.holiday_mode.active_mode:
-                active_mode = self.holiday_mode.active_mode
-                active_mode.target_temperature = None
+            if self.holiday.active_mode:
+                active_mode = self.holiday.active_mode
+                active_mode.target = None
                 return active_mode
 
             if self.quick_mode and self.quick_mode.for_dhw:
@@ -184,7 +221,7 @@ class System:
             return circulation.active_mode
         return None
 
-    def get_active_mode_hot_water(self, hot_water: Optional[HotWater] = None)\
+    def get_active_mode_hot_water(self, hot_water: Optional[HotWater] = None) \
             -> Optional[ActiveMode]:
         """Get the current
         :class:`~pymultimatic.model.mode.ActiveMode` for a
@@ -199,19 +236,19 @@ class System:
         Returns:
             ActiveMode: The active mode.
         """
-        if not hot_water:
-            hot_water = self.hot_water
+        if not hot_water and self.dhw and self.dhw.hotwater:
+            hot_water = self.dhw.hotwater
 
         if hot_water:
-            if self.holiday_mode.active_mode:
-                active_mode = self.holiday_mode.active_mode
-                active_mode.target_temperature = \
+            if self.holiday.active_mode:
+                active_mode = self.holiday.active_mode
+                active_mode.target = \
                     constants.FROST_PROTECTION_TEMP
                 return active_mode
 
             if self.quick_mode and self.quick_mode.for_dhw:
                 if self.quick_mode == QuickModes.HOTWATER_BOOST:
-                    return ActiveMode(hot_water.target_temperature,
+                    return ActiveMode(hot_water.target_high,
                                       self.quick_mode)
 
                 if self.quick_mode == QuickModes.SYSTEM_OFF:

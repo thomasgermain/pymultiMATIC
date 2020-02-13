@@ -34,12 +34,12 @@ SettingModes
 
 QuickMode
 *********
-.. autoclass:: QuickMode
+.. autoclass:: pymultimatic.model.quick_mode.QuickMode
    :members:
 
 QuickModes
 **********
-.. autoclass:: QuickModes
+.. autoclass:: pymultimatic.model.quick_mode.QuickModes
    :members:
 
 ActiveMode
@@ -49,5 +49,5 @@ ActiveMode
 
 HolidayMode
 ***********
-.. autoclass:: HolidayMode
+.. autoclass:: pymultimatic.model.quick_mode.HolidayMode
    :members:

@@ -1,35 +1,45 @@
 Components
 ==========
-.. automodule:: pymultimatic.model.component
+.. automodule:: pymultimatic.model.common
 
 Component
 *********
 .. autoclass:: Component
    :members:
 
+Component
+*********
+.. autoclass:: Function
+   :members:
+
 Circulation
 ***********
-.. autoclass:: Circulation
+.. autoclass:: pymultimatic.model.dhw.Circulation
    :members:
 
 Hot Water
 *********
-.. autoclass:: HotWater
+.. autoclass:: pymultimatic.model.dhw.HotWater
+   :members:
+
+Ventilation
+***********
+.. autoclass:: pymultimatic.model.ventilation.Ventilation
    :members:
 
 Room
 ****
-.. autoclass:: Room
+.. autoclass:: pymultimatic.model.room.Room
    :members:
 
 Zone
 ****
-.. autoclass:: Zone
+.. autoclass:: pymultimatic.model.zone.Zone
    :members:
 
 Device
 ******
-.. autoclass:: Device
+.. autoclass:: pymultimatic.model.room.Device
    :members:
 
 System

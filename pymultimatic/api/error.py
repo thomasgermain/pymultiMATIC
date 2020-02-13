@@ -1,7 +1,7 @@
 """Errors coming from the API."""
 from typing import Optional, Any
 
-from requests import Response
+from aiohttp import ClientResponse
 
 import attr
 
@@ -12,5 +12,5 @@ class ApiError(Exception):
     vaillant API."""
 
     message = attr.ib(type=str)
-    response = attr.ib(type=Optional[Response])
+    response = attr.ib(type=Optional[ClientResponse])
     payload = attr.ib(type=Any, default=None)
