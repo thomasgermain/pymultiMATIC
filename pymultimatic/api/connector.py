@@ -154,12 +154,20 @@ class Connector:
     async def request(self, method: str, url: str,
                       payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a request against vaillant API."""
-        async with self._session.request(method, url, data=payload) as resp:
+        async with self._session.request(
+                method,
+                url,
+                json=payload,
+                headers=HEADER
+        ) as resp:
             if resp.status == 401:
                 await self.login(True)
                 return await self.request(method, url, payload)
 
             if resp.status > 399:
-                raise ApiError('Cannot ' + method + ' ' + url, response=resp)
+                # fetch json response so it's available later on
+                await resp.json(content_type=None)
+                raise ApiError('Cannot ' + method + ' ' + url, response=resp,
+                               payload=payload)
 
             return await resp.json(content_type=None)
