@@ -162,4 +162,4 @@ class Connector:
             if resp.status > 399:
                 raise ApiError('Cannot ' + method + ' ' + url, response=resp)
 
-            return await resp.json()
+            return await resp.json(content_type=None)
