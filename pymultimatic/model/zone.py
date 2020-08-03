@@ -47,6 +47,7 @@ class Zone(Component):
          rbr (bool): Room By Room, means the zone is controlled by ambisense.
          heating (ZoneHeating): Heating function of the zone.
          cooling (ZoneCooling): Cooling function of the zone.
+         enabled: True if enabled
      """
 
     MODES = [OperatingModes.AUTO, OperatingModes.OFF, OperatingModes.DAY,
@@ -63,6 +64,7 @@ class Zone(Component):
     rbr = attr.ib(type=bool, default=False)
     heating = attr.ib(type=ZoneHeating, default=None)
     cooling = attr.ib(type=Optional[ZoneCooling], default=None)
+    enabled = attr.ib(type=bool, default=True)
 
     @property
     def active_mode(self) -> ActiveMode:
