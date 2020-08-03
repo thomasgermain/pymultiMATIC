@@ -120,10 +120,12 @@ class QuickModes:
     This advanced function activates a quick veto for one specific zone
     """
 
+    COOLING_FOR_X_DAYS = QuickMode('QM_COOLING_FOR_X_DAYS', True, False, False)
+
     _VALUES = {qm.name: qm for qm in [HOTWATER_BOOST, VENTILATION_BOOST,
                                       ONE_DAY_AWAY, SYSTEM_OFF,
                                       ONE_DAY_AT_HOME, PARTY, HOLIDAY,
-                                      QUICK_VETO]}
+                                      QUICK_VETO, COOLING_FOR_X_DAYS]}
 
     @classmethod
     def for_zone(cls) -> List[QuickMode]:

@@ -91,6 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#ventilation">Ventilation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#room">Room</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#zone">Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#activefunction">ActiveFunction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#device">Device</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#system">System</a></li>
 </ul>
@@ -336,7 +337,7 @@ for this function. All operating modes are handled,
 <h2>Zone<a class="headerlink" href="#zone" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymultimatic.model.zone.Zone">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.zone.</code><code class="sig-name descname">Zone</code><span class="sig-paren">(</span><em class="sig-param">id: str = None</em>, <em class="sig-param">name: str = None</em>, <em class="sig-param">temperature: Optional[float] = None</em>, <em class="sig-param">quick_veto: Optional[pymultimatic.model.mode.QuickVeto] = None</em>, <em class="sig-param">active_function: str = None</em>, <em class="sig-param">rbr: bool = False</em>, <em class="sig-param">heating: pymultimatic.model.zone.ZoneHeating = None</em>, <em class="sig-param">cooling: Optional[pymultimatic.model.zone.ZoneCooling] = None</em>, <em class="sig-param">enabled: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.zone.Zone" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.zone.</code><code class="sig-name descname">Zone</code><span class="sig-paren">(</span><em class="sig-param">id: str = None</em>, <em class="sig-param">name: str = None</em>, <em class="sig-param">temperature: Optional[float] = None</em>, <em class="sig-param">quick_veto: Optional[pymultimatic.model.mode.QuickVeto] = None</em>, <em class="sig-param">active_function: pymultimatic.model.zone.ActiveFunction = None</em>, <em class="sig-param">rbr: bool = False</em>, <em class="sig-param">heating: pymultimatic.model.zone.ZoneHeating = None</em>, <em class="sig-param">cooling: Optional[pymultimatic.model.zone.ZoneCooling] = None</em>, <em class="sig-param">enabled: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.zone.Zone" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is representing a zone from the system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -346,8 +347,7 @@ anymore, it means rooms are ‘controlling’ the zone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>active_function</strong> (<em>str</em>) – Indicate what the zone is doing (basically
-‘HEATING’ or ‘STANDBY’).</p></li>
+<li><p><strong>active_function</strong> (<a class="reference internal" href="#pymultimatic.model.zone.ActiveFunction" title="pymultimatic.model.zone.ActiveFunction"><em>ActiveFunction</em></a>) – Indicate what the zone is doing.</p></li>
 <li><p><strong>rbr</strong> (<em>bool</em>) – Room By Room, means the zone is controlled by ambisense.</p></li>
 <li><p><strong>heating</strong> (<em>ZoneHeating</em>) – Heating function of the zone.</p></li>
 <li><p><strong>cooling</strong> (<em>ZoneCooling</em>) – Cooling function of the zone.</p></li>
@@ -362,14 +362,20 @@ anymore, it means rooms are ‘controlling’ the zone.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pymultimatic.model.zone.Zone.MIN_TARGET_TEMP">
-<code class="sig-name descname">MIN_TARGET_TEMP</code><em class="property"> = 5.0</em><a class="headerlink" href="#pymultimatic.model.zone.Zone.MIN_TARGET_TEMP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Min temperature that can be apply to a zone.</p>
+<dt id="pymultimatic.model.zone.Zone.MIN_TARGET_COOLING_TEMP">
+<code class="sig-name descname">MIN_TARGET_COOLING_TEMP</code><em class="property"> = 15</em><a class="headerlink" href="#pymultimatic.model.zone.Zone.MIN_TARGET_COOLING_TEMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min cooling temperature that can be apply to a zone.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymultimatic.model.zone.Zone.MIN_TARGET_HEATING_TEMP">
+<code class="sig-name descname">MIN_TARGET_HEATING_TEMP</code><em class="property"> = 5.0</em><a class="headerlink" href="#pymultimatic.model.zone.Zone.MIN_TARGET_HEATING_TEMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min heating temperature that can be apply to a zone.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="pymultimatic.model.zone.Zone.MODES">
-<code class="sig-name descname">MODES</code><em class="property"> = [OperatingMode(name='AUTO'), OperatingMode(name='OFF'), OperatingMode(name='DAY'), OperatingMode(name='NIGHT'), OperatingMode(name='QUICK_VETO')]</em><a class="headerlink" href="#pymultimatic.model.zone.Zone.MODES" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">MODES</code><em class="property"> = [OperatingMode(name='AUTO'), OperatingMode(name='OFF'), OperatingMode(name='DAY'), OperatingMode(name='NIGHT'), OperatingMode(name='QUICK_VETO'), OperatingMode(name='ON')]</em><a class="headerlink" href="#pymultimatic.model.zone.Zone.MODES" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of mode that are applicable to zones component.</p>
 </dd></dl>
 
@@ -392,6 +398,16 @@ may not receive the active mode that is really applied. You should use
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="activefunction">
+<h2>ActiveFunction<a class="headerlink" href="#activefunction" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymultimatic.model.zone.ActiveFunction">
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.zone.</code><code class="sig-name descname">ActiveFunction</code><a class="headerlink" href="#pymultimatic.model.zone.ActiveFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent the active function the zone is currently running.</p>
+<p>It can be ‘STANDBY’, ‘COOLING’, ‘HEATING’</p>
 </dd></dl>
 
 </div>
@@ -511,7 +527,7 @@ get the real one.</p>
 
 <dl class="method">
 <dt id="pymultimatic.model.system.System.get_active_mode_zone">
-<code class="sig-name descname">get_active_mode_zone</code><span class="sig-paren">(</span><em class="sig-param">zone: pymultimatic.model.zone.Zone</em><span class="sig-paren">)</span> &#x2192; pymultimatic.model.mode.ActiveMode<a class="headerlink" href="#pymultimatic.model.system.System.get_active_mode_zone" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_active_mode_zone</code><span class="sig-paren">(</span><em class="sig-param">zone: pymultimatic.model.zone.Zone</em><span class="sig-paren">)</span> &#x2192; Optional[pymultimatic.model.mode.ActiveMode]<a class="headerlink" href="#pymultimatic.model.system.System.get_active_mode_zone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the current
 <a class="reference internal" href="modes.html#pymultimatic.model.mode.ActiveMode" title="pymultimatic.model.mode.ActiveMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActiveMode</span></code></a> for a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code>. This is the only way to

@@ -103,7 +103,7 @@ class Component:
 
     @property
     @abc.abstractmethod
-    def active_mode(self) -> ActiveMode:
+    def active_mode(self) -> Optional[ActiveMode]:
         """ActiveMode: Get the :class:`~pymultimatic.model.mode.ActiveMode`
         for this component. All operating modes and quick veto are handled,
         **but not quick mode.**

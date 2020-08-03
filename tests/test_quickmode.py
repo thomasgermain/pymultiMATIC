@@ -10,7 +10,7 @@ class QuickModeTest(unittest.TestCase):
     def test_for_zone(self) -> None:
         """Test get quick mode for zone."""
         values = QuickModes.for_zone()
-        self.assertEqual(6, len(values))
+        self.assertEqual(7, len(values))
 
     def test_for_room(self) -> None:
         """Test get quick mode for zone."""

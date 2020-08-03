@@ -37,6 +37,11 @@ Zone
 .. autoclass:: pymultimatic.model.zone.Zone
    :members:
 
+ActiveFunction
+**************
+.. autoclass:: pymultimatic.model.zone.ActiveFunction
+   :members:
+
 Device
 ******
 .. autoclass:: pymultimatic.model.room.Device

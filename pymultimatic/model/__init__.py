@@ -4,7 +4,7 @@ from .mode import Mode, OperatingMode, OperatingModes, QuickVeto, ActiveMode,\
     SettingMode, SettingModes
 from .timeprogram import TimeProgram, TimeProgramDay, TimePeriodSetting
 from .common import Component, Function
-from .zone import ZoneCooling, ZoneHeating, Zone
+from .zone import ZoneCooling, ZoneHeating, Zone, ActiveFunction
 from .room import Device, Room
 from .status import BoilerStatus, Error
 from .syncstate import SyncState

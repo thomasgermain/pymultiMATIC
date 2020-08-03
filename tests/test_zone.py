@@ -1,7 +1,8 @@
 import unittest
 
-from pymultimatic.model import Zone, OperatingModes, ZoneCooling, SettingModes
-from tests.conftest import _zone, _time_program
+from pymultimatic.model import Zone, OperatingModes, ZoneCooling, \
+    SettingModes, ActiveFunction
+from tests.conftest import _zone, _time_program, _zone_cooling
 
 
 class ZoneTest(unittest.TestCase):
@@ -31,7 +32,7 @@ class ZoneTest(unittest.TestCase):
         active_mode = zone.active_mode
 
         self.assertEqual(OperatingModes.OFF, active_mode.current)
-        self.assertEqual(Zone.MIN_TARGET_TEMP, active_mode.target)
+        self.assertEqual(Zone.MIN_TARGET_HEATING_TEMP, active_mode.target)
         self.assertIsNone(active_mode.sub)
 
     def test_cooling_active_mode_auto(self) -> None:
@@ -69,3 +70,29 @@ class ZoneTest(unittest.TestCase):
         active_mode = cooling.active_mode
         self.assertEqual(OperatingModes.OFF, active_mode.current)
         self.assertIsNone(active_mode.sub)
+
+    def test_get_active_mode_cooling_auto(self) -> None:
+        zone = _zone_cooling()
+        active_mode = zone.active_mode
+
+        self.assertEqual(OperatingModes.AUTO, active_mode.current)
+        self.assertEqual(zone.cooling.target_high, active_mode.target)
+        self.assertEqual(SettingModes.ON, active_mode.sub)
+
+    def test_get_active_mode_standby_cooling(self) -> None:
+        zone = _zone_cooling()
+        zone.active_function = ActiveFunction.STANDBY
+        active_mode = zone.active_mode
+
+        self.assertEqual(OperatingModes.AUTO, active_mode.current)
+        self.assertEqual(zone.cooling.target_high, active_mode.target)
+        self.assertEqual(SettingModes.ON, active_mode.sub)
+
+    def test_get_active_mode_standby_heating(self) -> None:
+        zone = _zone()
+        zone.active_function = ActiveFunction.STANDBY
+        active_mode = zone.active_mode
+
+        self.assertEqual(OperatingModes.AUTO, active_mode.current)
+        self.assertEqual(zone.heating.target_high, active_mode.target)
+        self.assertEqual(SettingModes.DAY, active_mode.sub)

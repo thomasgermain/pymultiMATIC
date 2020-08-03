@@ -5,8 +5,6 @@
 ![PyPI](https://img.shields.io/pypi/v/pymultiMATIC)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pymultiMATIC.svg)
 
-<b>Please note that the project is still in beta state, it means  I may do some (un)intentional breaking changes</b>
-
 ## Legal Disclaimer
 This software is not affiliated with Vaillant and the developers take no legal responsibility for the functionality or security of your vaillant devices.
 
@@ -99,7 +97,7 @@ system = await manager.get_system()
 await manager.set_hot_water_setpoint_temperature('dhw_id', 55)
 
 # set the zone operation mode to 'AUTO'
-await manager.set_zone_operating_mode('zone_id', OperatingModes.AUTO)
+await manager.set_zone_heating_operating_mode('zone_id', OperatingModes.AUTO)
 ```
 
 The main object to manipulate is `pymultimatic.model.System`, which is grouping all the information about your system.
@@ -113,5 +111,4 @@ You can find a deeper documentation [here](https://thomasgermain.github.io/pymul
 
 ## Todo's
 - Handling ventilation
-- SysFlow instead of boiler
 - Moving some constructors (System) to **kwargs
