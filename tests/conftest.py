@@ -11,7 +11,8 @@ from pymultimatic.api import urls, Connector
 from pymultimatic.model import (Circulation, Zone, HotWater, Room, ZoneHeating,
                                 SettingModes, OperatingModes, SettingMode,
                                 TimeProgram, TimePeriodSetting,
-                                TimeProgramDay, Ventilation)
+                                TimeProgramDay, Ventilation, ZoneCooling,
+                                ActiveFunction)
 
 
 @pytest.fixture(autouse=True, name='session')
@@ -88,9 +89,22 @@ def _zone() -> Zone:
     return Zone(id='zone',  # type: ignore
                 name='Zone',
                 temperature=22,
-                active_function='HEATING',
+                active_function=ActiveFunction.HEATING,
                 rbr=False,
                 heating=heating)
+
+
+def _zone_cooling() -> Zone:
+    timeprogram = _time_program(SettingModes.ON)
+    cooling = ZoneCooling(time_program=timeprogram,
+                          operating_mode=OperatingModes.AUTO,
+                          target_high=23)
+    return Zone(id='zone',  # type: ignore
+                name='Zone',
+                temperature=22,
+                active_function=ActiveFunction.COOLING,
+                rbr=False,
+                cooling=cooling)
 
 
 def _circulation() -> Circulation:

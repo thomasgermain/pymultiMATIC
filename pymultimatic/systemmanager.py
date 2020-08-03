@@ -7,7 +7,8 @@ from aiohttp import ClientSession
 
 from .api import Connector, urls, payloads, defaults, ApiError
 from .model import mapper, System, HotWater, QuickMode, QuickVeto, Room, \
-    Zone, OperatingMode, Circulation, OperatingModes, constants
+    Zone, OperatingMode, Circulation, OperatingModes, constants, \
+    ZoneHeating, ZoneCooling
 
 _LOGGER = logging.getLogger('SystemManager')
 
@@ -55,6 +56,14 @@ class SystemManager:
             bool: True/False if authentication succeeded or not.
         """
         return await self._connector.login(force_login)
+
+    async def logout(self) -> None:
+        """Get logged out from the API, see
+        :func:`~pymultimatic.api.connector.ApiConnector.logout`
+        """
+        if not self._fixed_serial:
+            self._serial = None
+        await self._connector.logout()
 
     # pylint: disable=too-many-locals
     async def get_system(self) -> System:
@@ -170,6 +179,90 @@ class SystemManager:
                                                params={'id': dhw_id})
         return mapper.map_circulation_alone(new_circulation, dhw_id)
 
+    async def set_quick_mode(self, quick_mode: QuickMode) -> None:
+        """Set a :class:`~pymultimatic.model.mode.QuickMode` system wise.
+
+        This will override the current
+        :class:`~pymultimatic.model.mode.QuickMode`, if any.
+
+        Args:
+            quick_mode (QuickMode): the quick mode to set, see
+                :class:`~pymultimatic.model.mode.QuickModes`
+        """
+        await self._call_api(
+            urls.system_quickmode,
+            payload=payloads.quickmode(quick_mode.name)
+        )
+
+    async def remove_quick_mode(self) -> None:
+        """Removes current :class:`~pymultimatic.model.mode.QuickMode`.
+
+        Note:
+            if there is not :class:`~pymultimatic.model.mode.QuickMode` set,
+            the API returns an error (HTTP 409). **This error is swallowed by
+            the manager**, so you don't have to handle it."""
+        try:
+            await self._call_api(urls.system_quickmode, 'delete')
+        except ApiError as exc:
+            if exc.response is None or exc.response.status != 409:
+                raise exc
+
+    async def set_holiday_mode(self, start_date: date, end_date: date,
+                               temperature: float) -> None:
+        """Set the :class:`~pymultimatic.model.mode.HolidayMode`.
+
+        Args:
+            start_date (date): Start date of the holiday mode.
+            end_date (date): End date of the holiday mode.
+            temperature (float): Target temperature while holiday mode
+                :class:`~pymultimatic.model.mode.HolidayMode.is_applied`
+        """
+        payload = payloads.holiday_mode(
+            True,
+            start_date,
+            end_date,
+            self._round(temperature)
+        )
+
+        await self._call_api(
+            urls.system_holiday_mode,
+            payload=payload
+        )
+
+    async def remove_holiday_mode(self) -> None:
+        """Remove :class:`~pymultimatic.model.mode.HolidayMode`.
+
+        Note:
+            There is a little workaround here, since the API doesn't simply
+            accept a DELETE request to remove the
+            :class:`~pymultimatic.model.mode.HolidayMode`, so the manager is
+            setting:
+
+            * the start date to two days before
+
+            * the end date to yesterday
+
+            * temperature to frost protection
+
+            * active to `False`
+
+            This will ensure the
+            :class:`~pymultimatic.model.mode.HolidayMode` is not active.
+
+        """
+
+        payload = payloads.holiday_mode(
+            False,
+            date.today() - timedelta(days=2),
+            date.today() - timedelta(days=1),
+            constants.FROST_PROTECTION_TEMP
+        )
+
+        await self._call_api(
+            urls.system_holiday_mode,
+            payload=payload
+        )
+
     async def set_hot_water_setpoint_temperature(self, dhw_id: str,
                                                  temperature: float) -> None:
         """This set the target temperature for *hot water*."""
@@ -253,69 +346,6 @@ class SystemManager:
         else:
             _LOGGER.debug("mode is not available for room %s", new_mode)
 
-    async def set_zone_operating_mode(self, zone_id: str,
-                                      new_mode: OperatingMode) -> None:
-        """Set new operating mode for
-        :class:`~pymultimatic.model.component.Zone`. The mode should be
-        listed here :class:`~pymultimatic.model.component.Zone.MODES`
-        otherwise it won't have any effect.
-
-
-        Note:
-            To set :class:`~pymultimatic.model.mode.QuickMode`, you
-            have to use :func:`set_quick_mode`.
-
-        Note:
-            This call won't have any effect if there is a
-            :class:`~pymultimatic.model.mode.QuickMode` activated, if you
-            want to remove the quick mode, use :func:`remove_quick_mode`.
-
-        Note:
-            To set :class:`~pymultimatic.model.mode.QuickVeto`, you have to
-            use :func:`set_zone_quick_veto`
-
-        Args:
-            zone_id (str): id of the zone.
-            new_mode (OperatingMode): The new mode to set.
-        """
-        if new_mode in Zone.MODES and new_mode != OperatingModes.QUICK_VETO:
-            _LOGGER.debug("New mode is %s", new_mode)
-            await self._call_api(
-                urls.zone_heating_mode,
-                params={'id': zone_id},
-                payload=payloads.zone_operating_mode(new_mode.name)
-            )
-        else:
-            _LOGGER.debug("mode is not available for zone %s", new_mode)
-
-    async def set_quick_mode(self, quick_mode: QuickMode) -> None:
-        """Set a :class:`~pymultimatic.model.mode.QuickMode` system wise.
-
-        This will override the current
-        :class:`~pymultimatic.model.mode.QuickMode`, if any.
-
-        Args:
-            quick_mode (QuickMode): the quick mode to set, see
-                :class:`~pymultimatic.model.mode.QuickModes`
-        """
-        await self._call_api(
-            urls.system_quickmode,
-            payload=payloads.quickmode(quick_mode.name)
-        )
-
-    async def remove_quick_mode(self) -> None:
-        """Removes current :class:`~pymultimatic.model.mode.QuickMode`.
-
-        Note:
-            if there is not :class:`~pymultimatic.model.mode.QuickMode` set,
-            the API returns an error (HTTP 409). **This error is swallowed by
-            the manager**, so you don't have to handle it."""
-        try:
-            await self._call_api(urls.system_quickmode, 'delete')
-        except ApiError as exc:
-            if exc.response is None or exc.response.status != 409:
-                raise exc
-
     async def set_room_quick_veto(self, room_id: str,
                                   quick_veto: QuickVeto) -> None:
         """Set a :class:`~pymultimatic.model.mode.QuickVeto` for a
@@ -351,39 +381,6 @@ class SystemManager:
             params={'id': room_id}
         )
 
-    async def set_zone_quick_veto(self, zone_id: str, quick_veto: QuickVeto) \
-            -> None:
-        """Set a :class:`~pymultimatic.model.mode.QuickVeto` for a
-        :class:`~pymultimatic.model.component.Zone`.
-        It will override the current
-        :class:`~pymultimatic.model.mode.QuickVeto`, if any.
-
-        Args:
-            zone_id (str): Id of the zone.
-            quick_veto (QuickVeto): Quick veto to set.
-        """
-        payload = payloads.zone_quick_veto(
-            self._round(quick_veto.target))
-
-        await self._call_api(
-            urls.zone_quick_veto,
-            params={'id': zone_id},
-            payload=payload
-        )
-
-    async def remove_zone_quick_veto(self, zone_id: str) -> None:
-        """Remove the :class:`~pymultimatic.model.mode.QuickVeto` from a
-        :class:`~pymultimatic.model.component.Zone`.
-
-        Args:
-            zone_id (str): Id of the zone.
-        """
-        await self._call_api(
-            urls.zone_quick_veto,
-            'delete',
-            params={'id': zone_id}
-        )
-
     async def set_room_setpoint_temperature(self, room_id: str,
                                             temperature: float) -> None:
         """Set the new current target temperature for a
@@ -412,8 +409,114 @@ class SystemManager:
                 self._round(temperature))
         )
 
-    async def set_zone_setpoint_temperature(self, zone_id: str,
-                                            temperature: float) -> None:
+    async def set_zone_quick_veto(self, zone_id: str, quick_veto: QuickVeto) \
+            -> None:
+        """Set a :class:`~pymultimatic.model.mode.QuickVeto` for a
+        :class:`~pymultimatic.model.component.Zone`.
+        It will override the current
+        :class:`~pymultimatic.model.mode.QuickVeto`, if any.
+
+        Args:
+            zone_id (str): Id of the zone.
+            quick_veto (QuickVeto): Quick veto to set.
+        """
+        payload = payloads.zone_quick_veto(
+            self._round(quick_veto.target))
+
+        await self._call_api(
+            urls.zone_quick_veto,
+            params={'id': zone_id},
+            payload=payload
+        )
+
+    async def set_zone_heating_operating_mode(self, zone_id: str,
+                                              new_mode: OperatingMode) -> None:
+        """Set new operating mode to heat a
+        :class:`~pymultimatic.model.component.Zone`. The mode should be
+        listed here :class:`~pymultimatic.model.component.ZoneHeating.MODES`
+        otherwise it won't have any effect.
+
+
+        Note:
+            To set :class:`~pymultimatic.model.mode.QuickMode`, you
+            have to use :func:`set_quick_mode`.
+
+        Note:
+            This call won't have any effect if there is a
+            :class:`~pymultimatic.model.mode.QuickMode` activated, if you
+            want to remove the quick mode, use :func:`remove_quick_mode`.
+
+        Note:
+            To set :class:`~pymultimatic.model.mode.QuickVeto`, you have to
+            use :func:`set_zone_quick_veto`
+
+        Args:
+            zone_id (str): id of the zone.
+            new_mode (OperatingMode): The new mode to set.
+        """
+        if new_mode in ZoneHeating.MODES \
+                and new_mode != OperatingModes.QUICK_VETO:
+            _LOGGER.debug("New mode is %s", new_mode)
+            await self._call_api(
+                urls.zone_heating_mode,
+                params={'id': zone_id},
+                payload=payloads.zone_operating_mode(new_mode.name)
+            )
+        else:
+            _LOGGER.debug("mode is not available for zone %s", new_mode)
+
+    async def set_zone_cooling_operating_mode(self, zone_id: str,
+                                              new_mode: OperatingMode) -> None:
+        """Set new operating mode to cool a
+        :class:`~pymultimatic.model.component.Zone`. The mode should be
+        listed here :class:`~pymultimatic.model.component.ZoneCooling.MODES`
+        otherwise it won't have any effect.
+
+
+        Note:
+            To set :class:`~pymultimatic.model.mode.QuickMode`, you
+            have to use :func:`set_quick_mode`.
+
+        Note:
+            This call won't have any effect if there is a
+            :class:`~pymultimatic.model.mode.QuickMode` activated, if you
+            want to remove the quick mode, use :func:`remove_quick_mode`.
+
+        Note:
+            To set :class:`~pymultimatic.model.mode.QuickVeto`, you have to
+            use :func:`set_zone_quick_veto`
+
+        Args:
+            zone_id (str): id of the zone.
+            new_mode (OperatingMode): The new mode to set.
+        """
+        if new_mode in ZoneCooling.MODES \
+                and new_mode != OperatingModes.QUICK_VETO:
+            _LOGGER.debug("New mode is %s", new_mode)
+            await self._call_api(
+                urls.zone_cooling_mode,
+                params={'id': zone_id},
+                payload=payloads.zone_operating_mode(new_mode.name)
+            )
+        else:
+            _LOGGER.debug("mode is not available for zone %s", new_mode)
+
+    async def remove_zone_quick_veto(self, zone_id: str) -> None:
+        """Remove the :class:`~pymultimatic.model.mode.QuickVeto` from a
+        :class:`~pymultimatic.model.component.Zone`.
+
+        Args:
+            zone_id (str): Id of the zone.
+        """
+        await self._call_api(
+            urls.zone_quick_veto,
+            'delete',
+            params={'id': zone_id}
+        )
+
+    async def set_zone_heating_setpoint_temperature(self, zone_id: str,
+                                                    temperature: float) \
+            -> None:
         """Set the configured temperature for the
         :class:`~pymultimatic.model.mode.SettingModes.DAY` mode.
 
@@ -436,9 +539,34 @@ class SystemManager:
             payload=payload
         )
 
-    async def set_zone_setback_temperature(self, zone_id: str,
-                                           temperature: float) -> None:
-        """Set the configured temperature for the
+    async def set_zone_cooling_setpoint_temperature(self, zone_id: str,
+                                                    temperature: float) \
+            -> None:
+        """Set the configured cooling temperature for the
+        :class:`~pymultimatic.model.mode.SettingModes.ON` mode.
+
+        Note:
+            It won't alter the
+            :class:`~pymultimatic.model.mode.OperatingMode`.
+
+        Args:
+            zone_id (str): Id of the zone.
+            temperature (float): New temperature.
+        """
+        _LOGGER.debug("Will try to set zone target temperature to %s",
+                      temperature)
+
+        payload = payloads.zone_temperature_setpoint(self._round(temperature))
+
+        await self._call_api(
+            urls.zone_cooling_setpoint_temperature,
+            params={'id': zone_id},
+            payload=payload
+        )
+
+    async def set_zone_heating_setback_temperature(self, zone_id: str,
+                                                   temperature: float) -> None:
+        """Set the configured heating temperature for the
         :class:`~pymultimatic.model.mode.SettingModes.NIGHT` mode.
 
         Note:
@@ -456,62 +584,6 @@ class SystemManager:
             urls.zone_heating_setback_temperature,
             params={'id': zone_id},
             payload=payloads.zone_temperature_setback(self._round(temperature))
-        )
-
-    async def set_holiday_mode(self, start_date: date, end_date: date,
-                               temperature: float) -> None:
-        """Set the :class:`~pymultimatic.model.mode.HolidayMode`.
-
-        Args:
-            start_date (date): Start date of the holiday mode.
-            end_date (date): End date of the holiday mode.
-            temperature (float): Target temperature while holiday mode
-                :class:`~pymultimatic.model.mode.HolidayMode.is_applied`
-        """
-        payload = payloads.holiday_mode(
-            True,
-            start_date,
-            end_date,
-            self._round(temperature)
-        )
-
-        await self._call_api(
-            urls.system_holiday_mode,
-            payload=payload
-        )
-
-    async def remove_holiday_mode(self) -> None:
-        """Remove :class:`~pymultimatic.model.mode.HolidayMode`.
-
-        Note:
-            There is a little workaround here, since the API doesn't simply
-            accept a DELETE request to remove the
-            :class:`~pymultimatic.model.mode.HolidayMode`, so the manager is
-            setting:
-
-            * the start date to two days before
-
-            * the end date to yesterday
-
-            * temperature to frost protection
-
-            * active to `False`
-
-            This will ensure the
-            :class:`~pymultimatic.model.mode.HolidayMode` is not active.
-
-        """
-
-        payload = payloads.holiday_mode(
-            False,
-            date.today() - timedelta(days=2),
-            date.today() - timedelta(days=1),
-            constants.FROST_PROTECTION_TEMP
-        )
-
-        await self._call_api(
-            urls.system_holiday_mode,
-            payload=payload
         )
 
     async def request_hvac_update(self) -> None:
@@ -547,14 +619,6 @@ class SystemManager:
 
         if state and not state.is_pending:
             await self._call_api(urls.hvac_update, 'put')
-
-    async def logout(self) -> None:
-        """Get logged out from the API, see
-        :func:`~pymultimatic.api.connector.ApiConnector.logout`
-        """
-        if not self._fixed_serial:
-            self._serial = None
-        await self._connector.logout()
 
     # pylint: disable=no-self-use
     def _round(self, number: float) -> float:

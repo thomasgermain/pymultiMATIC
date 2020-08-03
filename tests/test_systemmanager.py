@@ -209,27 +209,20 @@ async def test_set_zone_operation_mode_heating_mode(
     url = urls.zone_heating_mode(id='Zone1', serial=SERIAL)
 
     resp.put(url, status=200)
-    await manager.set_zone_operating_mode('Zone1', OperatingModes.AUTO)
+    await manager.set_zone_heating_operating_mode('Zone1', OperatingModes.AUTO)
     _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
 async def test_set_zone_operation_mode_no_new_mode(
         manager: SystemManager) -> None:
-    await manager.set_zone_operating_mode('Zone1', None)
+    await manager.set_zone_heating_operating_mode('Zone1', None)
     _assert_calls(0, manager)
 
 
 @pytest.mark.asyncio
 async def test_set_zone_operation_mode_no_zone(manager: SystemManager) -> None:
-    await manager.set_zone_operating_mode(None, OperatingModes.MANUAL)
-    _assert_calls(0, manager)
-
-
-@pytest.mark.asyncio
-async def test_set_zone_operation_mode_wrong_mode(
-        manager: SystemManager) -> None:
-    await manager.set_zone_operating_mode('Zone1', OperatingModes.ON)
+    await manager.set_zone_heating_operating_mode(None, OperatingModes.MANUAL)
     _assert_calls(0, manager)
 
 
@@ -290,7 +283,7 @@ async def test_set_zone_setpoint_temperature(manager: SystemManager,
 
     resp.put(url, status=200)
 
-    await manager.set_zone_setpoint_temperature('Zone1', 25.5)
+    await manager.set_zone_heating_setpoint_temperature('Zone1', 25.5)
     _assert_calls(1, manager, [url], [payload])
 
 
@@ -302,7 +295,7 @@ async def test_set_zone_setback_temperature(manager: SystemManager,
 
     resp.put(url, status=200)
 
-    await manager.set_zone_setback_temperature('Zone1', 18)
+    await manager.set_zone_heating_setback_temperature('Zone1', 18)
     _assert_calls(1, manager, [url], [payload])
 
 

@@ -462,9 +462,9 @@ temperature again or the operating mode.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pymultimatic.systemmanager.SystemManager.set_zone_operating_mode">
-<em class="property">async </em><code class="sig-name descname">set_zone_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">new_mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_operating_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set new operating mode for
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_cooling_operating_mode">
+<em class="property">async </em><code class="sig-name descname">set_zone_cooling_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">new_mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_cooling_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set new operating mode to cool a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code>. The mode should be
 listed here <code class="xref py py-class docutils literal notranslate"><span class="pre">MODES</span></code>
 otherwise it won’t have any effect.</p>
@@ -495,26 +495,62 @@ use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManage
 </dd></dl>
 
 <dl class="method">
-<dt id="pymultimatic.systemmanager.SystemManager.set_zone_quick_veto">
-<em class="property">async </em><code class="sig-name descname">set_zone_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">quick_veto: pymultimatic.model.mode.QuickVeto</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_quick_veto" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code>.
-It will override the current
-<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a>, if any.</p>
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_cooling_setpoint_temperature">
+<em class="property">async </em><code class="sig-name descname">set_zone_cooling_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_cooling_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the configured cooling temperature for the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingModes.ON" title="pymultimatic.model.mode.SettingModes.ON"><code class="xref py py-class docutils literal notranslate"><span class="pre">ON</span></code></a> mode.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It won’t alter the
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">OperatingMode</span></code></a>.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>zone_id</strong> (<em>str</em>) – Id of the zone.</p></li>
-<li><p><strong>quick_veto</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><em>QuickVeto</em></a>) – Quick veto to set.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – New temperature.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="pymultimatic.systemmanager.SystemManager.set_zone_setback_temperature">
-<em class="property">async </em><code class="sig-name descname">set_zone_setback_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_setback_temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the configured temperature for the
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_heating_operating_mode">
+<em class="property">async </em><code class="sig-name descname">set_zone_heating_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">new_mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_heating_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set new operating mode to heat a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code>. The mode should be
+listed here <code class="xref py py-class docutils literal notranslate"><span class="pre">MODES</span></code>
+otherwise it won’t have any effect.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To set <code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code>, you
+have to use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.set_quick_mode" title="pymultimatic.systemmanager.SystemManager.set_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_quick_mode()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This call won’t have any effect if there is a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QuickMode</span></code> activated, if you
+want to remove the quick mode, use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.remove_quick_mode" title="pymultimatic.systemmanager.SystemManager.remove_quick_mode"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_quick_mode()</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To set <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a>, you have to
+use <a class="reference internal" href="#pymultimatic.systemmanager.SystemManager.set_zone_quick_veto" title="pymultimatic.systemmanager.SystemManager.set_zone_quick_veto"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_zone_quick_veto()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zone_id</strong> (<em>str</em>) – id of the zone.</p></li>
+<li><p><strong>new_mode</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><em>OperatingMode</em></a>) – The new mode to set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_heating_setback_temperature">
+<em class="property">async </em><code class="sig-name descname">set_zone_heating_setback_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_heating_setback_temperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the configured heating temperature for the
 <a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingModes.NIGHT" title="pymultimatic.model.mode.SettingModes.NIGHT"><code class="xref py py-class docutils literal notranslate"><span class="pre">NIGHT</span></code></a> mode.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -532,8 +568,8 @@ It will override the current
 </dd></dl>
 
 <dl class="method">
-<dt id="pymultimatic.systemmanager.SystemManager.set_zone_setpoint_temperature">
-<em class="property">async </em><code class="sig-name descname">set_zone_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_heating_setpoint_temperature">
+<em class="property">async </em><code class="sig-name descname">set_zone_heating_setpoint_temperature</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">temperature: float</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_heating_setpoint_temperature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the configured temperature for the
 <a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingModes.DAY" title="pymultimatic.model.mode.SettingModes.DAY"><code class="xref py py-class docutils literal notranslate"><span class="pre">DAY</span></code></a> mode.</p>
 <div class="admonition note">
@@ -546,6 +582,23 @@ It will override the current
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>zone_id</strong> (<em>str</em>) – Id of the zone.</p></li>
 <li><p><strong>temperature</strong> (<em>float</em>) – New temperature.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_zone_quick_veto">
+<em class="property">async </em><code class="sig-name descname">set_zone_quick_veto</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">quick_veto: pymultimatic.model.mode.QuickVeto</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_quick_veto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a <a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a> for a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Zone</span></code>.
+It will override the current
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuickVeto</span></code></a>, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zone_id</strong> (<em>str</em>) – Id of the zone.</p></li>
+<li><p><strong>quick_veto</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.QuickVeto" title="pymultimatic.model.mode.QuickVeto"><em>QuickVeto</em></a>) – Quick veto to set.</p></li>
 </ul>
 </dd>
 </dl>

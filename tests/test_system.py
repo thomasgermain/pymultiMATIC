@@ -4,8 +4,10 @@ import unittest
 
 from pymultimatic.model import (System, TimePeriodSetting, TimeProgramDay,
                                 QuickModes, QuickVeto, HolidayMode, Room, Zone,
-                                OperatingModes, SettingModes, constants, Dhw)
-from tests.conftest import _zone, _time_program, _room, _circulation, _hotwater
+                                OperatingModes, SettingModes, constants, Dhw,
+                                HotWater)
+from tests.conftest import _zone, _time_program, _room, _circulation, \
+    _hotwater, _zone_cooling
 
 
 class SystemTest(unittest.TestCase):
@@ -91,7 +93,7 @@ class SystemTest(unittest.TestCase):
 
         self.assertEqual(OperatingModes.AUTO, active_mode.current)
         self.assertEqual(SettingModes.OFF, active_mode.sub)
-        self.assertEqual(constants.FROST_PROTECTION_TEMP,
+        self.assertEqual(HotWater.MIN_TARGET_TEMP,
                          active_mode.target)
 
     def test_get_active_mode_hot_water_system_off(self) -> None:
@@ -217,7 +219,7 @@ class SystemTest(unittest.TestCase):
         active_mode = system.get_active_mode_zone(zone)
 
         self.assertEqual(QuickModes.SYSTEM_OFF, active_mode.current)
-        self.assertEqual(Zone.MIN_TARGET_TEMP, active_mode.target)
+        self.assertEqual(Zone.MIN_TARGET_HEATING_TEMP, active_mode.target)
 
     def test_get_active_mode_zone_quick_mode_one_day_home(self) -> None:
         """Test get active mode for zone one day home."""
@@ -265,7 +267,7 @@ class SystemTest(unittest.TestCase):
         active_mode = system.get_active_mode_zone(zone)
 
         self.assertEqual(QuickModes.ONE_DAY_AWAY, active_mode.current)
-        self.assertEqual(Zone.MIN_TARGET_TEMP,
+        self.assertEqual(Zone.MIN_TARGET_HEATING_TEMP,
                          active_mode.target)
 
     def test_get_active_mode_zone_quick_mode_party(self) -> None:
@@ -299,7 +301,7 @@ class SystemTest(unittest.TestCase):
         active_mode = system.get_active_mode_zone(zone)
 
         self.assertEqual(QuickModes.VENTILATION_BOOST, active_mode.current)
-        self.assertEqual(Zone.MIN_TARGET_TEMP, active_mode.target)
+        self.assertEqual(Zone.MIN_TARGET_HEATING_TEMP, active_mode.target)
 
     def test_get_active_mode_circulation_hot_water_boost(self) -> None:
         """Test get active mode for circulation with hotwater boost."""
@@ -442,3 +444,15 @@ class SystemTest(unittest.TestCase):
 
         system.set_room(room3.id, room3)
         self.assertEqual(3, len(system.rooms))
+
+    def test_get_active_mode_zone_cooling_for_x_days(self) -> None:
+        """Test quick mode COOLING_FOR_X_DAYS."""
+        zone = _zone_cooling()
+        system = System(zones=[zone],
+                        quick_mode=QuickModes.COOLING_FOR_X_DAYS)
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(QuickModes.COOLING_FOR_X_DAYS, active_mode.current)
+        self.assertIsNone(active_mode.sub)
+        self.assertEqual(zone.cooling.target_high, active_mode.target)

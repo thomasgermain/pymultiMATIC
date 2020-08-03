@@ -1,4 +1,5 @@
 """Groups everything related to a zone."""
+from enum import Enum
 from typing import Optional
 
 import attr
@@ -6,8 +7,22 @@ import attr
 from . import (Function, ActiveMode, OperatingModes, constants, Component)
 
 
+class ActiveFunction(Enum):
+    """Represent the active function the zone is currently running.
+
+    It can be 'STANDBY', 'COOLING', 'HEATING'
+    """
+
+    STANDBY = 'STANDBY'
+    COOLING = 'COOLING'
+    HEATING = 'HEATING'
+
+
 class ZoneHeating(Function):
     """Represent the heating function of a zone."""
+
+    MODES = [OperatingModes.AUTO, OperatingModes.OFF, OperatingModes.DAY,
+             OperatingModes.NIGHT, OperatingModes.QUICK_VETO]
 
     def _active_mode(self) -> ActiveMode:
         if self.operating_mode == OperatingModes.OFF:
@@ -25,9 +40,11 @@ class ZoneHeating(Function):
 class ZoneCooling(Function):
     """Represent the cooling function of a zone."""
 
+    MODES = [OperatingModes.AUTO, OperatingModes.ON, OperatingModes.OFF]
+
     def _active_mode(self) -> ActiveMode:
         if self.operating_mode == OperatingModes.OFF:
-            mode = ActiveMode(self.target_low, OperatingModes.OFF)
+            mode = ActiveMode(None, OperatingModes.OFF)
         else:  # MODE ON
             mode = ActiveMode(self.target_high, OperatingModes.ON)
         return mode
@@ -42,8 +59,7 @@ class Zone(Component):
          anymore, it means rooms are 'controlling' the zone.
 
      Args:
-         active_function (str): Indicate what the zone is doing (basically
-             'HEATING' or 'STANDBY').
+         active_function (ActiveFunction): Indicate what the zone is doing.
          rbr (bool): Room By Room, means the zone is controlled by ambisense.
          heating (ZoneHeating): Heating function of the zone.
          cooling (ZoneCooling): Cooling function of the zone.
@@ -51,24 +67,39 @@ class Zone(Component):
      """
 
     MODES = [OperatingModes.AUTO, OperatingModes.OFF, OperatingModes.DAY,
-             OperatingModes.NIGHT, OperatingModes.QUICK_VETO]
+             OperatingModes.NIGHT, OperatingModes.QUICK_VETO,
+             OperatingModes.ON]
     """List of mode that are applicable to zones component."""
 
-    MIN_TARGET_TEMP = constants.FROST_PROTECTION_TEMP
-    """Min temperature that can be apply to a zone."""
+    MIN_TARGET_HEATING_TEMP = constants.FROST_PROTECTION_TEMP
+    """Min heating temperature that can be apply to a zone."""
+
+    MIN_TARGET_COOLING_TEMP = 15
+    """Min cooling temperature that can be apply to a zone."""
 
     MAX_TARGET_TEMP = constants.THERMOSTAT_MAX_TEMP
     """Max temperature that can be apply to a zone."""
 
-    active_function = attr.ib(type=str, default=None)
+    active_function = attr.ib(type=ActiveFunction, default=None)
     rbr = attr.ib(type=bool, default=False)
     heating = attr.ib(type=ZoneHeating, default=None)
     cooling = attr.ib(type=Optional[ZoneCooling], default=None)
     enabled = attr.ib(type=bool, default=True)
 
     @property
-    def active_mode(self) -> ActiveMode:
+    def active_mode(self) -> Optional[ActiveMode]:
         if self.quick_veto:
             return ActiveMode(self.quick_veto.target,
                               OperatingModes.QUICK_VETO)
-        return self.heating.active_mode
+
+        if self.active_function == ActiveFunction.COOLING and self.cooling:
+            return self.cooling.active_mode
+        if self.active_function == ActiveFunction.HEATING and self.heating:
+            return self.heating.active_mode
+
+        if self.heating:
+            return self.heating.active_mode
+
+        if self.cooling:
+            return self.cooling.active_mode
+        return None

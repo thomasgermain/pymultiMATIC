@@ -6,7 +6,7 @@ from . import (BoilerStatus, Circulation, Device, HolidayMode, HotWater,
                QuickMode, QuickModes, QuickVeto, Room, TimeProgram,
                TimeProgramDay, TimePeriodSetting, OperatingModes, Error,
                SyncState, SettingModes, SystemInfo, Dhw, OperatingMode, Zone,
-               ZoneHeating, ZoneCooling, Report, Ventilation)
+               ZoneHeating, ZoneCooling, Report, Ventilation, ActiveFunction)
 
 _DATE_FORMAT = "%Y-%m-%d"
 
@@ -230,7 +230,7 @@ def map_zone(raw_zone) -> Optional[Zone]:
         configuration = raw_zone.get("configuration", dict())
         name = configuration.get("name", "").strip()
         temperature = configuration.get("inside_temperature")
-        active_function = configuration.get("active_function")
+        active_function = ActiveFunction[configuration.get("active_function")]
         quick_veto = _map_quick_veto_zone(configuration.get("quick_veto"))
         rbr = raw_zone.get("currently_controlled_by", dict())\
             .get("name", "") == "RBR"

@@ -118,7 +118,7 @@ class System:
         self._rooms[room_id] = room
         self.rooms = list(self._rooms.values())
 
-    def get_active_mode_zone(self, zone: Zone) -> ActiveMode:
+    def get_active_mode_zone(self, zone: Zone) -> Optional[ActiveMode]:
         """Get the current
         :class:`~pymultimatic.model.mode.ActiveMode` for a
         :class:`~pymultimatic.model.component.Zone`. This is the only way to
@@ -130,7 +130,7 @@ class System:
         Returns:
             ActiveMode: The active mode.
         """
-        mode: ActiveMode = zone.active_mode
+        mode: Optional[ActiveMode] = zone.active_mode
 
         # Holiday mode takes precedence over everything
         if self.holiday.active_mode:
@@ -139,13 +139,16 @@ class System:
         # Global system quick mode takes over zone settings
         if self.quick_mode and self.quick_mode.for_zone:
             if self.quick_mode == QuickModes.VENTILATION_BOOST:
-                mode = ActiveMode(Zone.MIN_TARGET_TEMP, self.quick_mode)
+                mode = ActiveMode(Zone.MIN_TARGET_HEATING_TEMP,
+                                  self.quick_mode)
 
             if self.quick_mode == QuickModes.ONE_DAY_AWAY:
-                mode = ActiveMode(Zone.MIN_TARGET_TEMP, self.quick_mode)
+                mode = ActiveMode(Zone.MIN_TARGET_HEATING_TEMP,
+                                  self.quick_mode)
 
             if self.quick_mode == QuickModes.SYSTEM_OFF:
-                mode = ActiveMode(Zone.MIN_TARGET_TEMP, self.quick_mode)
+                mode = ActiveMode(Zone.MIN_TARGET_HEATING_TEMP,
+                                  self.quick_mode)
 
             if self.quick_mode == QuickModes.ONE_DAY_AT_HOME:
                 if zone.heating:
@@ -164,6 +167,10 @@ class System:
                 if zone.heating:
                     mode = ActiveMode(zone.heating.target_high,
                                       self.quick_mode)
+
+            if self.quick_mode == QuickModes.COOLING_FOR_X_DAYS \
+                    and zone.cooling:
+                mode = ActiveMode(zone.cooling.target_high, self.quick_mode)
 
         return mode
 

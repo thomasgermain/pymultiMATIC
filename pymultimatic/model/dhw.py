@@ -23,13 +23,14 @@ class HotWater(Function, Component):
     """Max `target temperature` for the hot water."""
 
     quick_veto = attr.ib(default=None, init=False)
-    target_low = attr.ib(default=constants.FROST_PROTECTION_TEMP, init=False)
+    target_low = attr.ib(default=MIN_TARGET_TEMP, init=False)
 
     def _active_mode(self) -> ActiveMode:
         if self.operating_mode == OperatingModes.ON:
             mode = ActiveMode(self.target_high, OperatingModes.ON)
         else:  # MODE_OFF
-            mode = ActiveMode(self.target_low, OperatingModes.OFF)
+            mode = ActiveMode(constants.FROST_PROTECTION_TEMP,
+                              OperatingModes.OFF)
         return mode
 
 
