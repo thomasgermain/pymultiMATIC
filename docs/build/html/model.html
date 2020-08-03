@@ -1,10 +1,9 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
@@ -17,11 +16,11 @@
     <title>Model &#8212; pymultiMATIC 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="SystemManager" href="systemmanager.html" />
@@ -45,8 +44,7 @@
         <li class="right" >
           <a href="components.html" title="Components"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Model</a></li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -122,9 +120,9 @@
 <p>Mapped model from the API.</p>
 <div class="section" id="error">
 <h2>Error<a class="headerlink" href="#error" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="pymultimatic.model.status.Error">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">Error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">status_code</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime.datetime</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.Error" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">Error</code><span class="sig-paren">(</span><em class="sig-param">device_name: str</em>, <em class="sig-param">title: str</em>, <em class="sig-param">status_code: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">timestamp: datetime.datetime</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.Error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Errors coming from your system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -142,9 +140,9 @@
 </div>
 <div class="section" id="boilerstatus">
 <h2>BoilerStatus<a class="headerlink" href="#boilerstatus" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="pymultimatic.model.status.BoilerStatus">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">BoilerStatus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">device_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">status_code</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime.datetime</span></em>, <em class="sig-param"><span class="n">hint</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.BoilerStatus" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.status.</code><code class="sig-name descname">BoilerStatus</code><span class="sig-paren">(</span><em class="sig-param">device_name: str</em>, <em class="sig-param">title: str</em>, <em class="sig-param">status_code: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">timestamp: datetime.datetime</em>, <em class="sig-param">hint: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.status.BoilerStatus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Status of the boiler. This is sent with an error format, but in this
 case, it’s more like a status.</p>
 <dl class="field-list simple">
@@ -153,7 +151,7 @@ case, it’s more like a status.</p>
 <code class="docutils literal notranslate"><span class="pre">...</span></code></p>
 </dd>
 </dl>
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.status.BoilerStatus.is_error">
 <em class="property">property </em><code class="sig-name descname">is_error</code><a class="headerlink" href="#pymultimatic.model.status.BoilerStatus.is_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if there is an error at boiler side.</p>
@@ -169,9 +167,9 @@ case, it’s more like a status.</p>
 </div>
 <div class="section" id="systeminfo">
 <h2>SystemInfo<a class="headerlink" href="#systeminfo" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="pymultimatic.model.system.SystemInfo">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.system.</code><code class="sig-name descname">SystemInfo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gateway</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">serial_number</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">mac_ethernet</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">mac_wifi</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">firmware</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">online</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">update</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.system.SystemInfo" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.system.</code><code class="sig-name descname">SystemInfo</code><span class="sig-paren">(</span><em class="sig-param">gateway: str</em>, <em class="sig-param">serial_number: str</em>, <em class="sig-param">name: str</em>, <em class="sig-param">mac_ethernet: str</em>, <em class="sig-param">mac_wifi: str</em>, <em class="sig-param">firmware: str</em>, <em class="sig-param">online: str</em>, <em class="sig-param">update: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.system.SystemInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>“Information about the system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -187,7 +185,7 @@ case, it’s more like a status.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.system.SystemInfo.is_online">
 <em class="property">property </em><code class="sig-name descname">is_online</code><a class="headerlink" href="#pymultimatic.model.system.SystemInfo.is_online" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the system is connected to the internet.</p>
@@ -198,7 +196,7 @@ case, it’s more like a status.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.system.SystemInfo.is_up_to_date">
 <em class="property">property </em><code class="sig-name descname">is_up_to_date</code><a class="headerlink" href="#pymultimatic.model.system.SystemInfo.is_up_to_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the system is up to date.</p>
@@ -214,9 +212,9 @@ case, it’s more like a status.</p>
 </div>
 <div class="section" id="syncstate">
 <h2>SyncState<a class="headerlink" href="#syncstate" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="pymultimatic.model.syncstate.SyncState">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.syncstate.</code><code class="sig-name descname">SyncState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime.datetime</span></em>, <em class="sig-param"><span class="n">resource_link</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.syncstate.</code><code class="sig-name descname">SyncState</code><span class="sig-paren">(</span><em class="sig-param">state: str</em>, <em class="sig-param">timestamp: datetime.datetime</em>, <em class="sig-param">resource_link: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sync state coming from the API.
 In the vaillant API, most resource you can ask for are flagged with a
 <code class="docutils literal notranslate"><span class="pre">resourceState</span></code>, with that, you can know if the resource you are asking
@@ -230,7 +228,7 @@ for is synced or not.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.syncstate.SyncState.is_init">
 <em class="property">property </em><code class="sig-name descname">is_init</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if state is initializing.</p>
@@ -241,7 +239,7 @@ for is synced or not.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.syncstate.SyncState.is_outdated">
 <em class="property">property </em><code class="sig-name descname">is_outdated</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_outdated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if state is outdated.</p>
@@ -252,7 +250,7 @@ for is synced or not.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.syncstate.SyncState.is_pending">
 <em class="property">property </em><code class="sig-name descname">is_pending</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_pending" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if state is pending.</p>
@@ -263,7 +261,7 @@ for is synced or not.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.syncstate.SyncState.is_synced">
 <em class="property">property </em><code class="sig-name descname">is_synced</code><a class="headerlink" href="#pymultimatic.model.syncstate.SyncState.is_synced" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if state is synced.</p>
@@ -279,9 +277,9 @@ for is synced or not.</p>
 </div>
 <div class="section" id="timeperiodsetting">
 <h2>TimePeriodSetting<a class="headerlink" href="#timeperiodsetting" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="pymultimatic.model.timeprogram.TimePeriodSetting">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimePeriodSetting</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_time</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">target_temperature</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">setting</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="modes.html#pymultimatic.model.mode.SettingMode" title="pymultimatic.model.mode.SettingMode">pymultimatic.model.mode.SettingMode</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimePeriodSetting</code><span class="sig-paren">(</span><em class="sig-param">start_time: str, target_temperature: Optional[float], setting: Optional[pymultimatic.model.mode.SettingMode]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a period setting, defining what the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">Component</span></code> should do when on
 <a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingModes.AUTO" title="pymultimatic.model.mode.OperatingModes.AUTO"><code class="xref py py-class docutils literal notranslate"><span class="pre">AUTO</span></code></a>.</p>
@@ -299,22 +297,22 @@ available for a <code class="xref py py-class docutils literal notranslate"><spa
 </ul>
 </dd>
 </dl>
-<dl class="py attribute">
+<dl class="attribute">
 <dt id="pymultimatic.model.timeprogram.TimePeriodSetting.absolute_minutes">
-<code class="sig-name descname">absolute_minutes</code><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting.absolute_minutes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">absolute_minutes</code><em class="property"> = None</em><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting.absolute_minutes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents <code class="xref py py-attr docutils literal notranslate"><span class="pre">start_time</span></code> in absolute minute. hours * 60 + minutes.
 This is more convenient to compare TimePeriodSetting using this.</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="attribute">
 <dt id="pymultimatic.model.timeprogram.TimePeriodSetting.hour">
-<code class="sig-name descname">hour</code><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting.hour" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hour</code><em class="property"> = None</em><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting.hour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hour at which the setting is starting.</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="attribute">
 <dt id="pymultimatic.model.timeprogram.TimePeriodSetting.minute">
-<code class="sig-name descname">minute</code><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting.minute" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">minute</code><em class="property"> = None</em><a class="headerlink" href="#pymultimatic.model.timeprogram.TimePeriodSetting.minute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Minute at which the setting is starting.</p>
 </dd></dl>
 
@@ -323,9 +321,9 @@ This is more convenient to compare TimePeriodSetting using this.</p>
 </div>
 <div class="section" id="timeprogramday">
 <h2>TimeProgramDay<a class="headerlink" href="#timeprogramday" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="pymultimatic.model.timeprogram.TimeProgramDay">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimeProgramDay</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">settings</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting">pymultimatic.model.timeprogram.TimePeriodSetting</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgramDay" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimeProgramDay</code><span class="sig-paren">(</span><em class="sig-param">settings: List[pymultimatic.model.timeprogram.TimePeriodSetting]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgramDay" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a day, this is basically a list of <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimePeriodSetting</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -337,9 +335,9 @@ This is more convenient to compare TimePeriodSetting using this.</p>
 </div>
 <div class="section" id="timeprogram">
 <h2>TimeProgram<a class="headerlink" href="#timeprogram" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
+<dl class="class">
 <dt id="pymultimatic.model.timeprogram.TimeProgram">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimeProgram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">days</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span><a class="reference internal" href="#pymultimatic.model.timeprogram.TimeProgramDay" title="pymultimatic.model.timeprogram.TimeProgramDay">pymultimatic.model.timeprogram.TimeProgramDay</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.timeprogram.</code><code class="sig-name descname">TimeProgram</code><span class="sig-paren">(</span><em class="sig-param">days: Dict[str, pymultimatic.model.timeprogram.TimeProgramDay]</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the full time program, a week, reflecting the configuration done
 through mobile app.</p>
 <dl class="field-list simple">
@@ -347,9 +345,9 @@ through mobile app.</p>
 <dd class="field-odd"><p><strong>days</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#pymultimatic.model.timeprogram.TimeProgramDay" title="pymultimatic.model.timeprogram.TimeProgramDay"><em>TimeProgramDay</em></a><em>]</em>) – Days of the week.</p>
 </dd>
 </dl>
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.timeprogram.TimeProgram.get_for">
-<code class="sig-name descname">get_for</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_date</span><span class="p">:</span> <span class="n">datetime.datetime</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting">pymultimatic.model.timeprogram.TimePeriodSetting</a><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram.get_for" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_for</code><span class="sig-paren">(</span><em class="sig-param">search_date: datetime.datetime</em><span class="sig-paren">)</span> &#x2192; pymultimatic.model.timeprogram.TimePeriodSetting<a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram.get_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the corresponding <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimePeriodSetting</span></code></a>
 for the given time.</p>
 <dl class="field-list simple">
@@ -366,9 +364,9 @@ in order to get the right <a class="reference internal" href="#pymultimatic.mode
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="pymultimatic.model.timeprogram.TimeProgram.get_next">
-<code class="sig-name descname">get_next</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">search_date</span><span class="p">:</span> <span class="n">datetime.datetime</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting">pymultimatic.model.timeprogram.TimePeriodSetting</a><a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram.get_next" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_next</code><span class="sig-paren">(</span><em class="sig-param">search_date: datetime.datetime</em><span class="sig-paren">)</span> &#x2192; pymultimatic.model.timeprogram.TimePeriodSetting<a class="headerlink" href="#pymultimatic.model.timeprogram.TimeProgram.get_next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the next <a class="reference internal" href="#pymultimatic.model.timeprogram.TimePeriodSetting" title="pymultimatic.model.timeprogram.TimePeriodSetting"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimePeriodSetting</span></code></a> for the given time.
 So if there is a time program like this:</p>
 <ul class="simple">
@@ -428,8 +426,7 @@ in order to get the right <a class="reference internal" href="#pymultimatic.mode
         <li class="right" >
           <a href="components.html" title="Components"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Model</a></li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pymultiMATIC 0.0.1 documentation</a> &#187;</li> 
       </ul>
     </div>
 <script type="text/javascript">
