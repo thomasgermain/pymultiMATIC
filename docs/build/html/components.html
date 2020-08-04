@@ -336,7 +336,7 @@ for this function. All operating modes are handled,
 <h2>Zone<a class="headerlink" href="#zone" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymultimatic.model.zone.Zone">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.zone.</code><code class="sig-name descname">Zone</code><span class="sig-paren">(</span><em class="sig-param">id: str = None</em>, <em class="sig-param">name: str = None</em>, <em class="sig-param">temperature: Optional[float] = None</em>, <em class="sig-param">quick_veto: Optional[pymultimatic.model.mode.QuickVeto] = None</em>, <em class="sig-param">active_function: str = None</em>, <em class="sig-param">rbr: bool = False</em>, <em class="sig-param">heating: pymultimatic.model.zone.ZoneHeating = None</em>, <em class="sig-param">cooling: Optional[pymultimatic.model.zone.ZoneCooling] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.zone.Zone" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.zone.</code><code class="sig-name descname">Zone</code><span class="sig-paren">(</span><em class="sig-param">id: str = None</em>, <em class="sig-param">name: str = None</em>, <em class="sig-param">temperature: Optional[float] = None</em>, <em class="sig-param">quick_veto: Optional[pymultimatic.model.mode.QuickVeto] = None</em>, <em class="sig-param">active_function: str = None</em>, <em class="sig-param">rbr: bool = False</em>, <em class="sig-param">heating: pymultimatic.model.zone.ZoneHeating = None</em>, <em class="sig-param">cooling: Optional[pymultimatic.model.zone.ZoneCooling] = None</em>, <em class="sig-param">enabled: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.zone.Zone" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is representing a zone from the system.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -351,6 +351,7 @@ anymore, it means rooms are ‘controlling’ the zone.</p>
 <li><p><strong>rbr</strong> (<em>bool</em>) – Room By Room, means the zone is controlled by ambisense.</p></li>
 <li><p><strong>heating</strong> (<em>ZoneHeating</em>) – Heating function of the zone.</p></li>
 <li><p><strong>cooling</strong> (<em>ZoneCooling</em>) – Cooling function of the zone.</p></li>
+<li><p><strong>enabled</strong> – True if enabled</p></li>
 </ul>
 </dd>
 </dl>

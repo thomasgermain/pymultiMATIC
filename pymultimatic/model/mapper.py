@@ -237,6 +237,7 @@ def map_zone(raw_zone) -> Optional[Zone]:
 
         raw_heating = raw_zone.get("heating", dict())
         raw_cooling = raw_zone.get("cooling", dict())
+        enabled = configuration.get("enabled", bool())
 
         zone_cooling = None
         func = _map_function(raw_heating, "setting")
@@ -249,7 +250,8 @@ def map_zone(raw_zone) -> Optional[Zone]:
         return Zone(id=zone_id, name=name,  # type: ignore
                     temperature=temperature,
                     quick_veto=quick_veto, active_function=active_function,
-                    rbr=rbr, heating=zone_heating, cooling=zone_cooling)
+                    rbr=rbr, heating=zone_heating, cooling=zone_cooling,
+                    enabled=enabled)
     return None
 
 
