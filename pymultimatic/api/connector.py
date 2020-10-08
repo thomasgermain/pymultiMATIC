@@ -10,7 +10,7 @@ from . import ApiError, urls, defaults
 
 _LOGGER = logging.getLogger('Connector')
 
-HEADER = {'content-type': 'application/json'}
+HEADER = {'content-type': 'application/json', 'Accept': 'application/json'}
 
 
 @attr.s
@@ -165,8 +165,9 @@ class Connector:
                 return await self.request(method, url, payload)
 
             if resp.status > 399:
-                # fetch json response so it's available later on
-                await resp.json(content_type=None)
+                # fetch response body, so it's available later on,
+                # since this is an error, this is not always json
+                await resp.read()
                 raise ApiError('Cannot ' + method + ' ' + url, response=resp,
                                payload=payload)
 
