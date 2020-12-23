@@ -462,6 +462,24 @@ temperature again or the operating mode.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pymultimatic.systemmanager.SystemManager.set_ventilation_operating_mode">
+<em class="property">async </em><code class="sig-name descname">set_ventilation_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">ventilation_id: str</em>, <em class="sig-param">mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_ventilation_operating_mode" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Set ventilation at night level.</dt><dd><p>Compatible modes are listed here
+:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>~pymultimatic.model.Ventilation.MODES</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ventilation_id</strong> (<em>str</em>) – id of the ventilation</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="modes.html#pymultimatic.model.mode.OperatingMode" title="pymultimatic.model.mode.OperatingMode"><em>OperatingMode</em></a>) – Mode to set</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="pymultimatic.systemmanager.SystemManager.set_zone_cooling_operating_mode">
 <em class="property">async </em><code class="sig-name descname">set_zone_cooling_operating_mode</code><span class="sig-paren">(</span><em class="sig-param">zone_id: str</em>, <em class="sig-param">new_mode: pymultimatic.model.mode.OperatingMode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pymultimatic.systemmanager.SystemManager.set_zone_cooling_operating_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set new operating mode to cool a

@@ -268,3 +268,23 @@ class System:
 
             return hot_water.active_mode
         return None
+
+    def get_active_mode_ventilation(self) -> Optional[ActiveMode]:
+        """Get the current
+        :class:`~pymultimatic.model.mode.ActiveMode` for a
+        :class:`~pymultimatic.model.Ventilation`. This is the only way
+        to get the real one.
+
+        Returns:
+            ActiveMode: The active mode.
+        """
+
+        mode = None
+        if self.ventilation:
+            if self.quick_mode == QuickModes.VENTILATION_BOOST:
+                mode = \
+                    ActiveMode(self.ventilation.target_high, self.quick_mode)
+            else:
+                mode = self.ventilation.active_mode
+
+        return mode

@@ -530,6 +530,19 @@ async def test_logout_serial_not_fixed(session: ClientSession) -> None:
     assert manager._serial is None
 
 
+@pytest.mark.asyncio
+async def test_set_ventilation_operating_mode(manager: SystemManager,
+                                              resp: aioresponses) -> None:
+    url = urls.set_ventilation_operating_mode(serial=SERIAL, id='123', )
+    resp.put(url, status=200)
+
+    payload = payloads.ventilation_operating_mode('OFF')
+
+    await manager.set_ventilation_operating_mode('123', OperatingModes.OFF)
+
+    _assert_calls(1, manager, [url], [payload])
+
+
 # pylint: disable=no-self-use,too-many-arguments
 def _mock_urls(resp: aioresponses, hvacstate_data: Any, livereport_data: Any,
                rooms_data: Any, system_data: Any,

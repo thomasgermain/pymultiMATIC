@@ -5,7 +5,7 @@ import unittest
 from pymultimatic.model import (System, TimePeriodSetting, TimeProgramDay,
                                 QuickModes, QuickVeto, HolidayMode, Room, Zone,
                                 OperatingModes, SettingModes, constants, Dhw,
-                                HotWater)
+                                HotWater, Ventilation)
 from tests.conftest import _zone, _time_program, _room, _circulation, \
     _hotwater, _zone_cooling
 
@@ -456,3 +456,52 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(QuickModes.COOLING_FOR_X_DAYS, active_mode.current)
         self.assertIsNone(active_mode.sub)
         self.assertEqual(zone.cooling.target_high, active_mode.target)
+
+    def test_get_active_mode_ventilation_off(self) -> None:
+        """Test get active mode for ventilation."""
+
+        ventilation = Ventilation(operating_mode=OperatingModes.OFF,
+                                  target_low=3)
+        system = System(ventilation=ventilation)
+
+        active_mode = system.get_active_mode_ventilation()
+
+        self.assertEqual(OperatingModes.OFF, active_mode.current)
+        self.assertEqual(1, active_mode.target)
+
+    def test_get_active_mode_ventilation_day(self) -> None:
+        """Test get active mode for ventilation."""
+
+        ventilation = Ventilation(operating_mode=OperatingModes.DAY,
+                                  target_high=5)
+        system = System(ventilation=ventilation)
+
+        active_mode = system.get_active_mode_ventilation()
+
+        self.assertEqual(OperatingModes.DAY, active_mode.current)
+        self.assertEqual(5, active_mode.target)
+
+    def test_get_active_mode_ventilation_night(self) -> None:
+        """Test get active mode for ventilation."""
+
+        ventilation = Ventilation(operating_mode=OperatingModes.NIGHT,
+                                  target_low=3)
+        system = System(ventilation=ventilation)
+
+        active_mode = system.get_active_mode_ventilation()
+
+        self.assertEqual(OperatingModes.NIGHT, active_mode.current)
+        self.assertEqual(3, active_mode.target)
+
+    def test_get_active_mode_ventilation_quick_mode(self) -> None:
+        """Test get active mode for ventilation."""
+
+        ventilation = Ventilation(operating_mode=OperatingModes.NIGHT,
+                                  target_high=5)
+        system = System(ventilation=ventilation,
+                        quick_mode=QuickModes.VENTILATION_BOOST)
+
+        active_mode = system.get_active_mode_ventilation()
+
+        self.assertEqual(QuickModes.VENTILATION_BOOST, active_mode.current)
+        self.assertEqual(5, active_mode.target)
