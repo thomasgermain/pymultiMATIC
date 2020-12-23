@@ -270,6 +270,12 @@ This is a bit special component since there is no
 <dt id="pymultimatic.model.ventilation.Ventilation">
 <em class="property">class </em><code class="sig-prename descclassname">pymultimatic.model.ventilation.</code><code class="sig-name descname">Ventilation</code><span class="sig-paren">(</span><em class="sig-param">time_program: pymultimatic.model.timeprogram.TimeProgram = None</em>, <em class="sig-param">operating_mode: pymultimatic.model.mode.OperatingMode = None</em>, <em class="sig-param">target_high: Optional[float] = None</em>, <em class="sig-param">target_low: Optional[float] = None</em>, <em class="sig-param">id: str = None</em>, <em class="sig-param">name: str = None</em>, <em class="sig-param">quick_veto: Optional[pymultimatic.model.mode.QuickVeto] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.model.ventilation.Ventilation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represent the ventilation.</p>
+<dl class="attribute">
+<dt id="pymultimatic.model.ventilation.Ventilation.MODES">
+<code class="sig-name descname">MODES</code><em class="property"> = [OperatingMode(name='OFF'), OperatingMode(name='NIGHT'), OperatingMode(name='DAY')]</em><a class="headerlink" href="#pymultimatic.model.ventilation.Ventilation.MODES" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of mode that are applicable to ventilation.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -521,6 +527,23 @@ get the real one.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="modes.html#pymultimatic.model.mode.ActiveMode" title="pymultimatic.model.mode.ActiveMode">ActiveMode</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymultimatic.model.system.System.get_active_mode_ventilation">
+<code class="sig-name descname">get_active_mode_ventilation</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional[pymultimatic.model.mode.ActiveMode]<a class="headerlink" href="#pymultimatic.model.system.System.get_active_mode_ventilation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current
+<a class="reference internal" href="modes.html#pymultimatic.model.mode.ActiveMode" title="pymultimatic.model.mode.ActiveMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ActiveMode</span></code></a> for a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Ventilation</span></code>. This is the only way
+to get the real one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The active mode.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="modes.html#pymultimatic.model.mode.ActiveMode" title="pymultimatic.model.mode.ActiveMode">ActiveMode</a></p>
 </dd>
 </dl>
 </dd></dl>

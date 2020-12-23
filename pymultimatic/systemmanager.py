@@ -586,6 +586,21 @@ class SystemManager:
             payload=payloads.zone_temperature_setback(self._round(temperature))
         )
 
+    async def set_ventilation_operating_mode(self, ventilation_id: str,
+                                             mode: OperatingMode) -> None:
+        """Set ventilation at night level.
+         Compatible modes are listed here
+         :class:`~pymultimatic.model.Ventilation.MODES
+
+        Args:
+            ventilation_id (str): id of the ventilation
+            mode (OperatingMode): Mode to set
+        """
+        await self._call_api(
+            urls.set_ventilation_operating_mode,
+            params={'id': ventilation_id},
+            payload=payloads.ventilation_operating_mode(mode.name))
+
     async def request_hvac_update(self) -> None:
         """Request an hvac update. This allow the vaillant API to read the data
         from your system.

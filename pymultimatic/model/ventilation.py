@@ -8,6 +8,9 @@ from . import Component, Function, ActiveMode, OperatingModes
 class Ventilation(Function, Component):
     """Represent the ventilation."""
 
+    MODES = [OperatingModes.OFF, OperatingModes.NIGHT, OperatingModes.DAY]
+    """List of mode that are applicable to ventilation."""
+
     temperature = attr.ib(default=None, init=False)
 
     def _active_mode(self) -> ActiveMode:

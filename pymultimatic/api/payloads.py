@@ -120,3 +120,10 @@ def holiday_mode(active: bool, start_date: date, end_date: date,
         "end_date": end_date.strftime(_DATE_FORMAT),
         "temperature_setpoint": temperature
     }
+
+
+def ventilation_operating_mode(mode: str) -> Dict[str, Any]:
+    """Payload to set operating mode for
+    :class:`~pymultimatic.model.Ventilation`.
+    """
+    return {"mode": mode}
