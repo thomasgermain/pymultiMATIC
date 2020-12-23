@@ -109,7 +109,7 @@ class Connector:
         if token_res.status == 200:
             json = await token_res.json()
             return str(json['body']['authToken'])
-        raise ApiError('Login/password invalid', response=token_res)
+        raise ApiError('Cannot get token', response=token_res)
 
     async def _authenticate(self, token: str) -> None:
         params = {
