@@ -22,7 +22,7 @@ setup(name='pymultiMATIC',
       install_requires=[
           "yarl==1.4.2",
           "attrs==19.3.0",
-          "aiohttp==3.6.2"
+          "aiohttp==3.7.4"
       ],
       classifiers=[
           'License :: OSI Approved :: MIT License',
