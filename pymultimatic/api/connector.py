@@ -8,7 +8,7 @@ from yarl import URL
 
 from . import ApiError, urls, defaults
 
-_LOGGER = logging.getLogger('Connector')
+_LOGGER = logging.getLogger(__name__)
 
 HEADER = {'content-type': 'application/json', 'Accept': 'application/json'}
 

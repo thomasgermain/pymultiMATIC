@@ -41,6 +41,7 @@ class TimePeriodSetting:
     start_time = attr.ib(type=str)
     target_temperature = attr.ib(type=Optional[float])
     setting = attr.ib(type=Optional[SettingMode])
+    end_time = attr.ib(type=str, default=None)
     hour = attr.ib(type=int, init=False)
     """Hour at which the setting is starting."""
     minute = attr.ib(type=int, init=False)
@@ -61,9 +62,18 @@ class TimePeriodSetting:
         if not validator.match(value):
             raise ValueError(value)
 
+    @end_time.validator
+    def _validate_end_time(self, attribute: Any, value: Any) -> None:
+        if not value:
+            return
+
+        validator = re.compile('[0-9]{1,2}:[0-9]{2}')
+        if not validator.match(value):
+            raise ValueError(value)
+
     def __deepcopy__(self, memodict: Any = None) -> 'TimePeriodSetting':
         return TimePeriodSetting(self.start_time, self.target_temperature,
-                                 self.setting)
+                                 self.setting, end_time=self.end_time)
 
 
 @attr.s

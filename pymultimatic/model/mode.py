@@ -66,8 +66,10 @@ class OperatingModes:
     . The newly set temperature will be applied for a certain period of
     time."""
 
+    TIME_CONTROLLED = OperatingMode('TIME_CONTROLLED')
+
     _VALUES = {opm.name: opm for opm in [AUTO, DAY, NIGHT, ON, OFF, MANUAL,
-                                         QUICK_VETO]}
+                                         QUICK_VETO, TIME_CONTROLLED]}
 
     @classmethod
     def get(cls, name: str) -> OperatingMode:
@@ -113,7 +115,7 @@ class QuickVeto(Mode):
     @duration.validator
     def _duration_validator(self, attribute: str,
                             value: Optional[int]) -> None:
-        if value is not None and value > 1440:
+        if value and value > 1440:
             raise ValueError('{} with value {} is not valid'
                              .format(attribute, value))
 
@@ -121,7 +123,7 @@ class QuickVeto(Mode):
     @target.validator
     def _target_validator(self, attribute: str,
                           value: Optional[float]) -> None:
-        if value is None or not 5 <= value <= 30:
+        if not value or not 5 <= value <= 30:
             raise ValueError('{} with value {} is not valid'
                              .format(attribute, value))
 
