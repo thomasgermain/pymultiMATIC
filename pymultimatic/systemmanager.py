@@ -7,7 +7,7 @@ from typing import Any, Callable, List, Optional, Tuple, Type
 from aiohttp import ClientSession
 from schema import Schema, SchemaError
 
-from .api import ApiError, Connector, WrongResponseError, defaults, payloads, schemas, urls
+from .api import ApiError, Connector, WrongResponseError, defaults, payloads, schemas
 from .model import (
     Circulation,
     Dhw,
@@ -118,6 +118,7 @@ class SystemManager:
         smartphone_id (str): This is required by the API to login.
         serial (str): If you have multiple facilities,
             you can specify which one to access
+        application (str): Multimatic or senso app (default multimatic)
     """
 
     def __init__(
@@ -127,11 +128,17 @@ class SystemManager:
         session: ClientSession,
         smartphone_id: str = defaults.SMARTPHONE_ID,
         serial: Optional[str] = None,
+        application: Optional[str] = defaults.MULTIMATIC,
     ):
         self._connector: Connector = Connector(user, password, session, smartphone_id)
         self._serial = serial
         self._fixed_serial = self._serial is not None
         self._ensure_ready_lock = asyncio.Lock()
+
+        if application == defaults.SENSO:
+            self.urls = __import__("pymultimatic.api.urls_senso", fromlist=[""])
+        else:
+            self.urls = __import__("pymultimatic.api.urls", fromlist=[""])
 
     async def login(self, force_login: bool = False) -> bool:
         """Try to login to the API, see
@@ -163,11 +170,11 @@ class SystemManager:
         """
 
         (facilities, full_system, live_report, hvac_state, gateway_json,) = await asyncio.gather(
-            self._call_api(urls.facilities_list, schema=schemas.FACILITIES),
-            self._call_api(urls.system, schema=schemas.SYSTEM),
-            self._call_api(urls.live_report, schema=schemas.LIVE_REPORTS),
-            self._call_api(urls.hvac, schema=schemas.HVAC),
-            self._call_api(urls.gateway_type, schema=schemas.GATEWAY),
+            self._call_api(self.urls.facilities_list, schema=schemas.FACILITIES),
+            self._call_api(self.urls.system, schema=schemas.SYSTEM),
+            self._call_api(self.urls.live_report, schema=schemas.LIVE_REPORTS),
+            self._call_api(self.urls.hvac, schema=schemas.HVAC),
+            self._call_api(self.urls.gateway_type, schema=schemas.GATEWAY),
         )
 
         hvac_status = mapper.map_hvac_status(hvac_state)
@@ -183,7 +190,7 @@ class SystemManager:
 
         rooms: List[Room] = []
         if [z for z in zones if z.rbr]:
-            rooms_raw = await self._call_api(urls.rooms, schema=schemas.ROOM_LIST)
+            rooms_raw = await self._call_api(self.urls.rooms, schema=schemas.ROOM_LIST)
             rooms = mapper.map_rooms(rooms_raw)
 
         return System(
@@ -207,7 +214,7 @@ class SystemManager:
         Returns:
             The list of report emf devices
         """
-        return mapper.map_emf_reports(await self._call_api(urls.emf_devices))
+        return mapper.map_emf_reports(await self._call_api(self.urls.emf_devices))
 
     async def get_gateway(self) -> str:
         """Get the gateway type (VR900, VR920, etc)
@@ -215,7 +222,7 @@ class SystemManager:
         Returns:
             The gateway type
         """
-        return mapper.map_gateway(await self._call_api(urls.gateway_type))
+        return mapper.map_gateway(await self._call_api(self.urls.gateway_type))
 
     @ignore_http_409()
     async def get_outdoor_temperature(self) -> Optional[float]:
@@ -224,7 +231,7 @@ class SystemManager:
         Returns:
             The outdoor temperature if available
         """
-        return mapper.map_outdoor_temp(await self._call_api(urls.system_status))
+        return mapper.map_outdoor_temp(await self._call_api(self.urls.system_status))
 
     @ignore_http_409()
     async def get_hvac_status(self) -> HvacStatus:
@@ -233,7 +240,7 @@ class SystemManager:
         Returns:
             The hvac status
         """
-        return mapper.map_hvac_status(await self._call_api(urls.hvac))
+        return mapper.map_hvac_status(await self._call_api(self.urls.hvac))
 
     async def get_facility_detail(self, serial: Optional[str] = None) -> FacilityDetail:
         """Get the :class:`~pymultimatic.model.FacilityDetail` for a given serial
@@ -243,7 +250,7 @@ class SystemManager:
         """
         serial = serial if serial is not None else self._serial
         return mapper.map_facility_detail(
-            await self._call_api(urls.facilities_list, schema=schemas.FACILITIES), serial
+            await self._call_api(self.urls.facilities_list, schema=schemas.FACILITIES), serial
         )
 
     @ignore_http_409()
@@ -254,7 +261,7 @@ class SystemManager:
             A list of live reports
         """
         return mapper.map_reports(
-            await self._call_api(urls.live_report, schema=schemas.LIVE_REPORTS)
+            await self._call_api(self.urls.live_report, schema=schemas.LIVE_REPORTS)
         )
 
     @ignore_http_409()
@@ -265,7 +272,7 @@ class SystemManager:
             A list of live reports
         """
         json = await self._call_api(
-            urls.live_report_device,
+            self.urls.live_report_device,
             params={"device_id": device_id, "report_id": report_id},
             schema=schemas.LIVE_REPORT,
         )
@@ -279,7 +286,7 @@ class SystemManager:
             Ventilation: the ventilation
         """
         return mapper.map_ventilation(
-            await self._call_api(urls.system_ventilation, schema=schemas.VENTILATION_LIST)
+            await self._call_api(self.urls.system_ventilation, schema=schemas.VENTILATION_LIST)
         )
 
     @ignore_http_409()
@@ -289,7 +296,7 @@ class SystemManager:
         Returns:
             HolidayMode: the holiday mode
         """
-        raw = await self._call_api(urls.system_holiday_mode)
+        raw = await self._call_api(self.urls.system_holiday_mode)
         return mapper.map_holiday_mode(raw)
 
     @ignore_http_409()
@@ -299,7 +306,7 @@ class SystemManager:
         Returns:
             QuickMode: the quick mode or None
         """
-        return mapper.map_quick_mode(await self._call_api(urls.system_quickmode))
+        return mapper.map_quick_mode(await self._call_api(self.urls.system_quickmode))
 
     @ignore_http_409()
     async def get_hot_water(self, dhw_id: str) -> Optional[HotWater]:
@@ -313,7 +320,9 @@ class SystemManager:
         Returns:
             HotWater: the hot water information, if any.
         """
-        dhw = await self._call_api(urls.hot_water, params={"id": dhw_id}, schema=schemas.FUNCTION)
+        dhw = await self._call_api(
+            self.urls.hot_water, params={"id": dhw_id}, schema=schemas.FUNCTION
+        )
         return mapper.map_hot_water(dhw, dhw_id)
 
     @ignore_http_409()
@@ -323,7 +332,7 @@ class SystemManager:
         Returns:
             The domestic Hot water (circulation + hot water), if any
         """
-        dhw = await self._call_api(urls.dhws, schema=schemas.DHWS)
+        dhw = await self._call_api(self.urls.dhws, schema=schemas.DHWS)
         return mapper.map_dhw(dhw)
 
     @ignore_http_409(return_value=[])
@@ -333,7 +342,7 @@ class SystemManager:
         Returns:
             Rooms: list of room
         """
-        rooms = await self._call_api(urls.rooms, schema=schemas.ROOM_LIST)
+        rooms = await self._call_api(self.urls.rooms, schema=schemas.ROOM_LIST)
         return mapper.map_rooms(rooms)
 
     @ignore_http_409()
@@ -348,7 +357,7 @@ class SystemManager:
         Returns:
             Room: the room information, if any.
         """
-        new_room = await self._call_api(urls.room, params={"id": room_id}, schema=schemas.ROOM)
+        new_room = await self._call_api(self.urls.room, params={"id": room_id}, schema=schemas.ROOM)
         return mapper.map_room(new_room)
 
     @ignore_http_409(return_value=[])
@@ -358,7 +367,7 @@ class SystemManager:
         Returns:
             Zones: list of Zone
         """
-        rooms = await self._call_api(urls.zones, schema=schemas.ZONE_LIST)
+        rooms = await self._call_api(self.urls.zones, schema=schemas.ZONE_LIST)
         return mapper.map_zones(rooms)
 
     @ignore_http_409()
@@ -373,7 +382,7 @@ class SystemManager:
         Returns:
             Zone: the zone information, if any.
         """
-        new_zone = await self._call_api(urls.zone, params={"id": zone_id}, schema=schemas.ZONE)
+        new_zone = await self._call_api(self.urls.zone, params={"id": zone_id}, schema=schemas.ZONE)
         return mapper.map_zone(new_zone)
 
     @ignore_http_409()
@@ -388,7 +397,7 @@ class SystemManager:
             Circulation: the circulation information, if any.
         """
         new_circulation = await self._call_api(
-            urls.circulation, params={"id": dhw_id}, schema=schemas.FUNCTION
+            self.urls.circulation, params={"id": dhw_id}, schema=schemas.FUNCTION
         )
         return mapper.map_circulation_alone(new_circulation, dhw_id)
 
@@ -403,7 +412,8 @@ class SystemManager:
                 :class:`~pymultimatic.model.mode.QuickModes`
         """
         await self._call_api(
-            urls.system_quickmode, payload=payloads.quickmode(quick_mode.name, quick_mode.duration)
+            self.urls.system_quickmode,
+            payload=payloads.quickmode(quick_mode.name, quick_mode.duration),
         )
 
     @ignore_http_409(return_value=False)
@@ -420,7 +430,7 @@ class SystemManager:
                 (if there wasn't any quick mode set previously)
         """
 
-        await self._call_api(urls.system_quickmode, "delete")
+        await self._call_api(self.urls.system_quickmode, "delete")
         return True
 
     async def set_holiday_mode(self, start_date: date, end_date: date, temperature: float) -> None:
@@ -434,7 +444,7 @@ class SystemManager:
         """
         payload = payloads.holiday_mode(True, start_date, end_date, self._round(temperature))
 
-        await self._call_api(urls.system_holiday_mode, payload=payload)
+        await self._call_api(self.urls.system_holiday_mode, payload=payload)
 
     async def remove_holiday_mode(self) -> None:
         """Remove :class:`~pymultimatic.model.mode.HolidayMode`.
@@ -465,7 +475,7 @@ class SystemManager:
             constants.FROST_PROTECTION_TEMP,
         )
 
-        await self._call_api(urls.system_holiday_mode, payload=payload)
+        await self._call_api(self.urls.system_holiday_mode, payload=payload)
 
     async def set_hot_water_setpoint_temperature(self, dhw_id: str, temperature: float) -> None:
         """This set the target temperature for *hot water*."""
@@ -474,7 +484,7 @@ class SystemManager:
         payload = payloads.hotwater_temperature_setpoint(self._round(temperature))
 
         await self._call_api(
-            urls.hot_water_temperature_setpoint, params={"id": dhw_id}, payload=payload
+            self.urls.hot_water_temperature_setpoint, params={"id": dhw_id}, payload=payload
         )
 
     async def set_hot_water_operating_mode(self, dhw_id: str, new_mode: OperatingMode) -> None:
@@ -502,7 +512,7 @@ class SystemManager:
         if new_mode in HotWater.MODES:
             _LOGGER.debug("New mode is %s", new_mode)
             await self._call_api(
-                urls.hot_water_operating_mode,
+                self.urls.hot_water_operating_mode,
                 params={"id": dhw_id},
                 payload=payloads.hot_water_operating_mode(new_mode.name),
             )
@@ -536,7 +546,7 @@ class SystemManager:
         if new_mode in Room.MODES and new_mode != OperatingModes.QUICK_VETO:
             _LOGGER.debug("New mode is %s", new_mode)
             await self._call_api(
-                urls.room_operating_mode,
+                self.urls.room_operating_mode,
                 params={"id": room_id},
                 payload=payloads.room_operating_mode(new_mode.name),
             )
@@ -554,7 +564,7 @@ class SystemManager:
             quick_veto (QuickVeto): Quick veto to set.
         """
         payload = payloads.room_quick_veto(self._round(quick_veto.target), quick_veto.duration)
-        await self._call_api(urls.room_quick_veto, params={"id": room_id}, payload=payload)
+        await self._call_api(self.urls.room_quick_veto, params={"id": room_id}, payload=payload)
 
     async def remove_room_quick_veto(self, room_id: str) -> None:
         """Remove the :class:`~pymultimatic.model.mode.QuickVeto` from a
@@ -564,7 +574,7 @@ class SystemManager:
             room_id (str): Id of the room.
         """
 
-        await self._call_api(urls.room_quick_veto, "delete", params={"id": room_id})
+        await self._call_api(self.urls.room_quick_veto, "delete", params={"id": room_id})
 
     async def set_room_setpoint_temperature(self, room_id: str, temperature: float) -> None:
         """Set the new current target temperature for a
@@ -586,7 +596,7 @@ class SystemManager:
         _LOGGER.debug("Will try to set room target temperature to %s", temperature)
 
         await self._call_api(
-            urls.room_temperature_setpoint,
+            self.urls.room_temperature_setpoint,
             params={"id": room_id},
             payload=payloads.room_temperature_setpoint(self._round(temperature)),
         )
@@ -603,7 +613,7 @@ class SystemManager:
         """
         payload = payloads.zone_quick_veto(self._round(quick_veto.target))
 
-        await self._call_api(urls.zone_quick_veto, params={"id": zone_id}, payload=payload)
+        await self._call_api(self.urls.zone_quick_veto, params={"id": zone_id}, payload=payload)
 
     async def set_zone_heating_operating_mode(self, zone_id: str, new_mode: OperatingMode) -> None:
         """Set new operating mode to heat a
@@ -632,7 +642,7 @@ class SystemManager:
         if new_mode in ZoneHeating.MODES and new_mode != OperatingModes.QUICK_VETO:
             _LOGGER.debug("New mode is %s", new_mode)
             await self._call_api(
-                urls.zone_heating_mode,
+                self.urls.zone_heating_mode,
                 params={"id": zone_id},
                 payload=payloads.zone_operating_mode(new_mode.name),
             )
@@ -666,7 +676,7 @@ class SystemManager:
         if new_mode in ZoneCooling.MODES and new_mode != OperatingModes.QUICK_VETO:
             _LOGGER.debug("New mode is %s", new_mode)
             await self._call_api(
-                urls.zone_cooling_mode,
+                self.urls.zone_cooling_mode,
                 params={"id": zone_id},
                 payload=payloads.zone_operating_mode(new_mode.name),
             )
@@ -680,7 +690,7 @@ class SystemManager:
         Args:
             zone_id (str): Id of the zone.
         """
-        await self._call_api(urls.zone_quick_veto, "delete", params={"id": zone_id})
+        await self._call_api(self.urls.zone_quick_veto, "delete", params={"id": zone_id})
 
     async def set_zone_heating_setpoint_temperature(self, zone_id: str, temperature: float) -> None:
         """Set the configured temperature for the
@@ -699,7 +709,7 @@ class SystemManager:
         payload = payloads.zone_temperature_setpoint(self._round(temperature))
 
         await self._call_api(
-            urls.zone_heating_setpoint_temperature,
+            self.urls.zone_heating_setpoint_temperature,
             params={"id": zone_id},
             payload=payload,
         )
@@ -721,7 +731,7 @@ class SystemManager:
         payload = payloads.zone_temperature_setpoint(self._round(temperature))
 
         await self._call_api(
-            urls.zone_cooling_setpoint_temperature,
+            self.urls.zone_cooling_setpoint_temperature,
             params={"id": zone_id},
             payload=payload,
         )
@@ -741,7 +751,7 @@ class SystemManager:
         _LOGGER.debug("Will try to set zone setback temperature to %s", temperature)
 
         await self._call_api(
-            urls.zone_heating_setback_temperature,
+            self.urls.zone_heating_setback_temperature,
             params={"id": zone_id},
             payload=payloads.zone_temperature_setback(self._round(temperature)),
         )
@@ -758,7 +768,7 @@ class SystemManager:
             mode (OperatingMode): Mode to set
         """
         await self._call_api(
-            urls.set_ventilation_operating_mode,
+            self.urls.set_ventilation_operating_mode,
             params={"id": ventilation_id},
             payload=payloads.ventilation_operating_mode(mode.name),
         )
@@ -771,7 +781,7 @@ class SystemManager:
             level (int): Level between 1 and 6
         """
         await self._call_api(
-            urls.set_ventilation_day_level,
+            self.urls.set_ventilation_day_level,
             params={"id": ventilation_id},
             payload=payloads.ventilation_level(level),
         )
@@ -784,7 +794,7 @@ class SystemManager:
             level (int): Level between 1 and 6
         """
         await self._call_api(
-            urls.set_ventilation_night_level,
+            self.urls.set_ventilation_night_level,
             params={"id": ventilation_id},
             payload=payloads.ventilation_level(level),
         )
@@ -817,10 +827,10 @@ class SystemManager:
 
         """
 
-        state = mapper.map_hvac_sync_state(await self._call_api(urls.hvac))
+        state = mapper.map_hvac_sync_state(await self._call_api(self.urls.hvac))
 
         if state and not state.is_pending:
-            await self._call_api(urls.hvac_update, "put")
+            await self._call_api(self.urls.hvac_update, "put")
 
     async def set_datetime(self, dt: datetime) -> None:
         """Sets the system datetime
@@ -829,13 +839,15 @@ class SystemManager:
             dt (datetime): the datetime to set
         """
         await self._call_api(
-            urls.system_datetime, "put", payload={"datetime": dt.isoformat(timespec="microseconds")}
+            self.urls.system_datetime,
+            "put",
+            payload={"datetime": dt.isoformat(timespec="microseconds")},
         )
 
     @staticmethod
     def _round(number: float) -> float:
         """round a float to the nearest 0.5, as vaillant API only accepts 0.5
-        step"""
+        stepself."""
         return round(number * 2) / 2
 
     @retry_async(
@@ -894,5 +906,5 @@ class SystemManager:
 
     async def _fetch_serial(self) -> None:
         if not self._fixed_serial:
-            facilities = await self._connector.get(urls.facilities_list())
+            facilities = await self._connector.get(self.urls.facilities_list())
             self._serial = mapper.map_serial_number(facilities)

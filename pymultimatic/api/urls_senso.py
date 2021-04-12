@@ -1,5 +1,5 @@
 # pylint: disable=all
-"""Vaillant API Urls for multimatic app."""
+"""Vaillant API Urls for senso app."""
 from typing import Any
 from urllib import parse
 
@@ -50,11 +50,11 @@ _HVAC_REQUEST_UPDATE = _FACILITIES + "/hvacstate/v1/hvacMessages/update"
 _LIVE_REPORT = _FACILITIES + "/livereport/v1"
 _LIVE_REPORT_DEVICE = _LIVE_REPORT + "/devices/{device_id}/reports/{report_id}"
 _PHOTOVOLTAICS_REPORT = _FACILITIES + "/spine/v1/currentPVMeteringInfo"
-_EMF_DEVICES = _FACILITIES + "/emf/v1/devices"
-_EMF_REPORT_DEVICE = _EMF_DEVICES + "/{device_id}"
+_EMF_REPORT = _FACILITIES + "/emf/v1/devices"
+_EMF_REPORT_DEVICE = _EMF_REPORT + "/{device_id}"
 
 """System control"""
-_SYSTEM = _FACILITIES + "/systemcontrol/v1"
+_SYSTEM = _FACILITIES + "/systemcontrol/tli/v1/"
 _SYSTEM_CONFIGURATION = _SYSTEM + "/configuration"
 _SYSTEM_STATUS = _SYSTEM + "/status"
 _SYSTEM_DATETIME = _SYSTEM_STATUS + "/datetime"
@@ -63,8 +63,7 @@ _SYSTEM_QUICK_MODE = _SYSTEM_CONFIGURATION + "/quickmode"
 _SYSTEM_HOLIDAY_MODE = _SYSTEM_CONFIGURATION + "/holidaymode"
 
 """DHW (Domestic Hot Water)"""
-_DHWS = _SYSTEM + "/dhw"
-_DHW = _DHWS + "/{id}"
+_DHW = _SYSTEM + "/dhw/{id}"
 
 """Circulation"""
 _CIRCULATION = _DHW + "/circulation"
@@ -79,7 +78,6 @@ _HOT_WATER_OPERATING_MODE = _HOT_WATER_CONFIGURATION + "/operation_mode"
 _HOT_WATER_TEMPERATURE_SETPOINT = _HOT_WATER_CONFIGURATION + "/temperature_setpoint"
 
 """Ventilation"""
-_SYSTEM_VENTILATION = _SYSTEM + "/ventilation"
 _VENTILATION = _SYSTEM + "/ventilation/{id}"
 _VENTILATION_CONFIGURATION = _VENTILATION + "/fan/configuration"
 _VENTILATION_TIMEPROGRAM = _VENTILATION_CONFIGURATION + "/timeprogram"
@@ -264,11 +262,12 @@ def photovoltaics(**kwargs: Any) -> str:
     return _PHOTOVOLTAICS_REPORT.format(**kwargs)
 
 
-def emf_devices(**kwargs: Any) -> str:
+def emf_report(**kwargs: Any) -> str:
     """Url to get emf (Embedded Metering Function) report."""
-    return _EMF_DEVICES.format(**kwargs)
+    return _EMF_REPORT.format(**kwargs)
 
 
+# pylint: disable=too-many-arguments
 def emf_report_device(
     energy_type: str, function: str, time_range: str, start: str, offset: str, **kwargs: Any
 ) -> str:
@@ -360,14 +359,6 @@ def dhw(**kwargs: Any) -> str:
     return _DHW.format(**kwargs)
 
 
-def dhws(**kwargs: Any) -> str:
-    """Url to get all domestic hot water
-    (:class:`~pymultimatic.model.component.HotWater` and
-    :class:`~pymultimatic.model.component.Circulation`).
-    """
-    return _DHWS.format(**kwargs)
-
-
 def circulation(**kwargs: Any) -> str:
     """Url to get :class:`~pymultimatic.model.component.Circulation` details."""
     return _CIRCULATION.format(**kwargs)
@@ -423,11 +414,6 @@ def hot_water_temperature_setpoint(**kwargs: Any) -> str:
 def ventilation(**kwargs: Any) -> str:
     """Url to get ventilation details."""
     return _VENTILATION.format(**kwargs)
-
-
-def system_ventilation(**kwargs: Any) -> str:
-    """Url to get ventilation details."""
-    return _SYSTEM_VENTILATION.format(**kwargs)
 
 
 def ventilation_configuration(**kwargs: Any) -> str:

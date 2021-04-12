@@ -103,7 +103,7 @@
 <h1>SystemManager<a class="headerlink" href="#systemmanager" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pymultimatic.systemmanager.SystemManager">
-<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.systemmanager.</code><code class="sig-name descname">SystemManager</code><span class="sig-paren">(</span><em class="sig-param">user: str</em>, <em class="sig-param">password: str</em>, <em class="sig-param">session: aiohttp.client.ClientSession</em>, <em class="sig-param">smartphone_id: str = 'pymultiMATIC'</em>, <em class="sig-param">serial: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.systemmanager.SystemManager" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymultimatic.systemmanager.</code><code class="sig-name descname">SystemManager</code><span class="sig-paren">(</span><em class="sig-param">user: str</em>, <em class="sig-param">password: str</em>, <em class="sig-param">session: aiohttp.client.ClientSession</em>, <em class="sig-param">smartphone_id: str = 'pymultiMATIC'</em>, <em class="sig-param">serial: Optional[str] = None</em>, <em class="sig-param">application: Optional[str] = 'SYSTEMCONTROL_MULTIMATIC'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymultimatic.systemmanager.SystemManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is a convenient manager to help interact with vaillant API.</p>
 <p>The manager is calling the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">ApiConnector</span></code>, the manager will
@@ -116,9 +116,11 @@ without altering it.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>user</strong> (<em>str</em>) – User to login with.</p></li>
 <li><p><strong>password</strong> (<em>str</em>) – Password associated with the user.</p></li>
+<li><p><strong>session</strong> – (aiohttp.ClientSession): Session.</p></li>
 <li><p><strong>smartphone_id</strong> (<em>str</em>) – This is required by the API to login.</p></li>
 <li><p><strong>serial</strong> (<em>str</em>) – If you have multiple facilities,
 you can specify which one to access</p></li>
+<li><p><strong>application</strong> (<em>str</em>) – Multimatic or senso app (default multimatic)</p></li>
 </ul>
 </dd>
 </dl>
