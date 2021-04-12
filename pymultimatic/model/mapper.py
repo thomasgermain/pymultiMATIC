@@ -187,11 +187,16 @@ def _map_status(hvac_state) -> Tuple[str, str]:
     return online, update
 
 
-def map_system_info(facilities, gateway, hvac) -> SystemInfo:
+def map_system_info(facilities, gateway, hvac, serial) -> SystemInfo:
     """Map *system info*."""
-    serial = map_serial_number(facilities)
+    if serial is None:
+        serial = map_serial_number(facilities)
 
-    facility = facilities.get("body", dict()).get("facilitiesList", list())[0]
+    facilities_list = facilities.get(
+        "body", dict()).get("facilitiesList", list())
+    facility = [facility for facility in
+                facilities_list if facility.get('serialNumber') == serial][0]
+
     name = facility.get("name", None)
     mac_ethernet = facility.get("networkInformation", dict()) \
         .get("macAddressEthernet")
