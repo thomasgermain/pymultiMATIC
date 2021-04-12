@@ -385,7 +385,7 @@ class MapperTest(unittest.TestCase):
                 'files/responses/hvacstate'), 'r') as file:
             hvac = json.loads(file.read())
 
-        sys_info = mapper.map_system_info(facilities, gateway, hvac)
+        sys_info = mapper.map_system_info(facilities, gateway, hvac, None)
         self.assertEqual('1234567890123456789012345678',
                          sys_info.serial_number)
         self.assertEqual('Home', sys_info.name)
