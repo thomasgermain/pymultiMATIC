@@ -18,8 +18,6 @@ script:
 - pycodestyle tests
 - mypy --strict --ignore-missing-import tests
 - coverage run --source=pymultimatic setup.py pytest
-- (cd docs && make ci-build)
-- (cd docs && chmod +x html-diff.sh && ./html-diff.sh)
 after_success:
 - coveralls
 
