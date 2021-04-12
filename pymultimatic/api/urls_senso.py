@@ -1,5 +1,5 @@
 # pylint: disable=all
-"""Vaillant API Urls for multimatic app."""
+"""Vaillant API Urls for senso app."""
 from typing import Any
 from urllib import parse
 
@@ -54,7 +54,7 @@ _EMF_REPORT = _FACILITIES + '/emf/v1/devices'
 _EMF_REPORT_DEVICE = _EMF_REPORT + '/{device_id}'
 
 """System control"""
-_SYSTEM = _FACILITIES + '/systemcontrol/v1'
+_SYSTEM = _FACILITIES + '/systemcontrol/tli/v1/'
 _SYSTEM_CONFIGURATION = _SYSTEM + '/configuration'
 _SYSTEM_STATUS = _SYSTEM + '/status'
 _SYSTEM_DATETIME = _SYSTEM_STATUS + '/datetime'
