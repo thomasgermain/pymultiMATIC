@@ -1,5 +1,5 @@
-# pylint: disable=all
-"""Vaillant API Urls for multimatic app."""
+"""Vaillant API Urls.
+"""
 from typing import Any
 from urllib import parse
 
