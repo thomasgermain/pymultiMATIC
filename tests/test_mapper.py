@@ -395,6 +395,22 @@ class MapperTest(unittest.TestCase):
         self.assertEqual('ONLINE', sys_info.online)
         self.assertEqual('UPDATE_NOT_PENDING', sys_info.update)
 
+    def test_map_system_info_specific_serial(self) -> None:
+        with open(path(
+                'files/responses/facilities_multiple'), 'r') as file:
+            facilities = json.loads(file.read())
+        with open(path(
+                'files/responses/gateway'), 'r') as file:
+            gateway = json.loads(file.read())
+        with open(path(
+                'files/responses/hvacstate'), 'r') as file:
+            hvac = json.loads(file.read())
+
+        sys_info = mapper.map_system_info(facilities, gateway, hvac, '888')
+        self.assertEqual('888', sys_info.serial_number)
+        self.assertEqual('Home2', sys_info.name)
+        self.assertEqual('6.6.6', sys_info.firmware)
+
     def test_map_hvac_sync_state_none(self) -> None:
         self.assertIsNone(mapper.map_hvac_sync_state(None))
 
