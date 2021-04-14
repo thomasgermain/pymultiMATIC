@@ -3,7 +3,11 @@ import json
 import unittest
 from datetime import date, datetime
 
-from pymultimatic.model import mapper, QuickModes, OperatingModes
+from pymultimatic.model import (
+    mapper,
+    QuickModes,
+    OperatingModes,
+    ActiveFunction)
 from tests.conftest import path
 
 
@@ -22,6 +26,16 @@ class MapperTest(unittest.TestCase):
         """Test map no zone."""
         zone = mapper.map_zone({})
         self.assertIsNone(zone)
+
+    def test_map_zone_no_active_function(self) -> None:
+        """Test map a zone without active function"""
+        with open(
+                path("files/responses/zone_no_active_function"),
+                'r') as file:
+            zone_file = json.loads(file.read())
+
+        zone = mapper.map_zone(zone_file)
+        self.assertEqual(ActiveFunction.STANDBY, zone.active_function)
 
     def test_map_quick_mode(self) -> None:
         """Test map quick mode."""
