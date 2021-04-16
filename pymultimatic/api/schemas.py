@@ -1,15 +1,4 @@
-import calendar
-import locale
-
 from schema import Schema, Optional, Or, And
-
-
-def days_of_week():
-    cur_locale = locale.getlocale()
-    locale.setlocale(locale.LC_ALL, 'en_US')
-    days = [i.lower() for i in calendar.day_name]
-    locale.setlocale(locale.LC_ALL, cur_locale)
-    return days
 
 
 non_empty_str = And(str, len)
@@ -47,7 +36,8 @@ FUNCTION_SCHEMA = Schema({
             Optional('setting'): non_empty_str,  # TODO: ENUM
             Optional('mode'): non_empty_str,  # TODO: ENUM
         }]
-        for day in days_of_week()
+        # could have used calendar.day_name, but locale may cause issues on different systems
+        for day in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
     }
 }, ignore_extra_keys=True)
 
