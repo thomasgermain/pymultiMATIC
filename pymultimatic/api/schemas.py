@@ -22,23 +22,46 @@ FACILITIES = Schema({
     },
 }, ignore_extra_keys=True)
 
+TIMEPROGRAM_PART = Schema({
+    day: [{
+        'startTime': non_empty_str,  # TODO: parse time
+        Optional('temperatureSetpoint'): numeric,
+        Optional('setting'): non_empty_str,  # TODO: ENUM
+        Optional('mode'): non_empty_str,  # TODO: ENUM
+    }]
+    # could have used calendar.day_name, but locale may cause issues on different systems
+    for day in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
+}, ignore_extra_keys=True)
 
-FUNCTION_SCHEMA = Schema({
+FUNCTION_PART = Schema({
     'configuration': {
         Or('mode', 'operation_mode', 'operationMode'): non_empty_str,  # TODO: ENUM
         Optional(Or('setpoint_temperature', 'temperature_setpoint', 'temperatureSetpoint', 'day_level')): numeric,
         Optional(Or('setback_temperature', 'night_level')): numeric,
+        Optional('day_level'): int,
+        Optional('night_level'): int,
     },
-    'timeprogram': {
-        day: [{
-            'startTime': non_empty_str,  # TODO: parse time
-            Optional('temperatureSetpoint'): numeric,
-            Optional('setting'): non_empty_str,  # TODO: ENUM
-            Optional('mode'): non_empty_str,  # TODO: ENUM
-        }]
-        # could have used calendar.day_name, but locale may cause issues on different systems
-        for day in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
-    }
+    'timeprogram': TIMEPROGRAM_PART,
+}, ignore_extra_keys=True)
+
+
+ZONE_PART = Schema({
+    '_id': non_empty_str,
+    'configuration': {
+        'name': non_empty_str,
+        'enabled': bool,
+        Optional('inside_temperature'): numeric,
+        'active_function': non_empty_str,  # TODO: add ENUM validation
+        'quick_veto': {
+            'active': bool,
+            'setpoint_temperature': numeric,
+        },
+    },
+    Optional('currently_controlled_by'): {
+        'name': non_empty_str,
+    },
+    Optional('heating'): FUNCTION_PART,
+    Optional('cooling'): FUNCTION_PART,
 }, ignore_extra_keys=True)
 
 
@@ -60,40 +83,64 @@ SYSTEM = Schema({
             'datetime': non_empty_str,  # TODO: parse date
             'outside_temperature': numeric,
         },
-        'parameters': [{
-            'name': non_empty_str,
-            'definition': Or(
-                {'values': [non_empty_str]},
-                {'min': numeric, 'max': numeric, 'stepsize': numeric},
-            )
-        }],
-        Optional('zones'): [{
-            '_id': non_empty_str,
-            'configuration': {
-                'name': non_empty_str,
-                'enabled': bool,
-                Optional('inside_temperature'): numeric,
-                'active_function': non_empty_str,  # TODO: add ENUM validation
-                'quick_veto': {
-                    'active': bool,
-                    'setpoint_temperature': numeric,
-                },
-            },
-            Optional('currently_controlled_by'): {
-                'name': non_empty_str,
-            },
-            Optional('heating'): FUNCTION_SCHEMA,
-            Optional('cooling'): FUNCTION_SCHEMA,
-        }],
+        'zones': [ZONE_PART],
         Optional('dhw'): [{
             '_id': non_empty_str,
-            'hotwater':FUNCTION_SCHEMA,
-            'circulation': FUNCTION_SCHEMA,
+            'hotwater': FUNCTION_PART,
+            'circulation': FUNCTION_PART,
         }],
         Optional('ventilation'): [{
-            'fan': FUNCTION_SCHEMA,  # TODO: add _id to schema
+            '_id': non_empty_str,
+            'fan': FUNCTION_PART,
         }],
     }
+}, ignore_extra_keys=True)
+
+
+FUNCTION = Schema({
+    'body': FUNCTION_PART,
+}, ignore_extra_keys=True)
+
+
+ROOM_PART = Schema({
+    'roomIndex': int,
+    'timeprogram': TIMEPROGRAM_PART,
+    'configuration': {
+        'name': non_empty_str,
+        'temperatureSetpoint': numeric,
+        'operationMode': non_empty_str,  # TODO: ENUM
+        'currentTemperature': numeric,
+        'childLock': bool,
+        'isWindowOpen': bool,
+        Optional('currentHumidity'): numeric,
+        'devices': [{
+            'name': non_empty_str,
+            'sgtin': non_empty_str,
+            'deviceType': non_empty_str,  # TODO: ENUM
+            'isBatteryLow': bool,
+            'isRadioOutOfReach': bool,
+        }],
+        Optional('quickVeto'): {
+            'remainingDuration': numeric,
+        },
+    },
+}, ignore_extra_keys=True)
+
+
+ROOM = Schema({
+    'body': ROOM_PART,
+}, ignore_extra_keys=True)
+
+
+ROOM_LIST = Schema({
+    'body': {
+        'rooms': [ROOM_PART],
+    },
+}, ignore_extra_keys=True)
+
+
+ZONE = Schema({
+    'body': ZONE_PART,
 }, ignore_extra_keys=True)
 
 

@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger('SystemManager')
 def retry_async(
         num_tries: int = 5,
         on_exceptions: Tuple[Exception] = (Exception, ),
-        backoff_base: float = 1,
+        backoff_base: float = 0.5,
 ):
     def decorator(func):
         async def wrapper(*args, **kwargs):
@@ -127,7 +127,7 @@ class SystemManager:
 
         rooms: List[Room] = []
         if [z for z in zones if z.rbr]:
-            rooms_raw = await self._call_api(urls.rooms)
+            rooms_raw = await self._call_api(urls.rooms, schema=schemas.ROOM_LIST)
             rooms = mapper.map_rooms(rooms_raw)
 
         return System(holiday=holiday,
@@ -154,8 +154,8 @@ class SystemManager:
             HotWater: the hot water information, if any.
         """
         dhw, report = await asyncio.gather(
-            self._call_api(urls.hot_water, params={'id': dhw_id}),
-            self._call_api(urls.live_report),
+            self._call_api(urls.hot_water, params={'id': dhw_id}, schema=schemas.FUNCTION),
+            self._call_api(urls.live_report, schema=schemas.LIVE_REPORT),
         )
         return mapper.map_hot_water_alone(dhw, dhw_id, report)
 
@@ -170,7 +170,7 @@ class SystemManager:
         Returns:
             Room: the room information, if any.
         """
-        new_room = await self._call_api(urls.room, params={'id': room_id})
+        new_room = await self._call_api(urls.room, params={'id': room_id}, schema=schemas.ROOM)
         return mapper.map_room(new_room)
 
     async def get_zone(self, zone_id: str) -> Optional[Zone]:
@@ -184,7 +184,7 @@ class SystemManager:
         Returns:
             Zone: the zone information, if any.
         """
-        new_zone = await self._call_api(urls.zone, params={'id': zone_id})
+        new_zone = await self._call_api(urls.zone, params={'id': zone_id}, schema=schemas.ZONE)
         return mapper.map_zone(new_zone)
 
     async def get_circulation(self, dhw_id: str) -> Optional[Circulation]:
@@ -198,7 +198,8 @@ class SystemManager:
             Circulation: the circulation information, if any.
         """
         new_circulation = await self._call_api(urls.circulation,
-                                               params={'id': dhw_id})
+                                               params={'id': dhw_id},
+                                               schema=schemas.FUNCTION)
         return mapper.map_circulation_alone(new_circulation, dhw_id)
 
     async def set_quick_mode(self, quick_mode: QuickMode) -> None:
