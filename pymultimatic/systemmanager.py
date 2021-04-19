@@ -2,10 +2,10 @@
 import asyncio
 import logging
 from datetime import date, timedelta
-from typing import Optional, List, Callable, Any, Tuple
+from typing import Optional, List, Callable, Any
 
 from aiohttp import ClientSession
-from schema import Schema
+from schema import Schema, SchemaError
 
 from .api import Connector, urls, payloads, defaults, ApiError, schemas
 from .model import mapper, System, HotWater, QuickMode, QuickVeto, Room, \
@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger('SystemManager')
 
 def retry_async(
         num_tries: int = 5,
-        on_exceptions: Tuple[Exception] = (Exception, ),
+        on_exceptions=(Exception, ),
         backoff_base: float = 0.5,
 ):
     def decorator(func):
@@ -664,7 +664,7 @@ class SystemManager:
         step"""
         return round(number * 2) / 2
 
-    @retry_async()
+    @retry_async(on_exceptions=(SchemaError, ))
     async def _call_api(self,
                         url_call: Callable[..., str],
                         method: Optional[str] = None,
