@@ -1,8 +1,9 @@
+"""Expected API response schemas"""
+# pylint: disable=fixme
 from schema import Schema, Optional, Or, And
 
-
-non_empty_str = And(str, len)
-numeric = Or(int, float)
+non_empty_str = And(str, len)  # pylint: disable=invalid-name
+numeric = Or(int, float)  # pylint: disable=invalid-name
 
 FACILITIES = Schema({
     'body': {
@@ -22,6 +23,8 @@ FACILITIES = Schema({
     },
 }, ignore_extra_keys=True)
 
+
+# could have used calendar.day_name, but locale may cause issues on different systems
 TIMEPROGRAM_PART = Schema({
     day: [{
         'startTime': non_empty_str,  # TODO: parse time
@@ -29,14 +32,19 @@ TIMEPROGRAM_PART = Schema({
         Optional('setting'): non_empty_str,  # TODO: ENUM
         Optional('mode'): non_empty_str,  # TODO: ENUM
     }]
-    # could have used calendar.day_name, but locale may cause issues on different systems
     for day in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
 }, ignore_extra_keys=True)
+
 
 FUNCTION_PART = Schema({
     'configuration': {
         Or('mode', 'operation_mode', 'operationMode'): non_empty_str,  # TODO: ENUM
-        Optional(Or('setpoint_temperature', 'temperature_setpoint', 'temperatureSetpoint', 'day_level')): numeric,
+        Optional(Or(
+            'setpoint_temperature',
+            'temperature_setpoint',
+            'temperatureSetpoint',
+            'day_level',
+        )): numeric,
         Optional(Or('setback_temperature', 'night_level')): numeric,
         Optional('day_level'): int,
         Optional('night_level'): int,

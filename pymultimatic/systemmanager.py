@@ -2,7 +2,7 @@
 import asyncio
 import logging
 from datetime import date, timedelta
-from typing import Optional, List, Callable, Any
+from typing import Optional, List, Callable, Any, Tuple, Type
 
 from aiohttp import ClientSession
 from schema import Schema, SchemaError
@@ -15,13 +15,21 @@ from .model import mapper, System, HotWater, QuickMode, QuickVeto, Room, \
 _LOGGER = logging.getLogger('SystemManager')
 
 
-def retry_async(
+def retry_async(  # type: ignore
         num_tries: int = 5,
-        on_exceptions=(Exception, ),
+        on_exceptions: Tuple[Type[BaseException]] = (Exception, ),
         backoff_base: float = 0.5,
 ):
-    def decorator(func):
-        async def wrapper(*args, **kwargs):
+    """In case of exceptions, retries decoreted async function multiple times.
+    Uses increasing backoff between tries.
+
+    Args:
+         num_tries (int): Max number of tries.
+         on_exceptions (tuple): Retries on specific exceptions only.
+         backoff_base (float): Backoff base value.
+    """
+    def decorator(func):  # type: ignore
+        async def wrapper(*args, **kwargs):  # type: ignore
             _num_tries = num_tries
             while _num_tries > 0:
                 _num_tries -= 1
@@ -664,7 +672,7 @@ class SystemManager:
         step"""
         return round(number * 2) / 2
 
-    @retry_async(on_exceptions=(SchemaError, ))
+    @retry_async(on_exceptions=(SchemaError, ))  # type: ignore
     async def _call_api(self,
                         url_call: Callable[..., str],
                         method: Optional[str] = None,
