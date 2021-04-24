@@ -1,17 +1,17 @@
 import json
 from datetime import date, timedelta
-from typing import Any, List, Dict, AsyncGenerator
+from typing import Any, List, Dict, AsyncGenerator, Tuple, Type
 
 from unittest import mock
 import pytest
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientResponse
 from aioresponses import aioresponses
 
 from tests.conftest import mock_auth, path
 from pymultimatic.api import urls, payloads, ApiError, Connector
 from pymultimatic.model import OperatingModes, QuickModes, QuickVeto, \
     constants, mapper
-from pymultimatic.systemmanager import SystemManager
+from pymultimatic.systemmanager import SystemManager, retry_async
 
 SERIAL = mapper.map_serial_number(
     json.loads(open(path('files/responses/facilities')).read()))
@@ -582,3 +582,47 @@ def _assert_calls(count: int, manager: SystemManager,
     if expected_payloads:
         diff = [x for x in expected_payloads if x not in actual_payloads]
         assert not diff
+
+
+def _api_error(status: int) -> ApiError:
+    response = mock.Mock(spec=ClientResponse)
+    response.status = status
+    return ApiError(
+        message='api error',
+        response=response,
+    )
+
+
+@pytest.mark.parametrize(
+    'on_exceptions, on_status_codes, exception, should_retry',
+    [
+        ((ValueError, ), (), ValueError(), True),
+        ((ValueError, ), (), IndexError(), False),
+        ((ValueError, ), (500, ), IndexError(), False),
+        ((ValueError, ), (), _api_error(400), False),
+        ((ValueError, ), (500, ), _api_error(400), False),
+        ((ValueError, ), (500, ), _api_error(500), True),
+    ],
+)
+@pytest.mark.asyncio
+async def test_retry_async(on_exceptions: Tuple[Type[BaseException]],
+                           on_status_codes: Tuple[int],
+                           exception: Type[BaseException],
+                           should_retry: bool) -> None:
+    cnt = {'cnt': 0}
+    num_tries = 3
+
+    @retry_async(
+        num_tries=num_tries,
+        on_exceptions=on_exceptions,
+        on_status_codes=on_status_codes,
+        backoff_base=0,
+    )
+    async def func() -> None:
+        cnt['cnt'] += 1
+        raise exception
+
+    with pytest.raises(exception.__class__):
+        await func()
+
+    assert cnt['cnt'] == (num_tries if should_retry else 1)

@@ -17,7 +17,8 @@ _LOGGER = logging.getLogger('SystemManager')
 
 def retry_async(  # type: ignore
         num_tries: int = 5,
-        on_exceptions: Tuple[Type[BaseException]] = (Exception, ),
+        on_exceptions: Tuple[Type[BaseException], ...] = (Exception, ),
+        on_status_codes: Tuple[int, ...] = (),
         backoff_base: float = 0.5,
 ):
     """In case of exceptions, retries decoreted async function multiple times.
@@ -26,8 +27,12 @@ def retry_async(  # type: ignore
     Args:
          num_tries (int): Max number of tries.
          on_exceptions (tuple): Retries on specific exceptions only.
+         on_status_codes (tuple): If `ApiError` occurs,
+            retry only on specified status codes.
          backoff_base (float): Backoff base value.
     """
+    on_exceptions = on_exceptions + (ApiError, )
+
     def decorator(func):  # type: ignore
         async def wrapper(*args, **kwargs):  # type: ignore
             _num_tries = num_tries
@@ -35,8 +40,11 @@ def retry_async(  # type: ignore
                 _num_tries -= 1
                 try:
                     return await func(*args, **kwargs)
-                except on_exceptions:
+                except on_exceptions as ex:
                     if not _num_tries:
+                        raise
+                    if isinstance(ex, ApiError) and \
+                            ex.response.status not in on_status_codes:
                         raise
                     retry_in = backoff_base * (num_tries - _num_tries)
                     _LOGGER.debug('Error occurred, retrying in %s', retry_in, exc_info=True)
@@ -672,7 +680,10 @@ class SystemManager:
         step"""
         return round(number * 2) / 2
 
-    @retry_async(on_exceptions=(SchemaError, ))  # type: ignore
+    @retry_async(
+        on_exceptions=(SchemaError, ),
+        on_status_codes=tuple(range(500, 600)),
+    )  # type: ignore
     async def _call_api(self,
                         url_call: Callable[..., str],
                         method: Optional[str] = None,
