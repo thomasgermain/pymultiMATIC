@@ -406,13 +406,13 @@ async def test_remove_quick_mode_no_active_quick_mode(
 async def test_remove_quick_mode_error(manager: SystemManager,
                                        resp: aioresponses) -> None:
     url = urls.system_quickmode(serial=SERIAL)
-    resp.delete(url, status=500)
+    resp.delete(url, status=400)
 
     try:
         await manager.remove_quick_mode()
         assert False
     except ApiError as exc:
-        assert exc.response.status == 500
+        assert exc.response.status == 400
 
     _assert_calls(1, manager, [url])
 
