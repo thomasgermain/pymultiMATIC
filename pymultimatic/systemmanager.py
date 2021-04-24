@@ -680,10 +680,10 @@ class SystemManager:
         step"""
         return round(number * 2) / 2
 
-    @retry_async(
+    @retry_async(  # type: ignore
         on_exceptions=(SchemaError, ),
         on_status_codes=tuple(range(500, 600)),
-    )  # type: ignore
+    )
     async def _call_api(self,
                         url_call: Callable[..., str],
                         method: Optional[str] = None,

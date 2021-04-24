@@ -1,5 +1,5 @@
 """Errors coming from the API."""
-from typing import Optional, Any
+from typing import Any
 
 from aiohttp import ClientResponse
 
