@@ -714,10 +714,6 @@ class SystemManager:
                 if not await self._connector.is_logged():
                     await self._connector.login()
                     await self._fetch_serial()
-        if not self._serial:
-            async with self._ensure_ready_lock:
-                if not self._serial:
-                    await self._fetch_serial()
 
     async def _fetch_serial(self) -> None:
         if not self._fixed_serial:
