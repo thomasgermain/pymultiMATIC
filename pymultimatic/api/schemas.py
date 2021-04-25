@@ -1,0 +1,200 @@
+"""Expected API response schemas"""
+# pylint: disable=fixme
+from schema import Schema, Optional, Or, And
+
+non_empty_str = And(str, len)  # pylint: disable=invalid-name
+numeric = Or(int, float)  # pylint: disable=invalid-name
+
+FACILITIES = Schema({
+    'body': {
+        'facilitiesList': [{
+            'serialNumber': non_empty_str,
+            'name': non_empty_str,
+            'responsibleCountryCode': non_empty_str,
+            'supportedBrand': non_empty_str,
+            'firmwareVersion': non_empty_str,
+            'capabilities': [non_empty_str],
+            'networkInformation': {
+                'macAddressEthernet': non_empty_str,
+                'macAddressWifiAccessPoint': non_empty_str,
+                'macAddressWifiClient': non_empty_str,
+            },
+        }]
+    },
+}, ignore_extra_keys=True)
+
+
+# could have used calendar.day_name, but locale may cause issues on different systems
+TIMEPROGRAM_PART = Schema({
+    day: [{
+        'startTime': non_empty_str,  # TODO: parse time
+        Optional('temperatureSetpoint'): numeric,
+        Optional('setting'): non_empty_str,  # TODO: ENUM
+        Optional('mode'): non_empty_str,  # TODO: ENUM
+    }]
+    for day in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
+}, ignore_extra_keys=True)
+
+
+FUNCTION_PART = Schema({
+    'configuration': {
+        Or('mode', 'operation_mode', 'operationMode'): non_empty_str,  # TODO: ENUM
+        Optional(Or(
+            'setpoint_temperature',
+            'temperature_setpoint',
+            'temperatureSetpoint',
+            'day_level',
+        )): numeric,
+        Optional(Or('setback_temperature', 'night_level')): numeric,
+        Optional('day_level'): int,
+        Optional('night_level'): int,
+    },
+    'timeprogram': TIMEPROGRAM_PART,
+}, ignore_extra_keys=True)
+
+
+ZONE_PART = Schema({
+    '_id': non_empty_str,
+    'configuration': {
+        'name': non_empty_str,
+        'enabled': bool,
+        Optional('inside_temperature'): numeric,
+        'active_function': non_empty_str,  # TODO: add ENUM validation
+        'quick_veto': {
+            'active': bool,
+            'setpoint_temperature': numeric,
+        },
+    },
+    Optional('currently_controlled_by'): {
+        'name': non_empty_str,
+    },
+    Optional('heating'): FUNCTION_PART,
+    Optional('cooling'): FUNCTION_PART,
+}, ignore_extra_keys=True)
+
+
+SYSTEM = Schema({
+    'body': {
+        'configuration': {
+            'eco_mode': bool,
+            'holidaymode': {
+                'active': bool,
+                'start_date': non_empty_str,  # TODO: parse date
+                'end_date': non_empty_str,  # TODO: parse date
+                'temperature_setpoint': numeric,
+            },
+            Optional('quick_mode'): {
+                'quick_mode': non_empty_str,  # TODO: ENUM
+            },
+        },
+        'status': {
+            'datetime': non_empty_str,  # TODO: parse date
+            'outside_temperature': numeric,
+        },
+        'zones': [ZONE_PART],
+        Optional('dhw'): [{
+            '_id': non_empty_str,
+            'hotwater': FUNCTION_PART,
+            'circulation': FUNCTION_PART,
+        }],
+        Optional('ventilation'): [{
+            '_id': non_empty_str,
+            'fan': FUNCTION_PART,
+        }],
+    }
+}, ignore_extra_keys=True)
+
+
+FUNCTION = Schema({
+    'body': FUNCTION_PART,
+}, ignore_extra_keys=True)
+
+
+ROOM_PART = Schema({
+    'roomIndex': int,
+    'timeprogram': TIMEPROGRAM_PART,
+    'configuration': {
+        'name': non_empty_str,
+        'temperatureSetpoint': numeric,
+        'operationMode': non_empty_str,  # TODO: ENUM
+        'currentTemperature': numeric,
+        'childLock': bool,
+        'isWindowOpen': bool,
+        Optional('currentHumidity'): numeric,
+        'devices': [{
+            'name': non_empty_str,
+            'sgtin': non_empty_str,
+            'deviceType': non_empty_str,  # TODO: ENUM
+            'isBatteryLow': bool,
+            'isRadioOutOfReach': bool,
+        }],
+        Optional('quickVeto'): {
+            'remainingDuration': numeric,
+        },
+    },
+}, ignore_extra_keys=True)
+
+
+ROOM = Schema({
+    'body': ROOM_PART,
+}, ignore_extra_keys=True)
+
+
+ROOM_LIST = Schema({
+    'body': {
+        'rooms': [ROOM_PART],
+    },
+}, ignore_extra_keys=True)
+
+
+ZONE = Schema({
+    'body': ZONE_PART,
+}, ignore_extra_keys=True)
+
+
+GATEWAY = Schema({
+    'body': {
+        'gatewayType': non_empty_str,
+    },
+}, ignore_extra_keys=True)
+
+
+HVAC = Schema({
+    'meta': {
+        'onlineStatus': {
+            'status': non_empty_str,  # TODO: ENUM
+        },
+        'firmwareUpdateStatus': {
+            'status': non_empty_str,  # TODO: ENUM
+        },
+    },
+    'body': {
+        Optional('errorMessages'): [{
+            'type': non_empty_str,  # TODO: ENUM
+            'timestamp': int,  # TODO: parse timestamp
+            'deviceName': non_empty_str,
+            'statusCode': non_empty_str,
+            'title': non_empty_str,
+            'description': non_empty_str,
+            Optional('hint'): non_empty_str,
+        }]
+    },
+}, ignore_extra_keys=True)
+
+
+LIVE_REPORT = Schema({
+    'body': {
+        'devices': [{
+            '_id': non_empty_str,
+            'name': non_empty_str,
+            'reports': [{
+                '_id': non_empty_str,
+                'name': non_empty_str,
+                'value': numeric,
+                'unit': non_empty_str,
+                'measurement_category': non_empty_str,  # TODO: ENUM
+                Optional('associated_device_function'): non_empty_str,  # TODO: ENUM
+            }],
+        }],
+    },
+}, ignore_extra_keys=True)
