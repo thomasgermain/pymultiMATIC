@@ -683,6 +683,7 @@ class SystemManager:
     @retry_async(  # type: ignore
         on_exceptions=(SchemaError, ),
         on_status_codes=tuple(range(500, 600)),
+        backoff_base=1
     )
     async def _call_api(self,
                         url_call: Callable[..., str],
