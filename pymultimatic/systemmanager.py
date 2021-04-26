@@ -717,9 +717,10 @@ class SystemManager:
                     await self._fetch_serial()
         if not self._serial:
             async with self._ensure_ready_lock:
-                await self._fetch_serial()
+                if not self._serial:
+                    await self._fetch_serial()
 
     async def _fetch_serial(self) -> None:
-        if not self._fixed_serial and not self._serial:
+        if not self._fixed_serial:
             facilities = await self._connector.get(urls.facilities_list())
             self._serial = mapper.map_serial_number(facilities)

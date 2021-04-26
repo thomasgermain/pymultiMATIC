@@ -510,7 +510,6 @@ async def test_serial_not_fixed_relogin(session: ClientSession,
     assert manager._serial == SERIAL
     assert not manager._fixed_serial
 
-    await manager.logout()
     connector._clear_cookies()
 
     await manager.get_zone('zone')
