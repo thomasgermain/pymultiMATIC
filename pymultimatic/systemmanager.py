@@ -1,16 +1,56 @@
 """Convenient manager to easily gets data from API."""
+import asyncio
 import logging
 from datetime import date, timedelta
-from typing import Optional, List, Callable, Any
+from typing import Optional, List, Callable, Any, Tuple, Type
 
 from aiohttp import ClientSession
+from schema import Schema, SchemaError
 
-from .api import Connector, urls, payloads, defaults, ApiError
+from .api import Connector, urls, payloads, defaults, ApiError, schemas
 from .model import mapper, System, HotWater, QuickMode, QuickVeto, Room, \
     Zone, OperatingMode, Circulation, OperatingModes, constants, \
     ZoneHeating, ZoneCooling
 
 _LOGGER = logging.getLogger('SystemManager')
+
+
+def retry_async(  # type: ignore
+        num_tries: int = 5,
+        on_exceptions: Tuple[Type[BaseException], ...] = (Exception, ),
+        on_status_codes: Tuple[int, ...] = (),
+        backoff_base: float = 0.5,
+):
+    """In case of exceptions, retries decoreted async function multiple times.
+    Uses increasing backoff between tries.
+
+    Args:
+         num_tries (int): Max number of tries.
+         on_exceptions (tuple): Retries on specific exceptions only.
+         on_status_codes (tuple): If `ApiError` occurs,
+            retry only on specified status codes.
+         backoff_base (float): Backoff base value.
+    """
+    on_exceptions = on_exceptions + (ApiError, )
+
+    def decorator(func):  # type: ignore
+        async def wrapper(*args, **kwargs):  # type: ignore
+            _num_tries = num_tries
+            while _num_tries > 0:
+                _num_tries -= 1
+                try:
+                    return await func(*args, **kwargs)
+                except on_exceptions as ex:
+                    if not _num_tries:
+                        raise
+                    if isinstance(ex, ApiError) and \
+                            ex.response.status not in on_status_codes:
+                        raise
+                    retry_in = backoff_base * (num_tries - _num_tries)
+                    _LOGGER.debug('Error occurred, retrying in %s', retry_in, exc_info=True)
+                    await asyncio.sleep(retry_in)
+        return wrapper
+    return decorator
 
 
 # pylint: disable=too-many-public-methods
@@ -46,6 +86,7 @@ class SystemManager:
             smartphone_id)
         self._serial = serial
         self._fixed_serial = self._serial is not None
+        self._ensure_ready_lock = asyncio.Lock()
 
     async def login(self, force_login: bool = False) -> bool:
         """Try to login to the API, see
@@ -77,36 +118,32 @@ class SystemManager:
             System: the full system.
         """
 
-        facilities_req = self._call_api(urls.facilities_list)
-        full_system_req = self._call_api(urls.system)
-        live_report_req = self._call_api(urls.live_report)
-        hvac_state_req = self._call_api(urls.hvac)
-        gateway_req = self._call_api(urls.gateway_type)
+        facilities, full_system, live_report, hvac_state, gateway = await asyncio.gather(
+            self._call_api(urls.facilities_list, schema=schemas.FACILITIES),
+            self._call_api(urls.system, schema=schemas.SYSTEM),
+            self._call_api(urls.live_report, schema=schemas.LIVE_REPORT),
+            self._call_api(urls.hvac, schema=schemas.HVAC),
+            self._call_api(urls.gateway_type, schema=schemas.GATEWAY),
+        )
 
-        gateway = await gateway_req
-        facilities = await facilities_req
-        hvac_state = await hvac_state_req
         system_info = mapper.map_system_info(
             facilities, gateway, hvac_state, self._serial)
 
         boiler_status = mapper.map_boiler_status(hvac_state)
         errors = mapper.map_errors(hvac_state)
 
-        full_system = await full_system_req
         holiday = mapper.map_holiday_mode(full_system)
         zones = mapper.map_zones(full_system)
         outdoor_temp = mapper.map_outdoor_temp(full_system)
         quick_mode = mapper.map_quick_mode(full_system)
         ventilation = mapper.map_ventilation(full_system)
 
-        live_report = await live_report_req
         dhw = mapper.map_dhw(full_system, live_report)
         reports = mapper.map_reports(live_report)
 
         rooms: List[Room] = []
         if [z for z in zones if z.rbr]:
-            rooms_req = self._call_api(urls.rooms)
-            rooms_raw = await rooms_req
+            rooms_raw = await self._call_api(urls.rooms, schema=schemas.ROOM_LIST)
             rooms = mapper.map_rooms(rooms_raw)
 
         return System(holiday=holiday,
@@ -132,12 +169,10 @@ class SystemManager:
         Returns:
             HotWater: the hot water information, if any.
         """
-        dhw_req = self._call_api(urls.hot_water,
-                                 params={'id': dhw_id})
-        lv_req = self._call_api(urls.live_report)
-
-        report = await lv_req
-        dhw = await dhw_req
+        dhw, report = await asyncio.gather(
+            self._call_api(urls.hot_water, params={'id': dhw_id}, schema=schemas.FUNCTION),
+            self._call_api(urls.live_report, schema=schemas.LIVE_REPORT),
+        )
         return mapper.map_hot_water_alone(dhw, dhw_id, report)
 
     async def get_room(self, room_id: str) -> Optional[Room]:
@@ -151,7 +186,7 @@ class SystemManager:
         Returns:
             Room: the room information, if any.
         """
-        new_room = await self._call_api(urls.room, params={'id': room_id})
+        new_room = await self._call_api(urls.room, params={'id': room_id}, schema=schemas.ROOM)
         return mapper.map_room(new_room)
 
     async def get_zone(self, zone_id: str) -> Optional[Zone]:
@@ -165,7 +200,7 @@ class SystemManager:
         Returns:
             Zone: the zone information, if any.
         """
-        new_zone = await self._call_api(urls.zone, params={'id': zone_id})
+        new_zone = await self._call_api(urls.zone, params={'id': zone_id}, schema=schemas.ZONE)
         return mapper.map_zone(new_zone)
 
     async def get_circulation(self, dhw_id: str) -> Optional[Circulation]:
@@ -179,7 +214,8 @@ class SystemManager:
             Circulation: the circulation information, if any.
         """
         new_circulation = await self._call_api(urls.circulation,
-                                               params={'id': dhw_id})
+                                               params={'id': dhw_id},
+                                               schema=schemas.FUNCTION)
         return mapper.map_circulation_alone(new_circulation, dhw_id)
 
     async def set_quick_mode(self, quick_mode: QuickMode) -> None:
@@ -638,15 +674,21 @@ class SystemManager:
         if state and not state.is_pending:
             await self._call_api(urls.hvac_update, 'put')
 
-    # pylint: disable=no-self-use
-    def _round(self, number: float) -> float:
+    @staticmethod
+    def _round(number: float) -> float:
         """round a float to the nearest 0.5, as vaillant API only accepts 0.5
         step"""
         return round(number * 2) / 2
 
+    @retry_async(  # type: ignore
+        on_exceptions=(SchemaError, ),
+        on_status_codes=tuple(range(500, 600)),
+        backoff_base=1
+    )
     async def _call_api(self,
                         url_call: Callable[..., str],
                         method: Optional[str] = None,
+                        schema: Optional[Schema] = None,
                         **kwargs: Any) -> Any:
         await self._ensure_ready()
 
@@ -661,14 +703,22 @@ class SystemManager:
                 method = 'put'
 
         url = url_call(**params)
-        return await self._connector.request(method, url, payload)
+        response = await self._connector.request(method, url, payload)
+        if schema:
+            return schema.validate(response)
+        return response
 
     async def _ensure_ready(self) -> None:
         if not await self._connector.is_logged():
-            await self._connector.login()
-            await self._fetch_serial()
+            async with self._ensure_ready_lock:
+                # double check whether other coroutine has already logged in
+                if not await self._connector.is_logged():
+                    await self._connector.login()
+                    await self._fetch_serial()
         if not self._serial:
-            await self._fetch_serial()
+            async with self._ensure_ready_lock:
+                if not self._serial:
+                    await self._fetch_serial()
 
     async def _fetch_serial(self) -> None:
         if not self._fixed_serial:
