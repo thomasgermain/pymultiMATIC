@@ -35,6 +35,14 @@ TIMEPROGRAM_PART = Schema({
     for day in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')
 }, ignore_extra_keys=True)
 
+CONTROLLED_BY = Schema({
+    'name': non_empty_str,
+    Optional('link'): {
+        Optional('rel'): str,
+        'resourceLink': str,
+        Optional('name'): str,
+    },
+})
 
 FUNCTION_PART = Schema({
     'configuration': {
@@ -52,26 +60,28 @@ FUNCTION_PART = Schema({
     'timeprogram': TIMEPROGRAM_PART,
 }, ignore_extra_keys=True)
 
+QUICK_MODE = Schema({
+    Optional('quickmode'): non_empty_str,  # TODO: ENUM
+    Optional('duration'): numeric,
+})
 
 ZONE_PART = Schema({
     '_id': non_empty_str,
     'configuration': {
         'name': non_empty_str,
-        'enabled': bool,
+        Optional('enabled'): bool,
         Optional('inside_temperature'): numeric,
         'active_function': non_empty_str,  # TODO: add ENUM validation
         'quick_veto': {
             'active': bool,
             'setpoint_temperature': numeric,
         },
+        Optional('quickmode'): QUICK_MODE
     },
-    Optional('currently_controlled_by'): {
-        'name': non_empty_str,
-    },
+    Optional('currently_controlled_by'): CONTROLLED_BY,
     Optional('heating'): FUNCTION_PART,
     Optional('cooling'): FUNCTION_PART,
 }, ignore_extra_keys=True)
-
 
 SYSTEM = Schema({
     'body': {
@@ -83,19 +93,18 @@ SYSTEM = Schema({
                 'end_date': non_empty_str,  # TODO: parse date
                 'temperature_setpoint': numeric,
             },
-            Optional('quick_mode'): {
-                'quick_mode': non_empty_str,  # TODO: ENUM
-            },
+            Optional('quickmode'): QUICK_MODE
         },
         'status': {
             'datetime': non_empty_str,  # TODO: parse date
-            'outside_temperature': numeric,
+            Optional('outside_temperature'): numeric,
         },
         'zones': [ZONE_PART],
         Optional('dhw'): [{
             '_id': non_empty_str,
             'hotwater': FUNCTION_PART,
             'circulation': FUNCTION_PART,
+            Optional('controlled_by'): CONTROLLED_BY,
         }],
         Optional('ventilation'): [{
             '_id': non_empty_str,

@@ -109,7 +109,8 @@ class Connector:
         if token_res.status == 200:
             json = await token_res.json()
             return str(json['body']['authToken'])
-        raise ApiError('Cannot get token', response=token_res)
+        raise ApiError(f'Cannot get token at {urls.new_token()}', response=await token_res.text(),
+                       status=token_res.status)
 
     async def _authenticate(self, token: str) -> None:
         params = {
@@ -123,7 +124,9 @@ class Connector:
                                             headers=HEADER)
 
         if auth_res.status > 399:
-            raise ApiError("Unable to authenticate", response=auth_res)
+            raise ApiError(f'Unable to authenticate at {urls.authenticate()}',
+                           response=await auth_res.text(),
+                           status=auth_res.status)
 
     def _get_cookies(self) -> Dict[Any, Any]:
         return self._session.cookie_jar.filter_cookies(URL(urls.base()))
@@ -168,7 +171,7 @@ class Connector:
                 # fetch response body, so it's available later on,
                 # since this is an error, this is not always json
                 await resp.read()
-                raise ApiError('Cannot ' + method + ' ' + url, response=resp,
-                               payload=payload)
+                raise ApiError('Cannot ' + method + ' ' + url, response=await resp.text(),
+                               payload=payload, status=resp.status)
 
             return await resp.json(content_type=None)

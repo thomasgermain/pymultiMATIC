@@ -4,7 +4,7 @@ from typing import Any, List, Dict, AsyncGenerator, Tuple, Type
 
 from unittest import mock
 import pytest
-from aiohttp import ClientSession, ClientResponse
+from aiohttp import ClientSession
 from aioresponses import aioresponses
 
 from tests.conftest import mock_auth, path
@@ -412,7 +412,7 @@ async def test_remove_quick_mode_error(manager: SystemManager,
         await manager.remove_quick_mode()
         assert False
     except ApiError as exc:
-        assert exc.response.status == 400
+        assert exc.status == 400
 
     _assert_calls(1, manager, [url])
 
@@ -585,30 +585,30 @@ def _assert_calls(count: int, manager: SystemManager,
 
 
 def _api_error(status: int) -> ApiError:
-    response = mock.Mock(spec=ClientResponse)
-    response.status = status
     return ApiError(
         message='api error',
-        response=response,
+        response='blah',
+        status=status
     )
 
 
 @pytest.mark.parametrize(
-    'on_exceptions, on_status_codes, exception, should_retry',
+    'on_exceptions, on_status_codes, exception, should_retry, expect_ex',
     [
-        ((ValueError, ), (), ValueError(), True),
-        ((ValueError, ), (), IndexError(), False),
-        ((ValueError, ), (500, ), IndexError(), False),
-        ((ValueError, ), (), _api_error(400), False),
-        ((ValueError, ), (500, ), _api_error(400), False),
-        ((ValueError, ), (500, ), _api_error(500), True),
+        ((ValueError, ), (), ValueError(), True, _api_error(500)),
+        ((ValueError, ), (), IndexError(), False, IndexError()),
+        ((ValueError, ), (500, ), IndexError(), False, IndexError()),
+        ((ValueError, ), (), _api_error(400), False, _api_error(400)),
+        ((ValueError, ), (500, ), _api_error(400), False, _api_error(400)),
+        ((ValueError, ), (500, ), _api_error(500), True, _api_error(400)),
     ],
 )
 @pytest.mark.asyncio
 async def test_retry_async(on_exceptions: Tuple[Type[BaseException]],
                            on_status_codes: Tuple[int],
                            exception: Type[BaseException],
-                           should_retry: bool) -> None:
+                           should_retry: bool,
+                           expect_ex: Type[BaseException]) -> None:
     cnt = {'cnt': 0}
     num_tries = 3
 
@@ -622,7 +622,7 @@ async def test_retry_async(on_exceptions: Tuple[Type[BaseException]],
         cnt['cnt'] += 1
         raise exception
 
-    with pytest.raises(exception.__class__):
+    with pytest.raises(expect_ex.__class__):
         await func()
 
     assert cnt['cnt'] == (num_tries if should_retry else 1)
