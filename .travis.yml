@@ -16,7 +16,7 @@ script:
 - mypy --strict pymultimatic
 - pylint --rcfile=tests/.pylintrc tests
 - pycodestyle tests
-- mypy --strict --ignore-missing-import tests
+- mypy --strict tests
 - coverage run --source=pymultimatic setup.py pytest
 after_success:
 - coveralls

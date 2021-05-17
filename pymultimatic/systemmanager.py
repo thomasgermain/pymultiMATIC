@@ -7,7 +7,7 @@ from typing import Optional, List, Callable, Any, Tuple, Type
 from aiohttp import ClientSession
 from schema import Schema, SchemaError
 
-from .api import Connector, urls, payloads, defaults, ApiError, schemas
+from .api import Connector, urls, payloads, defaults, ApiError, schemas, WrongResponseError
 from .model import mapper, System, HotWater, QuickMode, QuickVeto, Room, \
     Zone, OperatingMode, Circulation, OperatingModes, constants, \
     ZoneHeating, ZoneCooling
@@ -36,16 +36,21 @@ def retry_async(  # type: ignore
     def decorator(func):  # type: ignore
         async def wrapper(*args, **kwargs):  # type: ignore
             _num_tries = num_tries
+            last_response: Optional[str] = None
             while _num_tries > 0:
                 _num_tries -= 1
                 try:
                     return await func(*args, **kwargs)
                 except on_exceptions as ex:
                     if not _num_tries:
-                        raise
-                    if isinstance(ex, ApiError) and \
-                            ex.response.status not in on_status_codes:
-                        raise
+                        if isinstance(ex, ApiError):
+                            raise ex
+                        raise ApiError("Cannot get correct response", response=last_response,
+                                       status=200) from ex
+                    if isinstance(ex, ApiError):
+                        last_response = ex.response
+                        if ex.status not in on_status_codes:
+                            raise
                     retry_in = backoff_base * (num_tries - _num_tries)
                     _LOGGER.debug('Error occurred, retrying in %s', retry_in, exc_info=True)
                     await asyncio.sleep(retry_in)
@@ -87,6 +92,7 @@ class SystemManager:
         self._serial = serial
         self._fixed_serial = self._serial is not None
         self._ensure_ready_lock = asyncio.Lock()
+        self._max_concurrent_requests = asyncio.Semaphore(2)
 
     async def login(self, force_login: bool = False) -> bool:
         """Try to login to the API, see
@@ -243,7 +249,7 @@ class SystemManager:
         try:
             await self._call_api(urls.system_quickmode, 'delete')
         except ApiError as exc:
-            if exc.response is None or exc.response.status != 409:
+            if exc.response is None or exc.status != 409:
                 raise exc
 
     async def set_holiday_mode(self, start_date: date, end_date: date,
@@ -681,7 +687,7 @@ class SystemManager:
         return round(number * 2) / 2
 
     @retry_async(  # type: ignore
-        on_exceptions=(SchemaError, ),
+        on_exceptions=(WrongResponseError, ),
         on_status_codes=tuple(range(500, 600)),
         backoff_base=1
     )
@@ -690,23 +696,33 @@ class SystemManager:
                         method: Optional[str] = None,
                         schema: Optional[Schema] = None,
                         **kwargs: Any) -> Any:
-        await self._ensure_ready()
+        async with self._max_concurrent_requests:
+            await self._ensure_ready()
 
-        params = kwargs.get('params', {})
-        params.update({'serial': self._serial})
+            params = kwargs.get('params', {})
+            params.update({'serial': self._serial})
 
-        payload = kwargs.get('payload', None)
+            payload = kwargs.get('payload', None)
 
-        if method is None:
-            method = 'get'
-            if payload is not None:
-                method = 'put'
+            if method is None:
+                method = 'get'
+                if payload is not None:
+                    method = 'put'
 
-        url = url_call(**params)
-        response = await self._connector.request(method, url, payload)
-        if schema:
+            url = url_call(**params)
+            response = await self._connector.request(method, url, payload)
+            if schema:
+                return await self._validate_schema(schema, response)
+            return response
+
+    @staticmethod
+    async def _validate_schema(schema: Schema, response: Any) -> Any:
+        try:
             return schema.validate(response)
-        return response
+        except SchemaError as err:
+            raise WrongResponseError(message='Cannot validate response from vaillant',
+                                     response=response,
+                                     status=200) from err
 
     async def _ensure_ready(self) -> None:
         if not await self._connector.is_logged():

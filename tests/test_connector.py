@@ -25,7 +25,7 @@ async def test_login_auth_error(connector: Connector,
         await connector.login()
         assert False
     except ApiError as err:
-        assert str(err.response.url) == urls.authenticate()
+        assert urls.authenticate() in err.message
 
     assert not await connector.is_logged()
 
@@ -39,7 +39,7 @@ async def test_login_login_error(connector: Connector,
         await connector.login()
         assert False
     except ApiError as err:
-        assert str(err.response.url) == urls.new_token()
+        assert urls.new_token() in err.message
 
     assert not await connector.is_logged()
 
@@ -72,7 +72,7 @@ async def test_login_error_before_request(connector: Connector,
             await connector.get(urls.system(serial='123'))
             assert False
         except ApiError as err:
-            assert str(err.response.url) == urls.new_token()
+            assert urls.new_token() in err.message
         mock_login.assert_called_once()
         assert not await connector.is_logged()
 
