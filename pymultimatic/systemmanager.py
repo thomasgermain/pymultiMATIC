@@ -92,7 +92,6 @@ class SystemManager:
         self._serial = serial
         self._fixed_serial = self._serial is not None
         self._ensure_ready_lock = asyncio.Lock()
-        self._max_concurrent_requests = asyncio.Semaphore(2)
 
     async def login(self, force_login: bool = False) -> bool:
         """Try to login to the API, see
@@ -181,6 +180,15 @@ class SystemManager:
         )
         return mapper.map_hot_water_alone(dhw, dhw_id, report)
 
+    async def get_rooms(self) -> Optional[List[Room]]:
+        """Get a list of :class:`~pymultimatic.model.component.Room`
+
+        Returns:
+            Rooms: list of room
+        """
+        rooms = await self._call_api(urls.rooms, schema=schemas.ROOM_LIST)
+        return mapper.map_rooms(rooms)
+
     async def get_room(self, room_id: str) -> Optional[Room]:
         """Get the :class:`~pymultimatic.model.component.Room` information
         for the given id.
@@ -194,6 +202,15 @@ class SystemManager:
         """
         new_room = await self._call_api(urls.room, params={'id': room_id}, schema=schemas.ROOM)
         return mapper.map_room(new_room)
+
+    async def get_zones(self) -> Optional[List[Zone]]:
+        """Get a list of :class:`~pymultimatic.model.component.Zone`
+
+        Returns:
+            Zones: list of Zone
+        """
+        rooms = await self._call_api(urls.zones, schema=schemas.ZONE_LIST)
+        return mapper.map_zones(rooms)
 
     async def get_zone(self, zone_id: str) -> Optional[Zone]:
         """"Get the :class:`~pymultimatic.model.component.Zone` information
@@ -689,38 +706,38 @@ class SystemManager:
     @retry_async(  # type: ignore
         on_exceptions=(WrongResponseError, ),
         on_status_codes=tuple(range(500, 600)),
-        backoff_base=1
+        backoff_base=1,
+        num_tries=3
     )
     async def _call_api(self,
                         url_call: Callable[..., str],
                         method: Optional[str] = None,
                         schema: Optional[Schema] = None,
                         **kwargs: Any) -> Any:
-        async with self._max_concurrent_requests:
-            await self._ensure_ready()
+        await self._ensure_ready()
 
-            params = kwargs.get('params', {})
-            params.update({'serial': self._serial})
+        params = kwargs.get('params', {})
+        params.update({'serial': self._serial})
 
-            payload = kwargs.get('payload', None)
+        payload = kwargs.get('payload', None)
 
-            if method is None:
-                method = 'get'
-                if payload is not None:
-                    method = 'put'
+        if method is None:
+            method = 'get'
+            if payload is not None:
+                method = 'put'
 
-            url = url_call(**params)
-            response = await self._connector.request(method, url, payload)
-            if schema:
-                return await self._validate_schema(schema, response)
-            return response
+        url = url_call(**params)
+        response = await self._connector.request(method, url, payload)
+        if schema:
+            return await self._validate_schema(schema, response, url)
+        return response
 
     @staticmethod
-    async def _validate_schema(schema: Schema, response: Any) -> Any:
+    async def _validate_schema(schema: Schema, response: Any, url: str) -> Any:
         try:
             return schema.validate(response)
         except SchemaError as err:
-            raise WrongResponseError(message='Cannot validate response from vaillant',
+            raise WrongResponseError(message=f'Cannot validate response from {url}: {err.code}',
                                      response=response,
                                      status=200) from err
 

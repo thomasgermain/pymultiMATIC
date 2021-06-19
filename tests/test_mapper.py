@@ -456,3 +456,19 @@ class MapperTest(unittest.TestCase):
         self.assertEqual(3, ventilation.target_high)
         self.assertEqual(1, ventilation.target_low)
         self.assertIsNone(ventilation.temperature)
+
+    def test_map_zone_quickveto(self) -> None:
+        with open(path('files/responses/zone_no_quickveto'), 'r') \
+                as file:
+            raw_zone = json.loads(file.read())
+            zone = mapper.map_zone(raw_zone)
+            self.assertIsNone(zone.quick_veto)
+
+    def test_map_system_no_config_rbr(self) -> None:
+        with open(path('files/responses/systemcontrol_zone_no_config_rbr'), 'r') \
+                as file:
+            raw_system = json.loads(file.read())
+            zones = mapper.map_zones(raw_system)
+            self.assertIsNotNone(zones)
+            self.assertIsNotNone(zones[0])
+            self.assertIsNotNone(zones[1])

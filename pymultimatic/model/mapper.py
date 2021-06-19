@@ -211,11 +211,14 @@ def map_system_info(facilities, gateway, hvac, serial) -> SystemInfo:
                       online, update)
 
 
-def map_zones(full_system) -> List[Zone]:
+def map_zones(json) -> List[Zone]:
     """Map *zones*."""
     zones = []
-    if full_system:
-        for raw_zone in full_system.get("body", dict()).get("zones", list()):
+    if json:
+        raw_zones = json.get("body", dict())
+        if not isinstance(raw_zones, list):
+            raw_zones = raw_zones.get("zones")
+        for raw_zone in raw_zones:
             zone = map_zone(raw_zone)
             if zone:
                 zones.append(zone)
@@ -246,7 +249,7 @@ def map_zone(raw_zone) -> Optional[Zone]:
         enabled = configuration.get("enabled", bool())
 
         zone_cooling = None
-        func = _map_function(raw_heating, "setting")
+        func = _map_function(raw_heating, "setting", rbr)
         zone_heating = ZoneHeating(func[0], func[1], func[2], func[3])
 
         if raw_cooling:
@@ -279,7 +282,8 @@ def map_ventilation(system) -> Optional[Ventilation]:
 
 def _map_function(
         raw,
-        tp_key=None) -> Tuple[TimeProgram, OperatingMode, float, float]:
+        tp_key=None,
+        rbr=False) -> Tuple[TimeProgram, OperatingMode, float, float]:
     conf = raw.get("configuration", dict())
     mode = conf.get('mode')
     if not mode:
@@ -287,7 +291,11 @@ def _map_function(
         if not mode:
             mode = conf.get('operationMode')
 
-    operating_mode = OperatingModes.get(mode)
+    operating_mode: OperatingMode
+    if rbr:
+        operating_mode = OperatingModes.get(mode) if mode else None  # type: ignore
+    else:
+        operating_mode = OperatingModes.get(mode)
     target_high = conf.get("setpoint_temperature", None)
     if not target_high:
         target_high = conf.get("temperature_setpoint", None)
