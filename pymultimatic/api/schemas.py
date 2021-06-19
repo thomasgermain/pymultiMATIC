@@ -4,6 +4,7 @@ from schema import Schema, Optional, Or, And
 
 non_empty_str = And(str, len)  # pylint: disable=invalid-name
 numeric = Or(int, float)  # pylint: disable=invalid-name
+not_rbr = And(non_empty_str, lambda v: v not in ('RBR', 'rbr'))  # pylint: disable=invalid-name
 
 FACILITIES = Schema({
     'body': {
@@ -36,13 +37,38 @@ TIMEPROGRAM_PART = Schema({
 }, ignore_extra_keys=True)
 
 CONTROLLED_BY = Schema({
-    'name': non_empty_str,
+    'name': not_rbr,
     Optional('link'): {
         Optional('rel'): str,
         'resourceLink': str,
         Optional('name'): str,
     },
 })
+
+CONTROLLED_BY_RBR = Schema({
+    'name': Or('RBR', 'rbr'),
+    Optional('link'): {
+        Optional('rel'): str,
+        'resourceLink': str,
+        Optional('name'): str,
+    },
+})
+
+OPTIONAL_CONFIG_FUNCTION_PART = Schema({
+    Optional('configuration'): {
+        Or('mode', 'operation_mode', 'operationMode'): non_empty_str,  # TODO: ENUM
+        Optional(Or(
+            'setpoint_temperature',
+            'temperature_setpoint',
+            'temperatureSetpoint',
+            'day_level',
+        )): numeric,
+        Optional(Or('setback_temperature', 'night_level')): numeric,
+        Optional('day_level'): int,
+        Optional('night_level'): int,
+    },
+    'timeprogram': TIMEPROGRAM_PART,
+}, ignore_extra_keys=True)
 
 FUNCTION_PART = Schema({
     'configuration': {
@@ -65,23 +91,35 @@ QUICK_MODE = Schema({
     Optional('duration'): numeric,
 })
 
-ZONE_PART = Schema({
-    '_id': non_empty_str,
-    'configuration': {
-        'name': non_empty_str,
-        Optional('enabled'): bool,
-        Optional('inside_temperature'): numeric,
-        'active_function': non_empty_str,  # TODO: add ENUM validation
-        'quick_veto': {
-            'active': bool,
-            'setpoint_temperature': numeric,
-        },
-        Optional('quickmode'): QUICK_MODE
+
+ZONE_CONFIGURATION = Schema({
+    'name': non_empty_str,
+    Optional('enabled'): bool,
+    Optional('inside_temperature'): numeric,
+    Optional('active_function'): non_empty_str,  # TODO: add ENUM validation
+    Optional('quick_veto'): {
+        'active': bool,
+        'setpoint_temperature': numeric,
     },
-    Optional('currently_controlled_by'): CONTROLLED_BY,
-    Optional('heating'): FUNCTION_PART,
-    Optional('cooling'): FUNCTION_PART,
-}, ignore_extra_keys=True)
+    Optional('quickmode'): QUICK_MODE
+})
+
+ZONE_PART = Schema(Or(
+    Schema({
+        '_id': non_empty_str,
+        'configuration': ZONE_CONFIGURATION,
+        Optional('currently_controlled_by'): CONTROLLED_BY,
+        Optional('heating'): FUNCTION_PART,
+        Optional('cooling'): FUNCTION_PART,
+    }),
+    Schema({
+        '_id': non_empty_str,
+        Optional('configuration'): ZONE_CONFIGURATION,
+        'currently_controlled_by': CONTROLLED_BY_RBR,
+        Optional('heating'): OPTIONAL_CONFIG_FUNCTION_PART,
+        Optional('cooling'): OPTIONAL_CONFIG_FUNCTION_PART,
+    })
+), ignore_extra_keys=True)
 
 SYSTEM = Schema({
     'body': {
@@ -129,6 +167,7 @@ ROOM_PART = Schema({
         'currentTemperature': numeric,
         'childLock': bool,
         'isWindowOpen': bool,
+        Optional('iconId'): str,
         Optional('currentHumidity'): numeric,
         'devices': [{
             'name': non_empty_str,
@@ -158,6 +197,10 @@ ROOM_LIST = Schema({
 
 ZONE = Schema({
     'body': ZONE_PART,
+}, ignore_extra_keys=True)
+
+ZONE_LIST = Schema({
+    'body': [ZONE_PART],
 }, ignore_extra_keys=True)
 
 

@@ -8,7 +8,7 @@ from aiohttp import ClientSession
 from aioresponses import aioresponses
 
 from tests.conftest import mock_auth, path
-from pymultimatic.api import urls, payloads, ApiError, Connector
+from pymultimatic.api import urls, payloads, ApiError, Connector, WrongResponseError
 from pymultimatic.model import OperatingModes, QuickModes, QuickVeto, \
     constants, mapper
 from pymultimatic.systemmanager import SystemManager, retry_async
@@ -592,15 +592,23 @@ def _api_error(status: int) -> ApiError:
     )
 
 
+def _wrong_response_error(status: int) -> ApiError:
+    return WrongResponseError(
+        message='api error',
+        response='blah',
+        status=status
+    )
+
+
 @pytest.mark.parametrize(
     'on_exceptions, on_status_codes, exception, should_retry, expect_ex',
     [
-        ((ValueError, ), (), ValueError(), True, _api_error(500)),
-        ((ValueError, ), (), IndexError(), False, IndexError()),
-        ((ValueError, ), (500, ), IndexError(), False, IndexError()),
-        ((ValueError, ), (), _api_error(400), False, _api_error(400)),
-        ((ValueError, ), (500, ), _api_error(400), False, _api_error(400)),
-        ((ValueError, ), (500, ), _api_error(500), True, _api_error(400)),
+        ((ValueError,), (), ValueError(), True, _api_error(500)),
+        ((ValueError,), (), IndexError(), False, IndexError()),
+        ((ValueError,), (500,), IndexError(), False, IndexError()),
+        ((ValueError,), (), _api_error(400), False, _api_error(400)),
+        ((ValueError,), (500,), _api_error(400), False, _api_error(400)),
+        ((WrongResponseError, ), (200, ), _wrong_response_error(200), True, _api_error(200)),
     ],
 )
 @pytest.mark.asyncio
