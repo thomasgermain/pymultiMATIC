@@ -1,15 +1,22 @@
 """Mapped model from the API."""
-# pylint: disable=cyclic-import
-from .mode import Mode, OperatingMode, OperatingModes, QuickVeto, ActiveMode,\
-    SettingMode, SettingModes
-from .timeprogram import TimeProgram, TimeProgramDay, TimePeriodSetting
-from .common import Component, Function
-from .zone import ZoneCooling, ZoneHeating, Zone, ActiveFunction
-from .room import Device, Room
-from .status import BoilerStatus, Error
-from .syncstate import SyncState
-from .dhw import Dhw, HotWater, Circulation
-from .report import Report
-from .quick_mode import QuickMode, QuickModes, HolidayMode
-from .ventilation import Ventilation
-from .system import System, SystemInfo
+from .mode import (  # noqa: F401
+    Mode,
+    OperatingMode,
+    OperatingModes,
+    QuickVeto,
+    ActiveMode,
+    SettingMode,
+    SettingModes,
+)
+from .timeprogram import TimeProgram, TimeProgramDay, TimePeriodSetting  # noqa: F401
+from .common import Component, Function  # noqa: F401
+from .zone import ZoneCooling, ZoneHeating, Zone, ActiveFunction  # noqa: F401
+from .room import Device, Room  # noqa: F401
+from .status import HvacStatus, BoilerStatus, Error  # noqa: F401
+from .syncstate import SyncState  # noqa: F401
+from .dhw import Dhw, HotWater, Circulation  # noqa: F401
+from .report import Report  # noqa: F401
+from .ventilation import Ventilation  # noqa: F401
+from .quick_mode import QuickMode, QuickModes, HolidayMode  # noqa: F401
+from .info import FacilityDetail  # noqa: F401
+from .system import System  # noqa: F401

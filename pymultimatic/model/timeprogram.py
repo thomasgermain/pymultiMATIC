@@ -2,10 +2,10 @@
 :class:`~pymultimatic.model.mode.OperatingModes.AUTO` operation mode is
 activated."""
 import copy
-from datetime import timedelta, datetime
-from typing import List, Dict, Optional, Any
-
 import re
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional
+
 import attr
 
 from . import SettingMode
@@ -51,19 +51,17 @@ class TimePeriodSetting:
 
     def __attrs_post_init__(self) -> None:
         self.absolute_minutes = _to_absolute_minutes(self.start_time)
-        self.hour = int(self.start_time.split(':')[0])
-        self.minute = int(self.start_time.split(':')[1])
+        self.hour = int(self.start_time.split(":")[0])
+        self.minute = int(self.start_time.split(":")[1])
 
-    # pylint: disable=unused-argument, no-self-use
     @start_time.validator
     def _validate_start_time(self, attribute: Any, value: Any) -> None:
-        validator = re.compile('[0-9]{1,2}:[0-9]{2}')
+        validator = re.compile("[0-9]{1,2}:[0-9]{2}")
         if not validator.match(value):
             raise ValueError(value)
 
-    def __deepcopy__(self, memodict: Any = None) -> 'TimePeriodSetting':
-        return TimePeriodSetting(self.start_time, self.target_temperature,
-                                 self.setting)
+    def __deepcopy__(self, memodict: Any = None) -> "TimePeriodSetting":
+        return TimePeriodSetting(self.start_time, self.target_temperature, self.setting)
 
 
 @attr.s
@@ -101,7 +99,7 @@ class TimeProgram:
         """
         day = search_date.strftime("%A").lower()
         day_before = (search_date - timedelta(days=1)).strftime("%A").lower()
-        time = str(search_date.hour) + ':' + str(search_date.minute)
+        time = str(search_date.hour) + ":" + str(search_date.minute)
 
         abs_minutes = _to_absolute_minutes(time)
         tp_day = self.days[day]
@@ -114,8 +112,7 @@ class TimeProgram:
 
         idx: int = 0
         max_len: int = len(tp_day.settings)
-        while idx < max_len and\
-                abs_minutes > tp_day.settings[idx].absolute_minutes:
+        while idx < max_len and abs_minutes > tp_day.settings[idx].absolute_minutes:
             idx += 1
 
         if not idx == max_len:
@@ -146,7 +143,7 @@ class TimeProgram:
         """
         day = search_date.strftime("%A").lower()
         day_after = (search_date + timedelta(days=1)).strftime("%A").lower()
-        time = str(search_date.hour) + ':' + str(search_date.minute)
+        time = str(search_date.hour) + ":" + str(search_date.minute)
 
         abs_minutes = _to_absolute_minutes(time)
         tp_day = self.days[day]
@@ -159,8 +156,7 @@ class TimeProgram:
 
         idx: int = 0
         max_len: int = len(tp_day.settings)
-        while idx < max_len and \
-                abs_minutes > tp_day.settings[idx].absolute_minutes:
+        while idx < max_len and abs_minutes > tp_day.settings[idx].absolute_minutes:
             idx += 1
 
         if not idx == max_len:

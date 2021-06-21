@@ -3,23 +3,52 @@ import json
 import unittest
 from datetime import date, datetime
 
-from pymultimatic.model import (
-    mapper,
-    QuickModes,
-    OperatingModes,
-    ActiveFunction)
+from pymultimatic.model import ActiveFunction, OperatingModes, QuickModes, mapper
 from tests.conftest import path
 
 
 class MapperTest(unittest.TestCase):
     """Test class."""
 
+    def test_map_quick_mode(self) -> None:
+        with open(path("files/responses/quick_mode"), "r") as file:
+            json_raw = json.loads(file.read())
+            q_m = mapper.map_quick_mode(json_raw)
+            self.assertEqual(QuickModes.SYSTEM_OFF, q_m)
+            self.assertEqual(0, q_m.duration)
+
+    def test_map_quick_mode_no_duration(self) -> None:
+        with open(path("files/responses/quick_mode_no_duration"), "r") as file:
+            json_raw = json.loads(file.read())
+            q_m = mapper.map_quick_mode(json_raw)
+            self.assertEqual(QuickModes.SYSTEM_OFF, q_m)
+            self.assertIsNone(q_m.duration)
+
+    def test_map_holiday(self) -> None:
+        with open(path("files/responses/holiday_mode"), "r") as file:
+            json_raw = json.loads(file.read())
+            holiday = mapper.map_holiday_mode(json_raw)
+            self.assertEqual(False, holiday.is_active)
+
+    def test_map_zones(self) -> None:
+        with open(path("files/responses/zones"), "r") as file:
+            json_raw = json.loads(file.read())
+            zones = mapper.map_zones(json_raw)
+            self.assertEqual(2, len(zones))
+
+    def test_map_dhw(self) -> None:
+        with open(path("files/responses/dhws"), "r") as file:
+            raw_dhw = json.loads(file.read())
+            dhw = mapper.map_dhw(raw_dhw)
+            self.assertIsNotNone(dhw.hotwater)
+            self.assertIsNone(dhw.hotwater.temperature)
+            self.assertIsNotNone(dhw.circulation)
+
     def test_map_zone_cooling(self) -> None:
         """Test map zone with cooling."""
-        with open(path("files/responses/systemcontrol_ventilation"),
-                  'r') as file:
+        with open(path("files/responses/systemcontrol_ventilation"), "r") as file:
             system = json.loads(file.read())
-        zones = mapper.map_zones(system)
+        zones = mapper.map_zones_from_system(system)
         self.assertIsNotNone(zones)
 
     def test_map_zone_empty(self) -> None:
@@ -29,42 +58,34 @@ class MapperTest(unittest.TestCase):
 
     def test_map_zone_no_active_function(self) -> None:
         """Test map a zone without active function"""
-        with open(
-                path("files/responses/zone_no_active_function"),
-                'r') as file:
+        with open(path("files/responses/zone_no_active_function"), "r") as file:
             zone_file = json.loads(file.read())
 
         zone = mapper.map_zone(zone_file)
         self.assertEqual(ActiveFunction.STANDBY, zone.active_function)
 
-    def test_map_quick_mode(self) -> None:
+    def test_map_quick_mode_from_system(self) -> None:
         """Test map quick mode."""
-        with open(
-                path("files/responses/systemcontrol_hotwater_boost"),
-                'r') as file:
+        with open(path("files/responses/systemcontrol_hotwater_boost"), "r") as file:
             system = json.loads(file.read())
 
-        quick_mode = mapper.map_quick_mode(system)
+        quick_mode = mapper.map_quick_mode_from_system(system)
         self.assertEqual(QuickModes.HOTWATER_BOOST.name, quick_mode.name)
 
     def test_map_quick_mode_quick_veto(self) -> None:
         """Test map quick veto."""
-        with open(
-                path("files/responses/systemcontrol_quick_veto"),
-                'r') as file:
+        with open(path("files/responses/systemcontrol_quick_veto"), "r") as file:
             system = json.loads(file.read())
 
-        quick_mode = mapper.map_quick_mode(system)
+        quick_mode = mapper.map_quick_mode_from_system(system)
         self.assertIsNone(quick_mode)
 
     def test_map_quick_veto_zone(self) -> None:
         """Test map quick veto zone."""
-        with open(
-                path("files/responses/systemcontrol_quick_veto"),
-                'r') as file:
+        with open(path("files/responses/systemcontrol_quick_veto"), "r") as file:
             system = json.loads(file.read())
 
-        zones = mapper.map_zones(system)
+        zones = mapper.map_zones_from_system(system)
 
         for zone in zones:
             if zone.id == "Control_ZO2":
@@ -76,29 +97,26 @@ class MapperTest(unittest.TestCase):
 
     def test_map_no_quick_mode(self) -> None:
         """Test map no quick mode."""
-        with open(path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             system = json.loads(file.read())
 
-        quick_mode = mapper.map_quick_mode(system)
+        quick_mode = mapper.map_quick_mode_from_system(system)
         self.assertIsNone(quick_mode)
 
     def test_map_outdoor_temp(self) -> None:
         """Test map outdoor temperature."""
-        with open(
-                path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             system = json.loads(file.read())
 
-        temp = mapper.map_outdoor_temp(system)
+        temp = mapper.map_outdoor_temp_from_system(system)
         self.assertEqual(6.3, temp)
 
     def test_map_no_outdoor_temp(self) -> None:
         """Test map no outdoor temperature."""
-        with open(
-                path('files/responses/systemcontrol_no_outside_temp'),
-                'r') as file:
+        with open(path("files/responses/systemcontrol_no_outside_temp"), "r") as file:
             system = json.loads(file.read())
 
-        temp = mapper.map_outdoor_temp(system)
+        temp = mapper.map_outdoor_temp_from_system(system)
         self.assertIsNone(temp)
 
     def test_rooms_none(self) -> None:
@@ -109,13 +127,13 @@ class MapperTest(unittest.TestCase):
 
     def test_rooms_empty(self) -> None:
         """Test map empty rooms."""
-        rooms = mapper.map_rooms(dict())
+        rooms = mapper.map_rooms({})
         self.assertIsNotNone(rooms)
         self.assertEqual(0, len(rooms))
 
     def test_rooms_correct(self) -> None:
         """Test map rooms."""
-        with open(path('files/responses/rooms'), 'r') as file:
+        with open(path("files/responses/rooms"), "r") as file:
             raw_rooms = json.loads(file.read())
 
         rooms = mapper.map_rooms(raw_rooms)
@@ -140,8 +158,7 @@ class MapperTest(unittest.TestCase):
 
     def test_room_quick_veto(self) -> None:
         """Test map quick veto room."""
-        with open(path('files/responses/rooms_quick_veto'), 'r') \
-                as file:
+        with open(path("files/responses/rooms_quick_veto"), "r") as file:
             raw_rooms = json.loads(file.read())
 
         rooms = mapper.map_rooms(raw_rooms)
@@ -162,7 +179,7 @@ class MapperTest(unittest.TestCase):
 
     def test_map_devices(self) -> None:
         """Test map devices."""
-        with open(path('files/responses/rooms'), 'r') as file:
+        with open(path("files/responses/rooms"), "r") as file:
             raw_rooms = json.loads(file.read())
 
         rooms = mapper.map_rooms(raw_rooms)
@@ -197,10 +214,10 @@ class MapperTest(unittest.TestCase):
 
     def test_holiday_mode_none(self) -> None:
         """Test map no holiday mode."""
-        with open(path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             raw_system = json.loads(file.read())
 
-        holiday_mode = mapper.map_holiday_mode(raw_system)
+        holiday_mode = mapper.map_holiday_mode_from_system(raw_system)
         self.assertIsNotNone(holiday_mode)
         self.assertFalse(holiday_mode.is_active)
         self.assertIsNotNone(holiday_mode.start_date)
@@ -211,12 +228,11 @@ class MapperTest(unittest.TestCase):
 
     def test_holiday_mode(self) -> None:
         """Test map holiday mode."""
-        with open(path('files/responses/systemcontrol_holiday'), 'r')\
-                as file:
+        with open(path("files/responses/systemcontrol_holiday"), "r") as file:
             raw_system = json.loads(file.read())
 
-        holiday_mode = mapper.map_holiday_mode(raw_system)
-        quick_mode = mapper.map_quick_mode(raw_system)
+        holiday_mode = mapper.map_holiday_mode_from_system(raw_system)
+        quick_mode = mapper.map_quick_mode_from_system(raw_system)
         self.assertEqual(QuickModes.HOLIDAY, quick_mode)
         self.assertIsNotNone(holiday_mode)
         self.assertTrue(holiday_mode.is_active)
@@ -226,49 +242,47 @@ class MapperTest(unittest.TestCase):
 
     def test_map_circulation(self) -> None:
         """Test map circulation."""
-        with open(path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             raw_system = json.loads(file.read())
 
-        circulation = mapper.map_circulation(raw_system)
+        circulation = mapper.map_circulation_from_system(raw_system)
         self.assertEqual(OperatingModes.AUTO, circulation.operating_mode)
         self.assertEqual("Control_DHW", circulation.id)
         self.assertIsNone(circulation.temperature)
         self.assertIsNone(circulation.target_high)
         self.assertIsNotNone(circulation.time_program)
-        self.assertIsNotNone(circulation.time_program.days['monday']
-                             .settings[0].setting)
+        self.assertIsNotNone(circulation.time_program.days["monday"].settings[0].setting)
 
     def test_hot_water(self) -> None:
         """Test map hot water."""
-        with open(path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             raw_system = json.loads(file.read())
-        with open(path('files/responses/livereport'), 'r') as file:
+        with open(path("files/responses/livereport"), "r") as file:
             raw_livereport = json.loads(file.read())
 
-        hot_water = mapper.map_hot_water(raw_system, raw_livereport)
+        hot_water = mapper.map_hot_water_from_system(raw_system, raw_livereport)
         self.assertEqual(44.5, hot_water.temperature)
         self.assertEqual(51, hot_water.target_high)
         self.assertEqual(OperatingModes.AUTO, hot_water.operating_mode)
         self.assertEqual("Control_DHW", hot_water.id)
-        self.assertIsNotNone(hot_water.time_program.days['monday']
-                             .settings[0].setting)
+        self.assertIsNotNone(hot_water.time_program.days["monday"].settings[0].setting)
 
     def test_no_hotwater(self) -> None:
         """Test map no hot water."""
-        with open(path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             raw_system = json.loads(file.read())
 
-        raw_system['body']['dhw'] = []
+        raw_system["body"]["dhw"] = []
 
-        hot_water = mapper.map_hot_water(raw_system, {})
+        hot_water = mapper.map_hot_water_from_system(raw_system, {})
         self.assertIsNone(hot_water)
 
     def test_hot_water_no_current_temp(self) -> None:
         """Test map hot water no live report."""
-        with open(path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             raw_system = json.loads(file.read())
 
-        hot_water = mapper.map_hot_water(raw_system, json.loads('{}'))
+        hot_water = mapper.map_hot_water_from_system(raw_system, json.loads("{}"))
         self.assertEqual(None, hot_water.temperature)
         self.assertEqual(51, hot_water.target_high)
         self.assertEqual(OperatingModes.AUTO, hot_water.operating_mode)
@@ -276,99 +290,94 @@ class MapperTest(unittest.TestCase):
 
     def test_boiler_status(self) -> None:
         """Test map boiler status."""
-        with open(path('files/responses/hvacstate'), 'r') as file:
+        with open(path("files/responses/hvacstate"), "r") as file:
             hvac = json.loads(file.read())
 
-        boiler_status = mapper.map_boiler_status(hvac)
+        hvac_status = mapper.map_hvac_status(hvac)
+        boiler_status = hvac_status.boiler_status
         self.assertEqual("...", boiler_status.hint)
         self.assertEqual("...", boiler_status.description)
         self.assertEqual("S.8", boiler_status.status_code)
-        self.assertEqual("Mode chauffage : Arrêt temporaire après une "
-                         "opération de chauffage", boiler_status.title)
-        self.assertEqual("VC BE 246/5-3", boiler_status.device_name)
-        self.assertFalse(boiler_status.is_error)
-        self.assertEqual(datetime.fromtimestamp(1545896904282/1000),
-                         boiler_status.timestamp)
+        self.assertEqual(
+            "Mode chauffage : Arrêt temporaire après une " "opération de chauffage",
+            hvac_status.boiler_status.title,
+        )
+        self.assertEqual("VC BE 246/5-3", hvac_status.boiler_status.device_name)
+        self.assertFalse(hvac_status.boiler_status.is_error)
+        self.assertEqual(datetime.fromtimestamp(1545896904282 / 1000), boiler_status.timestamp)
 
     def test_boiler_status_no_live_report(self) -> None:
         """Test map boiler status no live report."""
-        with open(path('files/responses/hvacstate'), 'r') as file:
+        with open(path("files/responses/hvacstate"), "r") as file:
             hvac = json.loads(file.read())
 
-        boiler_status = mapper.map_boiler_status(hvac)
-        self.assertEqual("...", boiler_status.hint)
-        self.assertEqual("...", boiler_status.description)
-        self.assertEqual("S.8", boiler_status.status_code)
-        self.assertEqual("Mode chauffage : Arrêt temporaire après une "
-                         "opération de chauffage", boiler_status.title)
-        self.assertEqual("VC BE 246/5-3", boiler_status.device_name)
-        self.assertFalse(boiler_status.is_error)
-        self.assertEqual(datetime.fromtimestamp(1545896904282/1000),
-                         boiler_status.timestamp)
+        hvac_status = mapper.map_hvac_status(hvac)
+        self.assertEqual("...", hvac_status.boiler_status.hint)
+        self.assertEqual("...", hvac_status.boiler_status.description)
+        self.assertEqual("S.8", hvac_status.boiler_status.status_code)
+        self.assertEqual(
+            "Mode chauffage : Arrêt temporaire après une " "opération de chauffage",
+            hvac_status.boiler_status.title,
+        )
+        self.assertEqual("VC BE 246/5-3", hvac_status.boiler_status.device_name)
+        self.assertFalse(hvac_status.boiler_status.is_error)
+        self.assertEqual(
+            datetime.fromtimestamp(1545896904282 / 1000),
+            hvac_status.boiler_status.timestamp,
+        )
 
     def test_boiler_status_empty(self) -> None:
         """Test map empty boiler status."""
-        with open(path('files/responses/hvacstate_empty'), 'r')\
-                as file:
+        with open(path("files/responses/hvacstate_empty"), "r") as file:
             hvac = json.loads(file.read())
 
-        boiler_status = mapper.map_boiler_status(hvac)
-        self.assertIsNone(boiler_status)
+        hvac_status = mapper.map_hvac_status(hvac)
+        self.assertIsNone(hvac_status.boiler_status)
 
     def test_hot_water_alone(self) -> None:
         """Test map hot water."""
-        with open(path('files/responses/hotwater'), 'r') as file:
+        with open(path("files/responses/hotwater"), "r") as file:
             raw_hotwater = json.loads(file.read())
-        with open(path('files/responses/livereport'), 'r') as file:
-            raw_livereport = json.loads(file.read())
 
-        hotwater = mapper.map_hot_water_alone(raw_hotwater, 'control_dhw',
-                                              raw_livereport)
-        self.assertEqual('control_dhw', hotwater.id)
+        hotwater = mapper.map_hot_water(raw_hotwater, "control_dhw")
+        self.assertEqual("control_dhw", hotwater.id)
         self.assertEqual(OperatingModes.AUTO, hotwater.operating_mode)
-        self.assertIsNotNone(hotwater.time_program.days['monday']
-                             .settings[0].setting)
+        self.assertIsNotNone(hotwater.time_program.days["monday"].settings[0].setting)
 
     def test_hot_water_alone_none(self) -> None:
         """Test map hot water."""
-        with open(path('files/responses/livereport'), 'r') as file:
-            raw_livereport = json.loads(file.read())
-
-        hotwater = mapper.map_hot_water_alone(None, 'control_dhw',
-                                              raw_livereport)
+        hotwater = mapper.map_hot_water(None, "control_dhw")
         self.assertIsNone(hotwater)
 
     def test_circulation_alone(self) -> None:
         """Test map circulation."""
-        with open(path('files/responses/circulation'), 'r') as file:
+        with open(path("files/responses/circulation"), "r") as file:
             raw_circulation = json.loads(file.read())
 
-        circulation = mapper.map_circulation_alone(raw_circulation,
-                                                   'control_dhw')
-        self.assertEqual('control_dhw', circulation.id)
+        circulation = mapper.map_circulation_alone(raw_circulation, "control_dhw")
+        self.assertEqual("control_dhw", circulation.id)
         self.assertEqual(OperatingModes.AUTO, circulation.operating_mode)
         self.assertIsNotNone(circulation.time_program)
-        self.assertIsNotNone(circulation.time_program.days['monday']
-                             .settings[0].setting)
+        self.assertIsNotNone(circulation.time_program.days["monday"].settings[0].setting)
 
     def test_circulation_alone_none(self) -> None:
         """Test map circulation."""
-        circulation = mapper.map_circulation_alone(None, 'control_dhw')
+        circulation = mapper.map_circulation_alone(None, "control_dhw")
         self.assertIsNone(circulation)
 
     def test_no_circulation(self) -> None:
         """Test map no circulation."""
-        with open(path('files/responses/systemcontrol'), 'r') as file:
+        with open(path("files/responses/systemcontrol"), "r") as file:
             raw_system = json.loads(file.read())
 
-        raw_system['body']['dhw'] = []
+        raw_system["body"]["dhw"] = []
 
-        circulation = mapper.map_circulation(raw_system)
+        circulation = mapper.map_circulation_from_system(raw_system)
         self.assertIsNone(circulation)
 
     def test_errors_no_error(self) -> None:
         """Test map no errors."""
-        with open(path('files/responses/hvacstate'), 'r') as file:
+        with open(path("files/responses/hvacstate"), "r") as file:
             raw_hvac = json.loads(file.read())
 
         errors = mapper.map_errors(raw_hvac)
@@ -376,99 +385,79 @@ class MapperTest(unittest.TestCase):
 
     def test_errors_with_errors(self) -> None:
         """Test map hvac errors."""
-        with open(path('files/responses/hvacstate_errors'), 'r') \
-                as file:
+        with open(path("files/responses/hvacstate_errors"), "r") as file:
             raw_hvac = json.loads(file.read())
 
         errors = mapper.map_errors(raw_hvac)
         self.assertEqual(1, len(errors))
         self.assertEqual(mapper._datetime(1562909693021), errors[0].timestamp)
-        self.assertEqual('...', errors[0].description)
-        self.assertEqual('Défaut : Bus de communication eBus', errors[0].title)
-        self.assertEqual('VR920', errors[0].device_name)
-        self.assertEqual('F.900', errors[0].status_code)
+        self.assertEqual("...", errors[0].description)
+        self.assertEqual("Défaut : Bus de communication eBus", errors[0].title)
+        self.assertEqual("VR920", errors[0].device_name)
+        self.assertEqual("F.900", errors[0].status_code)
 
-    def test_map_system_info(self) -> None:
-        with open(path(
-                'files/responses/facilities'), 'r') as file:
+    def test_map_facility_detail(self) -> None:
+        with open(path("files/responses/facilities"), "r") as file:
             facilities = json.loads(file.read())
-        with open(path(
-                'files/responses/gateway'), 'r') as file:
-            gateway = json.loads(file.read())
-        with open(path(
-                'files/responses/hvacstate'), 'r') as file:
-            hvac = json.loads(file.read())
 
-        sys_info = mapper.map_system_info(facilities, gateway, hvac, None)
-        self.assertEqual('1234567890123456789012345678',
-                         sys_info.serial_number)
-        self.assertEqual('Home', sys_info.name)
-        self.assertEqual('01:23:45:67:89:AB', sys_info.mac_ethernet)
-        self.assertEqual('1.2.3', sys_info.firmware)
-        self.assertEqual('VR920', sys_info.gateway)
-        self.assertEqual('ONLINE', sys_info.online)
-        self.assertEqual('UPDATE_NOT_PENDING', sys_info.update)
+        sys_info = mapper.map_facility_detail(facilities)
+        self.assertEqual("1234567890123456789012345678", sys_info.serial_number)
+        self.assertEqual("Home", sys_info.name)
+        self.assertEqual("01:23:45:67:89:AB", sys_info.ethernet_mac)
+        self.assertEqual("1.2.3", sys_info.firmware_version)
 
     def test_map_system_info_specific_serial(self) -> None:
-        with open(path(
-                'files/responses/facilities_multiple'), 'r') as file:
+        with open(path("files/responses/facilities_multiple"), "r") as file:
             facilities = json.loads(file.read())
-        with open(path(
-                'files/responses/gateway'), 'r') as file:
-            gateway = json.loads(file.read())
-        with open(path(
-                'files/responses/hvacstate'), 'r') as file:
-            hvac = json.loads(file.read())
 
-        sys_info = mapper.map_system_info(facilities, gateway, hvac, '888')
-        self.assertEqual('888', sys_info.serial_number)
-        self.assertEqual('Home2', sys_info.name)
-        self.assertEqual('6.6.6', sys_info.firmware)
+        sys_info = mapper.map_facility_detail(facilities, "888")
+        self.assertEqual("888", sys_info.serial_number)
+        self.assertEqual("Home2", sys_info.name)
+        self.assertEqual("6.6.6", sys_info.firmware_version)
 
     def test_map_hvac_sync_state_none(self) -> None:
         self.assertIsNone(mapper.map_hvac_sync_state(None))
 
     def test_map_reports(self) -> None:
-        with open(path('files/responses/livereport'), 'r') as file:
+        with open(path("files/responses/livereport"), "r") as file:
             livereport = json.loads(file.read())
         reports = mapper.map_reports(livereport)
         self.assertEqual(5, len(reports))
-        self.assertEqual('VRC700 MultiMatic', reports[0].device_name)
-        self.assertEqual('Control_SYS_MultiMatic', reports[0].device_id)
-        self.assertEqual('bar', reports[0].unit)
+        self.assertEqual("VRC700 MultiMatic", reports[0].device_name)
+        self.assertEqual("Control_SYS_MultiMatic", reports[0].device_id)
+        self.assertEqual("bar", reports[0].unit)
         self.assertEqual(1.9, reports[0].value)
-        self.assertEqual('Water pressure', reports[0].name)
-        self.assertEqual('WaterPressureSensor', reports[0].id)
+        self.assertEqual("Water pressure", reports[0].name)
+        self.assertEqual("WaterPressureSensor", reports[0].id)
 
     def test_map_reports_no_livereport(self) -> None:
         reports = mapper.map_reports(None)
         self.assertEqual(0, len(reports))
 
     def test_map_ventilation(self) -> None:
-        with open(path('files/responses/systemcontrol_ventilation'), 'r') \
-                as file:
+        with open(path("files/responses/systemcontrol_ventilation"), "r") as file:
             system = json.loads(file.read())
 
-        ventilation = mapper.map_ventilation(system)
-        self.assertEqual('_template', ventilation.id)
-        self.assertEqual('Ventilation', ventilation.name)
+        ventilation = mapper.map_ventilation_from_system(system)
+        self.assertIsNotNone(ventilation)
+        self.assertEqual("_template", ventilation.id)
+        self.assertEqual("Ventilation", ventilation.name)
         self.assertEqual(OperatingModes.AUTO, ventilation.operating_mode)
         self.assertEqual(3, ventilation.target_high)
         self.assertEqual(1, ventilation.target_low)
         self.assertIsNone(ventilation.temperature)
 
     def test_map_zone_quickveto(self) -> None:
-        with open(path('files/responses/zone_no_quickveto'), 'r') \
-                as file:
+        with open(path("files/responses/zone_no_quickveto"), "r") as file:
             raw_zone = json.loads(file.read())
             zone = mapper.map_zone(raw_zone)
+            self.assertIsNotNone(zone)
             self.assertIsNone(zone.quick_veto)
 
     def test_map_system_no_config_rbr(self) -> None:
-        with open(path('files/responses/systemcontrol_zone_no_config_rbr'), 'r') \
-                as file:
+        with open(path("files/responses/systemcontrol_zone_no_config_rbr"), "r") as file:
             raw_system = json.loads(file.read())
-            zones = mapper.map_zones(raw_system)
+            zones = mapper.map_zones_from_system(raw_system)
             self.assertIsNotNone(zones)
             self.assertIsNotNone(zones[0])
             self.assertIsNotNone(zones[1])

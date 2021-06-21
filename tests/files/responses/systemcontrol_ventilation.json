@@ -1,0 +1,1692 @@
+{
+  "body": {
+    "zones": [
+      {
+        "heating": {
+          "configuration": {
+            "mode": "AUTO",
+            "setpoint_temperature": 20,
+            "setback_temperature": 5
+          },
+          "timeprogram": {
+            "sunday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "saturday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "tuesday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "wednesday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "thursday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "friday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "monday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ]
+          }
+        },
+        "_id": "_template",
+        "configuration": {
+          "inside_temperature": 21.5,
+          "active_function": "HEATING",
+          "name": "Zone 1",
+          "quick_veto": {
+            "active": false,
+            "setpoint_temperature": 18
+          }
+        }
+      },
+      {
+        "heating": {
+          "configuration": {
+            "mode": "OFF",
+            "setpoint_temperature": 15,
+            "setback_temperature": 5
+          },
+          "timeprogram": {
+            "monday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "tuesday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "wednesday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "thursday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "friday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "saturday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ],
+            "sunday": [
+              {
+                "startTime": "00:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "NIGHT"
+              }
+            ]
+          }
+        },
+        "cooling": {
+          "configuration": {
+            "mode": "ON",
+            "setpoint_temperature": 8
+          },
+          "timeprogram": {
+            "sunday": [
+              {
+                "startTime": "00:00",
+                "setting": "OFF"
+              }
+            ],
+            "saturday": [
+              {
+                "startTime": "00:00",
+                "setting": "OFF"
+              }
+            ],
+            "tuesday": [
+              {
+                "startTime": "00:00",
+                "setting": "OFF"
+              }
+            ],
+            "wednesday": [
+              {
+                "startTime": "00:00",
+                "setting": "OFF"
+              }
+            ],
+            "thursday": [
+              {
+                "startTime": "00:00",
+                "setting": "OFF"
+              }
+            ],
+            "friday": [
+              {
+                "startTime": "00:00",
+                "setting": "OFF"
+              }
+            ],
+            "monday": [
+              {
+                "startTime": "00:00",
+                "setting": "OFF"
+              }
+            ]
+          }
+        },
+        "_id": "_template2",
+        "configuration": {
+          "inside_temperature": 17,
+          "active_function": "COOLING",
+          "name": "Zone 2",
+          "quick_veto": {
+            "active": false,
+            "setpoint_temperature": 21.5
+          }
+        }
+      }
+    ],
+    "ventilation": [
+      {
+        "fan": {
+          "configuration": {
+            "day_level": 3,
+            "night_level": 1,
+            "operation_mode": "AUTO"
+          },
+          "timeprogram": {
+            "monday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "tuesday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "wednesday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "thursday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "friday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "saturday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "sunday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ]
+          }
+        },
+        "_id": "_template"
+      }
+    ],
+    "dhw": [
+      {
+        "_id": "_template",
+        "hotwater": {
+          "configuration": {
+            "operation_mode": "ON",
+            "temperature_setpoint": 40
+          },
+          "timeprogram": {
+            "monday": [
+              {
+                "startTime": "0:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              }
+            ],
+            "tuesday": [
+              {
+                "startTime": "0:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              }
+            ],
+            "wednesday": [
+              {
+                "startTime": "0:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              }
+            ],
+            "thursday": [
+              {
+                "startTime": "0:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              }
+            ],
+            "friday": [
+              {
+                "startTime": "0:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              }
+            ],
+            "saturday": [
+              {
+                "startTime": "0:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              }
+            ],
+            "sunday": [
+              {
+                "startTime": "0:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "mode": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "mode": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "mode": "ON"
+              }
+            ]
+          }
+        },
+        "circulation": {
+          "configuration": {
+            "operationMode": "AUTO"
+          },
+          "timeprogram": {
+            "monday": [
+              {
+                "startTime": "0:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              }
+            ],
+            "tuesday": [
+              {
+                "startTime": "0:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              }
+            ],
+            "wednesday": [
+              {
+                "startTime": "0:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              }
+            ],
+            "thursday": [
+              {
+                "startTime": "0:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              }
+            ],
+            "friday": [
+              {
+                "startTime": "0:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              }
+            ],
+            "saturday": [
+              {
+                "startTime": "0:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              }
+            ],
+            "sunday": [
+              {
+                "startTime": "0:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "ON"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "OFF"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "ON"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration": {
+      "eco_mode": false,
+      "holidaymode": {
+        "start_date": "2015-07-20",
+        "end_date": "2015-07-20",
+        "temperature_setpoint": 1.5,
+        "active": false
+      }
+    },
+    "status": {
+      "datetime": "2018-09-06T07:51:33.616Z",
+      "outside_temperature": 13.5
+    },
+    "parameters": [
+      {
+        "name": "Urlaubsmodus Wunschtemperatur",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/configuration/holidaymode/temperature_setpoint"
+        }
+      },
+      {
+        "name": "Mögliche Quick Actions",
+        "definition": {
+          "values": [
+            "QM_HOLIDAY",
+            "QM_HOTWATER_BOOST",
+            "QM_VENTILATION_BOOST",
+            "QM_PARTY",
+            "QM_ONE_DAY_AWAY",
+            "QM_COOLING_FOR_X_DAYS",
+            "QM_ONE_DAY_AT_HOME",
+            "QM_SYSTEM_OFF"
+          ]
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/configuration/quickmode/quickmode"
+        }
+      },
+      {
+        "name": "Dauer der Quick Action (Tage)",
+        "definition": {
+          "min": 0,
+          "max": 365,
+          "stepsize": 1
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/configuration/quickmode/duration"
+        }
+      },
+      {
+        "name": "Einstellung für DHW-Zeitfenster",
+        "definition": {
+          "timewindow_type": "EVENTS",
+          "definition": {
+            "values": [
+              "ON",
+              "OFF"
+            ]
+          }
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/dhw/{dhwIdentifier}/circulation/timeprogram/setting"
+        }
+      },
+      {
+        "name": "Betriebsmodus Heißwasser DHW",
+        "definition": {
+          "values": [
+            "ON",
+            "OFF",
+            "AUTO"
+          ]
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/dhw/{dhwIdentifier}/hotwater/configuration/operation_mode/mode"
+        }
+      },
+      {
+        "name": "Temperatur Heißwasser DHW",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/dhw/{dhwIdentifier}/hotwater/configuration/setpoint/temperature_setpoint"
+        }
+      },
+      {
+        "name": "Einstellung für Heißwasser DHW-Zeitfenster",
+        "definition": {
+          "timewindow_type": "EVENTS",
+          "definition": {
+            "enum": [
+              "ON",
+              "OFF"
+            ]
+          }
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/dhw/{dhwIdentifier}/hotwater/timeprogram/mode"
+        }
+      },
+      {
+        "name": "Tageswert für Lüftung",
+        "definition": {
+          "min": 0,
+          "max": 3,
+          "stepsize": 1
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/ventilation/{ventilationIdentifier}/fan/configuration/day_level/level"
+        }
+      },
+      {
+        "name": "Nachtwert für Lüftung",
+        "definition": {
+          "min": 0,
+          "max": 3,
+          "stepsize": 1
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/ventilation/{ventilationIdentifier}/fan/configuration/night_level/level"
+        }
+      },
+      {
+        "name": "Betriebsmodus Lüftung",
+        "definition": {
+          "values": [
+            "ON",
+            "OFF",
+            "AUTO"
+          ]
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/ventilation/{ventilationIdentifier}/fan/configuration/operation_mode/mode"
+        }
+      },
+      {
+        "name": "Zeitsteuerung Lüftung",
+        "definition": {
+          "timewindow_type": "EVENTS",
+          "definition": {
+            "values": [
+              "DAY",
+              "NIGHT"
+            ]
+          }
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/ventilation/{ventilationIdentifier}/fan/timeprogram/setting"
+        }
+      },
+      {
+        "name": "Quick Veto Wunschtemperatur",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template/configuration/quick_veto/setpoint_temperature"
+        }
+      },
+      {
+        "name": "Betriebsmodus Heizen",
+        "definition": {
+          "values": [
+            "OFF",
+            "DAY",
+            "NIGHT",
+            "AUTO"
+          ]
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template/heating/configuration/mode/mode"
+        }
+      },
+      {
+        "name": "Absenktemperatur Heizen",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template/heating/configuration/setback_temperature/setback_temperature"
+        }
+      },
+      {
+        "name": "Wunschtemperatur Heizen",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template/heating/configuration/setpoint_temperature/setpoint_temperature"
+        }
+      },
+      {
+        "name": "Zeitsteuerung Heizen",
+        "definition": {
+          "timewindow_type": "EVENTS",
+          "definition": {
+            "values": [
+              "DAY",
+              "NIGHT"
+            ]
+          }
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template/heating/timeprogram/setting"
+        }
+      },
+      {
+        "name": "Quick Veto Wunschtemperatur",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/configuration/quick_veto/setpoint_temperature"
+        }
+      },
+      {
+        "name": "Betriebsmodus Kühlung",
+        "definition": {
+          "values": [
+            "ON",
+            "OFF",
+            "AUTO"
+          ]
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/cooling/configuration/mode/mode"
+        }
+      },
+      {
+        "name": "Wunschtemperatur Kühlung",
+        "definition": {
+          "min": 5,
+          "max": 20,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/cooling/configuration/setpoint_temperature/setpoint_temperature"
+        }
+      },
+      {
+        "name": "Zeitsteuerung Kühlung",
+        "definition": {
+          "timewindow_type": "EVENTS",
+          "definition": {
+            "values": [
+              "ON",
+              "OFF"
+            ]
+          }
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/cooling/timeprogram/setting"
+        }
+      },
+      {
+        "name": "Betriebsmodus Heizen",
+        "definition": {
+          "values": [
+            "OFF",
+            "DAY",
+            "NIGHT",
+            "AUTO"
+          ]
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/heating/configuration/mode/mode"
+        }
+      },
+      {
+        "name": "Absenktemperatur Heizen",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/heating/configuration/setback_temperature/setback_temperature"
+        }
+      },
+      {
+        "name": "Wunschtemperatur Heizen",
+        "definition": {
+          "min": 5,
+          "max": 30,
+          "stepsize": 0.5
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/heating/configuration/setpoint_temperature/setpoint_temperature"
+        }
+      },
+      {
+        "name": "Zeitsteuerung Heizen",
+        "definition": {
+          "timewindow_type": "EVENTS",
+          "definition": {
+            "values": [
+              "DAY",
+              "NIGHT"
+            ]
+          }
+        },
+        "link": {
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters/zones/_template2/heating/timeprogram/setting"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/configuration"
+        },
+        "timestamp": 1536220293649
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/status"
+        },
+        "timestamp": 1536220293652
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/configuration/holidaymode"
+        },
+        "timestamp": 1536220293654
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/configuration/quickmode"
+        },
+        "timestamp": 1536220293657
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/parameters"
+        },
+        "timestamp": 1536220293660
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template/heating/configuration"
+        },
+        "timestamp": 1536220293662
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template/heating/timeprogram"
+        },
+        "timestamp": 1536220293666
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template/configuration"
+        },
+        "timestamp": 1536220293668
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template/configuration/quickmode"
+        },
+        "timestamp": 1536220293673
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template2/heating/configuration"
+        },
+        "timestamp": 1536220293680
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template2/heating/timeprogram"
+        },
+        "timestamp": 1536220293683
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template2/cooling/configuration"
+        },
+        "timestamp": 1536220293685
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template2/cooling/timeprogram"
+        },
+        "timestamp": 1536220293687
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template2/configuration"
+        },
+        "timestamp": 1536220293689
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/zones/_template2/configuration/quickmode"
+        },
+        "timestamp": 1536220293691
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/ventilation/_template/fan/configuration"
+        },
+        "timestamp": 1536220293693
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/ventilation/_template/fan/timeprogram"
+        },
+        "timestamp": 1536220293695
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/dhw/_template/hotwater/configuration"
+        },
+        "timestamp": 1536220293697
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/dhw/_template/hotwater/timeprogram"
+        },
+        "timestamp": 1536220293699
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/dhw/_template/circulation/configuration"
+        },
+        "timestamp": 1536220293701
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/dhw/_template/circulation/timeprogram"
+        },
+        "timestamp": 1536220293704
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/dhw/_template2/hotwater/configuration"
+        },
+        "timestamp": 1536220293706
+      },
+      {
+        "state": "SYNCED",
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/00000000000000000000000000N0/systemcontrol/v1/dhw/_template2/hotwater/timeprogram"
+        },
+        "timestamp": 1536220293708
+      }
+    ]
+  }
+}

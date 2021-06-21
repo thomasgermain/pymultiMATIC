@@ -1,0 +1,20 @@
+{
+  "body": {
+    "active": false,
+    "start_date": "2021-05-12",
+    "end_date": "2021-05-13",
+    "temperature_setpoint": 5.0
+  },
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1624282807221,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxx/systemcontrol/v1/configuration"
+        }
+      }
+    ]
+  }
+}
