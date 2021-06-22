@@ -1,9 +1,10 @@
 """Vaillant operation modes."""
 from datetime import date
 from typing import List, Optional
+
 import attr
 
-from . import Mode, HotWater, Circulation, Room, Zone, Component, ActiveMode
+from . import ActiveMode, Circulation, Component, HotWater, Mode, Room, Ventilation, Zone
 
 
 @attr.s(frozen=True)
@@ -17,6 +18,7 @@ class QuickMode(Mode):
 
     Args:
         name (str): Name of the quick mode.
+        duration (int): Some quick mode require a duration.
         for_zone (bool): quick mode is applicable for a
             :class:`~pymultimatic.model.component.Zone`.
         for_room (bool): quick mode is applicable for a
@@ -24,6 +26,8 @@ class QuickMode(Mode):
         for_dhw (bool): quick mode is applicable for a
             :class:`~pymultimatic.model.component.HotWater` and
             :class:`~pymultimatic.model.component.Circulation`.
+        for_ventilation (bool): quick mode is applicable for a
+            :class:`~pymultimatic.model.component.Ventilation`.
 
     Note:
         There is a default duration for quick modes (which can't be changed)
@@ -34,9 +38,11 @@ class QuickMode(Mode):
     http://elearning.vaillant.com/vrc700/ci/en/documents/uk/infopool/Operating_instructions.pdf
     """
 
-    for_zone = attr.ib(type=bool, default=None)
-    for_room = attr.ib(type=bool, default=None)
-    for_dhw = attr.ib(type=bool, default=None)
+    for_zone = attr.ib(type=bool, default=None, eq=False)
+    for_room = attr.ib(type=bool, default=None, eq=False)
+    for_dhw = attr.ib(type=bool, default=None, eq=False)
+    for_ventilation = attr.ib(type=bool, default=None, eq=False)
+    duration = attr.ib(type=Optional[int], default=None, eq=False)
 
     def is_for(self, comp: Component) -> bool:
         """Check if the quick mode has impact on the given component.
@@ -54,20 +60,22 @@ class QuickMode(Mode):
             return True
         if isinstance(comp, Zone) and self.for_zone:
             return True
+        if isinstance(comp, Ventilation) and self.for_ventilation:
+            return True
         return False
 
 
 class QuickModes:
     """Groups all :class:`QuickMode` together."""
 
-    HOTWATER_BOOST = QuickMode('QM_HOTWATER_BOOST', False, False, True)
+    HOTWATER_BOOST = QuickMode("QM_HOTWATER_BOOST", False, False, True, False)
     """The advanced function heats the water in the domestic hot water cylinder
     once until the desired DHW circuit temperature set is reached or until you
     cancel the advanced function early.
     The heating installation will then return to the pre-set mode
     """
 
-    VENTILATION_BOOST = QuickMode('QM_VENTILATION_BOOST', True, False, False)
+    VENTILATION_BOOST = QuickMode("QM_VENTILATION_BOOST", True, False, False, True)
     """This advanced function switches the zone off for 30 minutes.
     The frost protection function is activated, and hot water generation and
     circulation remain active.
@@ -77,7 +85,7 @@ class QuickModes:
     The heating installation will then return to the pre-set mode.
     """
 
-    ONE_DAY_AWAY = QuickMode('QM_ONE_DAY_AWAY', True, False, True)
+    ONE_DAY_AWAY = QuickMode("QM_ONE_DAY_AWAY", True, False, True, True)
     """Hot water generation and circulation are switched off and the frost
     protection is activated.
     The advanced function is automatically deactivated after 24:00 hours or if
@@ -86,14 +94,14 @@ class QuickModes:
     Ventilation is activated and works at the lowest ventilation level.
     """
 
-    SYSTEM_OFF = QuickMode('QM_SYSTEM_OFF', True, True, True)
+    SYSTEM_OFF = QuickMode("QM_SYSTEM_OFF", True, True, True, True)
     """The heating function, hot water circuit and cooling are switched off.
     The frost protection function is activated.
     The circulation is switched off.
     Ventilation is activated and works at the lowest ventilation level.
     """
 
-    ONE_DAY_AT_HOME = QuickMode('QM_ONE_DAY_AT_HOME', True, False, False)
+    ONE_DAY_AT_HOME = QuickMode("QM_ONE_DAY_AT_HOME", True, False, False, False)
     """This advanced function activates Automatic mode for one day with the
     settings for Sunday, as set using the Time programmes function.
     The advanced function is automatically deactivated after 24:00 hours or if
@@ -103,7 +111,7 @@ class QuickModes:
     :class:`~pymultimatic.model.component.Room` are not affected.
     """
 
-    PARTY = QuickMode('QM_PARTY', True, False, False)
+    PARTY = QuickMode("QM_PARTY", True, False, True, True)
     """The advanced function brings the room temperature to the set desired
     Day temperature, in accordance with the set time periods.
     The advanced function is deactivated after six hours or if you cancel it
@@ -111,21 +119,31 @@ class QuickModes:
     The heating installation will then return to the pre-set mode.
     """
 
-    HOLIDAY = QuickMode('QM_HOLIDAY', True, True, True)
+    HOLIDAY = QuickMode("QM_HOLIDAY", True, True, True, True)
     """
     """
 
-    QUICK_VETO = QuickMode('QM_QUICK_VETO', False, False, False)
+    QUICK_VETO = QuickMode("QM_QUICK_VETO", False, False, False, False)
     """
     This advanced function activates a quick veto for one specific zone
     """
 
-    COOLING_FOR_X_DAYS = QuickMode('QM_COOLING_FOR_X_DAYS', True, False, False)
+    COOLING_FOR_X_DAYS = QuickMode("QM_COOLING_FOR_X_DAYS", True, False, False, False)
 
-    _VALUES = {qm.name: qm for qm in [HOTWATER_BOOST, VENTILATION_BOOST,
-                                      ONE_DAY_AWAY, SYSTEM_OFF,
-                                      ONE_DAY_AT_HOME, PARTY, HOLIDAY,
-                                      QUICK_VETO, COOLING_FOR_X_DAYS]}
+    _VALUES = {
+        qm.name: qm
+        for qm in [
+            HOTWATER_BOOST,
+            VENTILATION_BOOST,
+            ONE_DAY_AWAY,
+            SYSTEM_OFF,
+            ONE_DAY_AT_HOME,
+            PARTY,
+            HOLIDAY,
+            QUICK_VETO,
+            COOLING_FOR_X_DAYS,
+        ]
+    }
 
     @classmethod
     def for_zone(cls) -> List[QuickMode]:
@@ -181,16 +199,42 @@ class QuickModes:
         return sub_list
 
     @classmethod
-    def get(cls, name: str) -> QuickMode:
+    def for_ventilation(cls) -> List[QuickMode]:
+        """Get the list of :class:`QuickMode` applicable to
+        :class:`~pymultimatic.model.component.Ventilation`.
+
+        Returns:
+            A list of quick mode applicable for
+            :class:`~pymultimatic.model.component.Ventilation`.
+        """
+        sub_list = []
+
+        for quick_mode in cls._VALUES.values():
+            if quick_mode.for_ventilation:
+                sub_list.append(quick_mode)
+
+        return sub_list
+
+    @classmethod
+    def get(cls, name: str, duration: Optional[int] = None) -> QuickMode:
         """Get :class:`QuickMode` by name.
 
         Args:
             name (str): Name of the operating mode
+            duration (int): Duration of the quick mode
 
         Returns:
             The corresponding operating mode or None
         """
-        return cls._VALUES[name]
+        value: QuickMode = cls._VALUES[name]
+        return QuickMode(
+            value.name,
+            value.for_zone,
+            value.for_room,
+            value.for_dhw,
+            value.for_ventilation,
+            duration,
+        )
 
 
 @attr.s
@@ -233,7 +277,9 @@ class HolidayMode:
             Use this to know if the holiday mode is active and applied to the
             system.
         """
-        return self.is_active \
-            and self.start_date is not None \
-            and self.end_date is not None \
+        return (
+            self.is_active
+            and self.start_date is not None
+            and self.end_date is not None
             and self.start_date <= date.today() <= self.end_date
+        )

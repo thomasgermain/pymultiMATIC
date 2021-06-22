@@ -1,6 +1,6 @@
 """Test for holiday mode."""
-from datetime import date, timedelta
 import unittest
+from datetime import date, timedelta
 
 from pymultimatic.model import HolidayMode
 

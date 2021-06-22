@@ -1,0 +1,262 @@
+{
+  "body": [
+    {
+      "heating": {
+        "configuration": {
+          "mode": "OFF",
+          "setback_temperature": 11.0,
+          "setpoint_temperature": 5.0
+        },
+        "timeprogram": {
+          "monday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "tuesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "wednesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "thursday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "friday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "saturday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "sunday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            }
+          ]
+        }
+      },
+      "configuration": {
+        "name": "ETAGE     ",
+        "enabled": true,
+        "active_function": "STANDBY",
+        "quick_veto": {
+          "active": false,
+          "setpoint_temperature": 11.0
+        }
+      },
+      "currently_controlled_by": {
+        "name": "RBR",
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones"
+        }
+      },
+      "_id": "Control_ZO1"
+    },
+    {
+      "heating": {
+        "configuration": {
+          "mode": "OFF",
+          "setback_temperature": 18.5,
+          "setpoint_temperature": 20.5
+        },
+        "timeprogram": {
+          "monday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "04:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "19:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "tuesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "04:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "19:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "wednesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "04:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "19:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "thursday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "04:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "19:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "friday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "04:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "19:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "saturday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "04:30",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "19:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "sunday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "04:30",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "19:30",
+              "setting": "NIGHT"
+            }
+          ]
+        }
+      },
+      "configuration": {
+        "name": "SALON     ",
+        "enabled": true,
+        "active_function": "STANDBY",
+        "inside_temperature": 25.4,
+        "quick_veto": {
+          "active": false,
+          "setpoint_temperature": 18.5
+        }
+      },
+      "_id": "Control_ZO2"
+    }
+  ],
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1624216569420,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO1/heating/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624223507000,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO1/heating/timeprogram"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624216569420,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO1/configuration/quick_veto"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624216571918,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO1/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624216575197,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO2/heating/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624223507000,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO2/heating/timeprogram"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624216507516,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO2/configuration/quick_veto"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624216582712,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/v1/zones/Control_ZO2/configuration"
+        }
+      }
+    ]
+  }
+}

@@ -1,6 +1,0 @@
-[MESSAGES CONTROL]
-disable=
-    protected-access,
-    too-few-public-methods,
-    too-many-public-methods,
-    missing-docstring

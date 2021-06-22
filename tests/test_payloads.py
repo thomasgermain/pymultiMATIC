@@ -1,9 +1,9 @@
 """Test for payloads"""
+import inspect
 import json
 import unittest
-import inspect
-from datetime import datetime, date
-from typing import Union, Any, Dict
+from datetime import date, datetime
+from typing import Any, Dict, Union
 
 from pymultimatic.api import payloads
 
@@ -13,8 +13,7 @@ class PayloadsTest(unittest.TestCase):
 
     def test_all_payload(self) -> None:
         """Test that ensure all payload are well json formatted."""
-        functions_list = inspect.getmembers(payloads,
-                                            predicate=inspect.isfunction)
+        functions_list = inspect.getmembers(payloads, predicate=inspect.isfunction)
 
         self.assertTrue(len(functions_list) > 0)
 
@@ -46,7 +45,7 @@ class PayloadsTest(unittest.TestCase):
             elif cls == date:
                 args[item[0]] = datetime.now()
             elif cls == str:
-                args[item[0]] = 'test'
+                args[item[0]] = "test"
             elif cls == int:
                 args[item[0]] = 10
             elif cls == Union[int, None]:
@@ -56,6 +55,5 @@ class PayloadsTest(unittest.TestCase):
 
         return args
 
-    # pylint: disable=no-self-use
     def _assert_function_call(self, result: Any) -> Any:
         json.loads(json.dumps(result))
