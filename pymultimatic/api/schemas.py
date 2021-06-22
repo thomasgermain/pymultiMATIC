@@ -17,8 +17,8 @@ FACILITIES = Schema({
             'capabilities': [non_empty_str],
             'networkInformation': {
                 'macAddressEthernet': non_empty_str,
-                'macAddressWifiAccessPoint': non_empty_str,
-                'macAddressWifiClient': non_empty_str,
+                Optional('macAddressWifiAccessPoint'): non_empty_str,
+                Optional('macAddressWifiClient'): non_empty_str,
             },
         }]
     },
