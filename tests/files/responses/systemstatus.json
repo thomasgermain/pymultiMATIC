@@ -1,0 +1,18 @@
+{
+  "body": {
+    "datetime": "2021-06-23T11:43:12.000Z",
+    "outside_temperature": 12.5
+  },
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1624441392223,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/status"
+        }
+      }
+    ]
+  }
+}

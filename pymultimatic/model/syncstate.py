@@ -3,16 +3,16 @@ from datetime import datetime
 
 import attr
 
-PENDING = 'PENDING'
+PENDING = "PENDING"
 """Resource is being updated."""
 
-SYNCED = 'SYNCED'
+SYNCED = "SYNCED"
 """Resource is sync."""
 
-OUTDATED = 'OUTDATED'
+OUTDATED = "OUTDATED"
 """Resource is outdated."""
 
-INITIALIZING = 'INITIALIZING'
+INITIALIZING = "INITIALIZING"
 """Resource is initializing."""
 
 

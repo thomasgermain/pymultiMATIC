@@ -1,0 +1,38 @@
+{
+  "body": [
+    {
+      "hotwater": {
+        "configuration": {
+          "operation_mode": "AUTO",
+          "temperature_setpoint": 60
+        }
+      },
+      "circulation": {
+        "configuration": {
+          "operationMode": "AUTO"
+        }
+      },
+      "_id": "Control_DHW"
+    }
+  ],
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1624477418615,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxxxxx/systemcontrol/v1/dhw/Control_DHW/circulation/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624470169435,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxxxx/systemcontrol/v1/dhw/Control_DHW/hotwater/configuration"
+        }
+      }
+    ]
+  }
+}

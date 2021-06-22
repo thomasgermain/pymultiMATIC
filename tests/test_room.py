@@ -1,7 +1,7 @@
 """Test for rooms."""
 import unittest
 
-from pymultimatic.model import Room, OperatingModes
+from pymultimatic.model import OperatingModes, Room
 from tests.conftest import _room
 
 

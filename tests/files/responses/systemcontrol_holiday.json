@@ -1,0 +1,891 @@
+{
+  "meta": {
+    "resourceState": [
+      {
+        "timestamp": 1564429543196,
+        "state": "OUTDATED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/status",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564429611768,
+        "state": "OUTDATED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/configuration",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564429596562,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/configuration/holidaymode",
+          "rel": "child"
+        }
+      },
+      {
+        "timestamp": 1564429611768,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/configuration/quickmode",
+          "rel": "child"
+        }
+      },
+      {
+        "timestamp": 1564429502761,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/heating/configuration",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564436472000,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/heating/timeprogram",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564429621262,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/configuration/quick_veto",
+          "rel": "child"
+        }
+      },
+      {
+        "timestamp": 1564429621262,
+        "state": "OUTDATED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/configuration",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564429567827,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/configuration",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564436472000,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/timeprogram",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564429603970,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/configuration/quick_veto",
+          "rel": "child"
+        }
+      },
+      {
+        "timestamp": 1564429603970,
+        "state": "OUTDATED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/configuration",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564436865265,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/circulation/configuration",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564436865265,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/configuration",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564436472000,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/circulation/timeprogram",
+          "rel": "self"
+        }
+      },
+      {
+        "timestamp": 1564436472000,
+        "state": "SYNCED",
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/timeprogram",
+          "rel": "self"
+        }
+      }
+    ]
+  },
+  "body": {
+    "dhw": [
+      {
+        "circulation": {
+          "configuration": {
+            "operationMode": "AUTO"
+          },
+          "timeprogram": {
+            "wednesday": [
+              {
+                "setting": "OFF",
+                "startTime": "00:00"
+              }
+            ],
+            "thursday": [
+              {
+                "setting": "OFF",
+                "startTime": "00:00"
+              }
+            ],
+            "sunday": [
+              {
+                "setting": "OFF",
+                "startTime": "00:00"
+              }
+            ],
+            "friday": [
+              {
+                "setting": "OFF",
+                "startTime": "00:00"
+              }
+            ],
+            "saturday": [
+              {
+                "setting": "OFF",
+                "startTime": "00:00"
+              }
+            ],
+            "monday": [
+              {
+                "setting": "OFF",
+                "startTime": "00:00"
+              }
+            ],
+            "tuesday": [
+              {
+                "setting": "OFF",
+                "startTime": "00:00"
+              }
+            ]
+          }
+        },
+        "hotwater": {
+          "configuration": {
+            "temperature_setpoint": 50.0,
+            "operation_mode": "AUTO"
+          },
+          "timeprogram": {
+            "wednesday": [
+              {
+                "mode": "OFF",
+                "startTime": "00:00"
+              },
+              {
+                "mode": "ON",
+                "startTime": "17:00"
+              },
+              {
+                "mode": "OFF",
+                "startTime": "18:30"
+              }
+            ],
+            "thursday": [
+              {
+                "mode": "OFF",
+                "startTime": "00:00"
+              },
+              {
+                "mode": "ON",
+                "startTime": "17:00"
+              },
+              {
+                "mode": "OFF",
+                "startTime": "18:30"
+              }
+            ],
+            "sunday": [
+              {
+                "mode": "OFF",
+                "startTime": "00:00"
+              },
+              {
+                "mode": "ON",
+                "startTime": "17:00"
+              },
+              {
+                "mode": "OFF",
+                "startTime": "18:30"
+              }
+            ],
+            "friday": [
+              {
+                "mode": "OFF",
+                "startTime": "00:00"
+              },
+              {
+                "mode": "ON",
+                "startTime": "17:00"
+              },
+              {
+                "mode": "OFF",
+                "startTime": "18:30"
+              }
+            ],
+            "saturday": [
+              {
+                "mode": "OFF",
+                "startTime": "00:00"
+              },
+              {
+                "mode": "ON",
+                "startTime": "17:00"
+              },
+              {
+                "mode": "OFF",
+                "startTime": "18:30"
+              }
+            ],
+            "monday": [
+              {
+                "mode": "OFF",
+                "startTime": "00:00"
+              },
+              {
+                "mode": "ON",
+                "startTime": "17:00"
+              },
+              {
+                "mode": "OFF",
+                "startTime": "18:30"
+              }
+            ],
+            "tuesday": [
+              {
+                "mode": "OFF",
+                "startTime": "00:00"
+              },
+              {
+                "mode": "ON",
+                "startTime": "17:00"
+              },
+              {
+                "mode": "OFF",
+                "startTime": "18:30"
+              }
+            ]
+          }
+        },
+        "_id": "Control_DHW"
+      }
+    ],
+    "configuration": {
+      "holidaymode": {
+        "start_date": "2019-01-02",
+        "temperature_setpoint": 15.0,
+        "active": true,
+        "end_date": "2019-01-03"
+      },
+      "eco_mode": true,
+      "quickmode": {
+        "duration": 0,
+        "quickmode": "QM_HOLIDAY"
+      }
+    },
+    "status": {
+      "datetime": "2019-07-29T21:45:30.000Z",
+      "outside_temperature": 23.3
+    },
+    "zones": [
+      {
+        "_id": "Control_ZO1",
+        "configuration": {
+          "active_function": "STANDBY",
+          "quick_veto": {
+            "setpoint_temperature": 11.0,
+            "active": false
+          },
+          "enabled": true,
+          "name": "ETAGE     ",
+          "quickmode": {
+            "quickmode": "QM_HOLIDAY"
+          }
+        },
+        "heating": {
+          "configuration": {
+            "setpoint_temperature": 5.0,
+            "setback_temperature": 13.0,
+            "mode": "OFF"
+          },
+          "timeprogram": {
+            "wednesday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              }
+            ],
+            "thursday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              }
+            ],
+            "sunday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              }
+            ],
+            "friday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              }
+            ],
+            "saturday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              }
+            ],
+            "monday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              }
+            ],
+            "tuesday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              }
+            ]
+          }
+        },
+        "currently_controlled_by": {
+          "link": {
+            "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones",
+            "rel": "self"
+          },
+          "name": "RBR"
+        }
+      },
+      {
+        "_id": "Control_ZO2",
+        "configuration": {
+          "active_function": "STANDBY",
+          "inside_temperature": 24.9,
+          "quick_veto": {
+            "setpoint_temperature": 18.5,
+            "active": false
+          },
+          "name": "SALON     ",
+          "quickmode": {
+            "quickmode": "QM_HOLIDAY"
+          },
+          "enabled": true
+        },
+        "heating": {
+          "configuration": {
+            "setpoint_temperature": 20.5,
+            "setback_temperature": 18.5,
+            "mode": "OFF"
+          },
+          "timeprogram": {
+            "wednesday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "04:30"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "19:30"
+              }
+            ],
+            "thursday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "04:00"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "07:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "14:00"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "19:30"
+              }
+            ],
+            "sunday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "04:30"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "19:30"
+              }
+            ],
+            "friday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "04:30"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "19:30"
+              }
+            ],
+            "saturday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "04:30"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "19:30"
+              }
+            ],
+            "monday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "04:00"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "07:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "14:00"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "19:30"
+              }
+            ],
+            "tuesday": [
+              {
+                "setting": "NIGHT",
+                "startTime": "00:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "04:00"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "07:00"
+              },
+              {
+                "setting": "DAY",
+                "startTime": "14:00"
+              },
+              {
+                "setting": "NIGHT",
+                "startTime": "19:30"
+              }
+            ]
+          }
+        },
+        "currently_controlled_by": {
+          "link": {
+            "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones",
+            "rel": "self"
+          },
+          "name": "HOLIDAY_MODE"
+        }
+      }
+    ],
+    "parameters": [
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/heating/configuration/setpoint_temperature",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 5.0
+        },
+        "name": "Consigne de temp\u00e9rature ambiante en journ\u00e9e"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/heating/configuration/setback_temperature",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 5.0
+        },
+        "name": "Consigne de temp\u00e9rature en mode r\u00e9duite"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/cooling/configuration/mode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": []
+        },
+        "name": "Mode de fonctionnement : refroidissement"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/heating/configuration/mode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "AUTO",
+            "SETBACK",
+            "OFF"
+          ]
+        },
+        "name": "Mode de fonctionnement chauffage"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/configuration/quickmode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "NO_QUICK_MODE",
+            "QM_PARTY",
+            "QM_VENTILATION_BOOST",
+            "QM_ONE_DAY_AT_HOME",
+            "QM_ONE_DAY_AWAY"
+          ]
+        },
+        "name": "Mode de fonctionnement particulier qui a \u00e9t\u00e9 activ\u00e9"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/cooling/configuration/setpoint_temperature",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 15.0
+        },
+        "name": "Temp\u00e9rature de rafra\u00eechissement en journ\u00e9e"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/configuration/quick_veto",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 5.0
+        },
+        "name": "Veto rapide temp\u00e9rature ambiante de consigne"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/configuration/setpoint_temperature",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 5.0
+        },
+        "name": "Consigne de temp\u00e9rature ambiante en journ\u00e9e"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/configuration/setback_temperature",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 5.0
+        },
+        "name": "Consigne de temp\u00e9rature en mode r\u00e9duite"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/cooling/configuration/mode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": []
+        },
+        "name": "Mode de fonctionnement : refroidissement"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/configuration/mode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "AUTO",
+            "SETBACK",
+            "OFF"
+          ]
+        },
+        "name": "Mode de fonctionnement chauffage"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/configuration/quickmode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "NO_QUICK_MODE",
+            "QM_PARTY",
+            "QM_VENTILATION_BOOST",
+            "QM_ONE_DAY_AT_HOME",
+            "QM_ONE_DAY_AWAY"
+          ]
+        },
+        "name": "Mode de fonctionnement particulier qui a \u00e9t\u00e9 activ\u00e9"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/cooling/configuration/setpoint_temperature",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 15.0
+        },
+        "name": "Temp\u00e9rature de rafra\u00eechissement en journ\u00e9e"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/configuration/quick_veto",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 0.5,
+          "min": 5.0
+        },
+        "name": "Veto rapide temp\u00e9rature ambiante de consigne"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/configuration/holidaymode",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 30.0,
+          "stepsize": 1.0,
+          "min": 5.0
+        },
+        "name": "Circuit de chauffage\u00a0: Consigne de temp\u00e9rature ambiante en mode vacances"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/ventilation/Control_SYS_MultiMatic/fan/configuration/day_level",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 6.0,
+          "stepsize": 1.0,
+          "min": 1.0
+        },
+        "name": "Jour - niveau maximum du ventilateur"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/ventilation/Control_SYS_MultiMatic/fan/configuration/operation_mode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "AUTO",
+            "NIGHT",
+            "DAY"
+          ]
+        },
+        "name": "Mode de fonctionnement circuits de ventilation"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/configuration/quickmode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "NO_QUICK_MODE",
+            "QM_PARTY",
+            "QM_VENTILATION_BOOST",
+            "QM_ONE_DAY_AT_HOME",
+            "QM_ONE_DAY_AWAY"
+          ]
+        },
+        "name": "Mode de fonctionnement particulier qui a \u00e9t\u00e9 activ\u00e9"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/ventilation/Control_SYS_MultiMatic/fan/configuration/night_level",
+          "rel": "self"
+        },
+        "definition": {
+          "max": 6.0,
+          "stepsize": 1.0,
+          "min": 1.0
+        },
+        "name": "Nuit - niveau maximum du ventilateur"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/configuration/operation_mode",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "AUTO",
+            "DAY",
+            "OFF"
+          ]
+        },
+        "name": "Mode de fonctionnement ECS"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/heating/timeprogram",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "NIGHT",
+            "DAY"
+          ]
+        },
+        "name": "HEATING"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/heating/timeprogram",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "NIGHT",
+            "DAY"
+          ]
+        },
+        "name": "HEATING"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO1/cooling/timeprogram",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "OFF",
+            "ON"
+          ]
+        },
+        "name": "COOLING"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/zones/Control_ZO2/cooling/timeprogram",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "OFF",
+            "ON"
+          ]
+        },
+        "name": "COOLING"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/hotwater/timeprogram",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "OFF",
+            "ON"
+          ]
+        },
+        "name": "HOTWATER"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/dhw/Control_DHW/circulation/timeprogram",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "OFF",
+            "ON"
+          ]
+        },
+        "name": "CIRCULATION_PUMP"
+      },
+      {
+        "link": {
+          "resourceLink": "/facilities/1234567890123456789012345678/systemcontrol/v1/ventilation/Control_SYS_MultiMatic/fan/timeprogram",
+          "rel": "self"
+        },
+        "definition": {
+          "values": [
+            "NIGHT",
+            "DAY"
+          ]
+        },
+        "name": "VENTILATION"
+      }
+    ]
+  }
+}

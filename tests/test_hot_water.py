@@ -27,6 +27,5 @@ class HotWaterTest(unittest.TestCase):
         active_mode = hot_water.active_mode
 
         self.assertEqual(OperatingModes.OFF, active_mode.current)
-        self.assertEqual(constants.FROST_PROTECTION_TEMP,
-                         active_mode.target)
+        self.assertEqual(constants.FROST_PROTECTION_TEMP, active_mode.target)
         self.assertIsNone(active_mode.sub)

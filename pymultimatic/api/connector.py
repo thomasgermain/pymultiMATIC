@@ -2,15 +2,14 @@
 import logging
 from typing import Any, Dict, Optional
 
-import attr
 import aiohttp
-from yarl import URL
+import attr
 
-from . import ApiError, urls, defaults
+from . import ApiError, defaults, urls
 
-_LOGGER = logging.getLogger('Connector')
+_LOGGER = logging.getLogger("Connector")
 
-HEADER = {'content-type': 'application/json', 'Accept': 'application/json'}
+HEADER = {"content-type": "application/json", "Accept": "application/json"}
 
 
 @attr.s
@@ -100,69 +99,60 @@ class Connector:
         params = {
             "smartphoneId": self._smartphone_id,
             "username": self._user,
-            "password": self._password
+            "password": self._password,
         }
 
-        token_res = await self._session.post(url=urls.new_token(),
-                                             json=params,
-                                             headers=HEADER)
+        token_res = await self._session.post(url=urls.new_token(), json=params, headers=HEADER)
         if token_res.status == 200:
             json = await token_res.json()
-            return str(json['body']['authToken'])
-        raise ApiError(f'Cannot get token at {urls.new_token()}', response=await token_res.text(),
-                       status=token_res.status)
+            return str(json["body"]["authToken"])
+        raise ApiError(
+            f"Cannot get token at {urls.new_token()}",
+            response=await token_res.text(),
+            status=token_res.status,
+        )
 
     async def _authenticate(self, token: str) -> None:
         params = {
             "smartphoneId": self._smartphone_id,
             "username": self._user,
-            "authToken": token
+            "authToken": token,
         }
 
-        auth_res = await self._session.post(url=urls.authenticate(),
-                                            json=params,
-                                            headers=HEADER)
+        auth_res = await self._session.post(url=urls.authenticate(), json=params, headers=HEADER)
 
         if auth_res.status > 399:
-            raise ApiError(f'Unable to authenticate at {urls.authenticate()}',
-                           response=await auth_res.text(),
-                           status=auth_res.status)
+            raise ApiError(
+                f"Unable to authenticate at {urls.authenticate()}",
+                response=await auth_res.text(),
+                status=auth_res.status,
+            )
 
     def _get_cookies(self) -> Dict[Any, Any]:
-        return self._session.cookie_jar.filter_cookies(URL(urls.base()))
+        return self._session.cookie_jar.filter_cookies(urls.base())  # type: ignore
 
     def _clear_cookies(self) -> None:
         self._session.cookie_jar.clear()
 
-    async def get(self, url: str,
-                  payload: Optional[Dict[str, Any]] = None) -> Any:
+    async def get(self, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a get against vaillant API."""
-        return await self.request('get', url, payload)
+        return await self.request("get", url, payload)
 
-    async def delete(self, url: str,
-                     payload: Optional[Dict[str, Any]] = None) -> Any:
+    async def delete(self, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a delete against vaillant API."""
-        return await self.request('delete', url, payload)
+        return await self.request("delete", url, payload)
 
-    async def put(self, url: str,
-                  payload: Optional[Dict[str, Any]] = None) -> Any:
+    async def put(self, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a put against vaillant API."""
-        return await self.request('put', url, payload)
+        return await self.request("put", url, payload)
 
-    async def post(self, url: str,
-                   payload: Optional[Dict[str, Any]] = None) -> Any:
+    async def post(self, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a post against vaillant API."""
-        return await self.request('post', url, payload)
+        return await self.request("post", url, payload)
 
-    async def request(self, method: str, url: str,
-                      payload: Optional[Dict[str, Any]] = None) -> Any:
+    async def request(self, method: str, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a request against vaillant API."""
-        async with self._session.request(
-                method,
-                url,
-                json=payload,
-                headers=HEADER
-        ) as resp:
+        async with self._session.request(method, url, json=payload, headers=HEADER) as resp:
             if resp.status == 401:
                 await self.login(True)
                 return await self.request(method, url, payload)
@@ -171,7 +161,11 @@ class Connector:
                 # fetch response body, so it's available later on,
                 # since this is an error, this is not always json
                 await resp.read()
-                raise ApiError('Cannot ' + method + ' ' + url, response=await resp.text(),
-                               payload=payload, status=resp.status)
+                raise ApiError(
+                    "Cannot " + method + " " + url,
+                    response=await resp.text(),
+                    payload=payload,
+                    status=resp.status,
+                )
 
             return await resp.json(content_type=None)

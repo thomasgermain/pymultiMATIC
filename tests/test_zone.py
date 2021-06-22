@@ -1,12 +1,10 @@
 import unittest
 
-from pymultimatic.model import Zone, OperatingModes, ZoneCooling, \
-    SettingModes, ActiveFunction
-from tests.conftest import _zone, _time_program, _zone_cooling
+from pymultimatic.model import ActiveFunction, OperatingModes, SettingModes, Zone, ZoneCooling
+from tests.conftest import _time_program, _zone, _zone_cooling
 
 
 class ZoneTest(unittest.TestCase):
-
     def test_get_active_mode_night(self) -> None:
         zone = _zone()
         zone.heating.operating_mode = OperatingModes.NIGHT

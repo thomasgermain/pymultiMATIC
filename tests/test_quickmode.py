@@ -1,7 +1,7 @@
 """Test for quick mode."""
 import unittest
 
-from pymultimatic.model import QuickModes, Zone, Room, Circulation, HotWater
+from pymultimatic.model import Circulation, HotWater, QuickModes, Room, Ventilation, Zone
 
 
 class QuickModeTest(unittest.TestCase):
@@ -20,11 +20,17 @@ class QuickModeTest(unittest.TestCase):
     def test_for_dhw(self) -> None:
         """Test get quick mode for zone."""
         values = QuickModes.for_dhw()
-        self.assertEqual(4, len(values))
+        self.assertEqual(5, len(values))
+
+    def test_for_ventilation(self) -> None:
+        """Test get quick mode for zone."""
+        values = QuickModes.for_ventilation()
+        self.assertEqual(5, len(values))
 
     def test_is_for(self) -> None:
         for mode in QuickModes._VALUES.values():
-            self.assertEqual(mode.for_zone, mode.is_for(Zone()))
-            self.assertEqual(mode.for_room, mode.is_for(Room()))
-            self.assertEqual(mode.for_dhw, mode.is_for(Circulation()))
-            self.assertEqual(mode.for_dhw, mode.is_for(HotWater()))
+            self.assertEqual(mode.for_zone, mode.is_for(Zone()), mode)
+            self.assertEqual(mode.for_room, mode.is_for(Room()), mode)
+            self.assertEqual(mode.for_dhw, mode.is_for(Circulation()), mode)
+            self.assertEqual(mode.for_dhw, mode.is_for(HotWater()), mode)
+            self.assertEqual(mode.for_ventilation, mode.is_for(Ventilation()), mode)

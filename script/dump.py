@@ -7,18 +7,14 @@ import sys
 
 import aiohttp
 
+
 sys.path.append("../")
+from pymultimatic.systemmanager import SystemManager
 from pymultimatic.api import Connector, ApiError, urls
 from pymultimatic.model import mapper
 
 URLS = [
-    urls.system,
-    urls.rooms,
-    urls.live_report,
-    urls.hvac,
-    urls.gateway_type,
-    urls.emf_report,
-    urls.photovoltaics
+
 ]
 
 
@@ -66,6 +62,25 @@ async def main(user, passw):
                     json.dump(json.loads(data), file, indent=4)
             except:
                 print('cannot write to file {}'.format(file.name))
+
+        manager = SystemManager(user, passw, sess)
+        print(await manager.get_zones())
+        print(await manager.get_gateway())
+        print(await manager.get_facility_detail())
+        print(await manager.get_holiday_mode())
+        print(await manager.get_hvac_status())
+        print(await manager.get_live_reports())
+        print(await manager.get_outdoor_temperature())
+        print(await manager.get_ventilation())
+        print(await manager.get_quick_mode())
+        print(await manager.get_dhw())
+        print(await manager.get_rooms())
+        print(await manager.get_live_report('DomesticHotWaterTankTemperature', 'Control_DHW'))
+        print(await manager.get_hot_water('Control_DHW'))
+        print(await manager.get_room('1'))
+        print(await manager.get_zone('Control_ZO1'))
+        print(await manager.get_system())
+        print(await manager.get_circulation('Control_DHW'))
 
 
 if __name__ == "__main__":
