@@ -197,7 +197,7 @@ def _active_mode_for_ventilation(
     return mode
 
 
-def _get_setting_for_sunday(time_program: TimeProgram) -> TimePeriodSetting:
+def _get_setting_for_sunday(time_program: TimeProgram) -> Optional[TimePeriodSetting]:
     today = datetime.now()
     sunday = today - timedelta(days=today.weekday() - 6)
     return time_program.get_for(sunday)

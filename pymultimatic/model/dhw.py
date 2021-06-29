@@ -25,17 +25,13 @@ class HotWater(Function, Component):
     quick_veto = attr.ib(default=None, init=False)
     target_low = attr.ib(default=MIN_TARGET_TEMP, init=False)
 
-    @property
-    def active_mode(self) -> ActiveMode:
-        """ActiveMode: Get the :class:`~pymultimatic.model.mode.ActiveMode`."""
-        if self.time_program:
-            return super().active_mode
-        if self.operating_mode == OperatingModes.AUTO:
-            return ActiveMode(self.target_high, OperatingModes.AUTO, SettingModes.ON)
-        return self._active_mode()
-
     def _active_mode(self) -> ActiveMode:
-        if self.operating_mode == OperatingModes.ON:
+        mode: ActiveMode
+        if (
+            self.operating_mode == OperatingModes.AUTO
+        ):  # auto at this point mean we have a "direct heater"
+            mode = ActiveMode(self.target_high, OperatingModes.AUTO, SettingModes.ON)
+        elif self.operating_mode == OperatingModes.ON:
             mode = ActiveMode(self.target_high, OperatingModes.ON)
         else:  # MODE_OFF
             mode = ActiveMode(constants.FROST_PROTECTION_TEMP, OperatingModes.OFF)
@@ -57,17 +53,13 @@ class Circulation(Function, Component):
     target_high = attr.ib(default=None, init=False)
     target_low = attr.ib(default=None, init=False)
 
-    @property
-    def active_mode(self) -> ActiveMode:
-        """ActiveMode: Get the :class:`~pymultimatic.model.mode.ActiveMode`."""
-        if self.time_program:
-            return super().active_mode
-        if self.operating_mode == OperatingModes.AUTO:
-            return ActiveMode(self.target_low, OperatingModes.AUTO, SettingModes.OFF)
-        return self._active_mode()
-
     def _active_mode(self) -> ActiveMode:
-        if self.operating_mode == OperatingModes.ON:
+        mode: ActiveMode
+        if (
+            self.operating_mode == OperatingModes.AUTO
+        ):  # auto at this point mean we have a "direct heater"
+            mode = ActiveMode(self.target_low, OperatingModes.AUTO, SettingModes.OFF)
+        elif self.operating_mode == OperatingModes.ON:
             mode = ActiveMode(self.target_high, OperatingModes.ON)
         else:  # MODE_OFF
             mode = ActiveMode(self.target_low, OperatingModes.OFF)

@@ -11,7 +11,7 @@ import aiohttp
 sys.path.append("../")
 from pymultimatic.systemmanager import SystemManager
 from pymultimatic.api import Connector, ApiError, urls
-from pymultimatic.model import mapper
+from pymultimatic.model import mapper, QuickModes
 
 URLS = [
 
@@ -64,7 +64,7 @@ async def main(user, passw):
                 print('cannot write to file {}'.format(file.name))
 
         manager = SystemManager(user, passw, sess)
-        print(await manager.get_zones())
+        """print(await manager.get_zones())
         print(await manager.get_gateway())
         print(await manager.get_facility_detail())
         print(await manager.get_holiday_mode())
@@ -80,7 +80,9 @@ async def main(user, passw):
         print(await manager.get_room('1'))
         print(await manager.get_zone('Control_ZO1'))
         print(await manager.get_system())
-        print(await manager.get_circulation('Control_DHW'))
+        print(await manager.get_circulation('Control_DHW'))"""
+        print(await manager.set_quick_mode(QuickModes.get('QM_COOLING_FOR_X_DAYS', 2)))
+        print(await manager.get_quick_mode())
 
 
 if __name__ == "__main__":

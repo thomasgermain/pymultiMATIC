@@ -17,6 +17,7 @@ from pymultimatic.model import (
     Ventilation,
     Zone,
     constants,
+    TimeProgram,
 )
 from tests.conftest import _circulation, _hotwater, _room, _time_program, _zone, _zone_cooling
 
@@ -479,6 +480,19 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(SettingModes.ON, active_mode.sub)
         self.assertEqual(50, active_mode.target)
 
+    def test_get_active_mode_hotwater_empty_timeprogram(self) -> None:
+        """Test get active mode for hot water."""
+
+        dhw = Dhw(hotwater=_hotwater())
+        dhw.hotwater.time_program = TimeProgram(days={})
+        system = System(dhw=dhw)
+
+        active_mode = system.get_active_mode_hot_water()
+
+        self.assertEqual(OperatingModes.AUTO, active_mode.current)
+        self.assertEqual(SettingModes.ON, active_mode.sub)
+        self.assertEqual(50, active_mode.target)
+
     def test_get_active_mode_hotwater_no_timeprogram_on(self) -> None:
         """Test get active mode for hot water."""
 
@@ -497,6 +511,18 @@ class SystemTest(unittest.TestCase):
 
         dhw = Dhw(circulation=_circulation())
         dhw.circulation.time_program = None
+        system = System(dhw=dhw)
+
+        active_mode = system.get_active_mode_circulation()
+
+        self.assertEqual(OperatingModes.AUTO, active_mode.current)
+        self.assertEqual(SettingModes.OFF, active_mode.sub)
+
+    def test_get_active_mode_circulation_empty_timeprogram(self) -> None:
+        """Test get active mode for circulation."""
+
+        dhw = Dhw(circulation=_circulation())
+        dhw.circulation.time_program = TimeProgram(days={})
         system = System(dhw=dhw)
 
         active_mode = system.get_active_mode_circulation()

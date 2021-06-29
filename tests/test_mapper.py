@@ -44,6 +44,24 @@ class MapperTest(unittest.TestCase):
             self.assertIsNone(dhw.hotwater.temperature)
             self.assertIsNotNone(dhw.circulation)
 
+    def test_map_dhw_no_timeprogram(self) -> None:
+        with open(path("files/responses/dhws_minimal"), "r") as file:
+            raw_dhw = json.loads(file.read())
+            dhw = mapper.map_dhw(raw_dhw)
+            self.assertIsNotNone(dhw.hotwater)
+            self.assertIsNotNone(dhw.circulation)
+            self.assertIsNotNone(dhw.circulation.time_program)
+            self.assertIsNotNone(dhw.hotwater.time_program)
+
+    def test_map_dhw_empty_timeprogram(self) -> None:
+        with open(path("files/responses/dhws_empty_timprogram"), "r") as file:
+            raw_dhw = json.loads(file.read())
+            dhw = mapper.map_dhw(raw_dhw)
+            self.assertIsNotNone(dhw.hotwater)
+            self.assertIsNotNone(dhw.circulation)
+            self.assertIsNotNone(dhw.circulation.time_program)
+            self.assertIsNotNone(dhw.hotwater.time_program)
+
     def test_map_zone_cooling(self) -> None:
         """Test map zone with cooling."""
         with open(path("files/responses/systemcontrol_ventilation"), "r") as file:
