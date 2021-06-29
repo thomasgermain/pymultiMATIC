@@ -341,7 +341,7 @@ def _map_function(raw, tp_key=None, rbr=False) -> Tuple[TimeProgram, OperatingMo
 
     operating_mode: OperatingMode
     if rbr:
-        operating_mode = OperatingModes.get(mode) if mode else None  # type: ignore
+        operating_mode = OperatingModes.get(mode) if mode else None
     else:
         operating_mode = OperatingModes.get(mode)
     target_high = conf.get("setpoint_temperature", None)

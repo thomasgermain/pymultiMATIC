@@ -86,7 +86,7 @@ class TimeProgram:
 
     days = attr.ib(type=Dict[str, TimeProgramDay])
 
-    def get_for(self, search_date: datetime) -> TimePeriodSetting:
+    def get_for(self, search_date: datetime) -> Optional[TimePeriodSetting]:
         """Get the corresponding :class:`TimePeriodSetting`
         for the given time.
 
@@ -97,31 +97,34 @@ class TimeProgram:
         Returns:
             TimePeriodSetting: The corresponding setting.
         """
-        day = search_date.strftime("%A").lower()
-        day_before = (search_date - timedelta(days=1)).strftime("%A").lower()
-        time = str(search_date.hour) + ":" + str(search_date.minute)
+        if self.days:
+            day = search_date.strftime("%A").lower()
+            day_before = (search_date - timedelta(days=1)).strftime("%A").lower()
+            time = str(search_date.hour) + ":" + str(search_date.minute)
 
-        abs_minutes = _to_absolute_minutes(time)
-        tp_day = self.days[day]
-        tp_day_before = self.days[day_before]
+            abs_minutes = _to_absolute_minutes(time)
+            tp_day = self.days.get(day)
+            tp_day_before = self.days.get(day_before)
 
-        # if given hour:minute is before the first setting of the day,
-        # get last setting of the previous day
-        if abs_minutes < tp_day.settings[0].absolute_minutes:
-            return copy.deepcopy(tp_day_before.settings[-1])
+            if tp_day and tp_day_before:
+                # if given hour:minute is before the first setting of the day,
+                # get last setting of the previous day
+                if abs_minutes < tp_day.settings[0].absolute_minutes:
+                    return copy.deepcopy(tp_day_before.settings[-1])
 
-        idx: int = 0
-        max_len: int = len(tp_day.settings)
-        while idx < max_len and abs_minutes > tp_day.settings[idx].absolute_minutes:
-            idx += 1
+                idx: int = 0
+                max_len: int = len(tp_day.settings)
+                while idx < max_len and abs_minutes > tp_day.settings[idx].absolute_minutes:
+                    idx += 1
 
-        if not idx == max_len:
-            # At this point, we went 1 step too far, so idx - 1
-            return copy.deepcopy(tp_day.settings[idx - 1])
+                if not idx == max_len:
+                    # At this point, we went 1 step too far, so idx - 1
+                    return copy.deepcopy(tp_day.settings[idx - 1])
 
-        # if no match a this point, it means search date is after the last
-        # setting of the day
-        return copy.deepcopy(tp_day.settings[-1])
+                # if no match a this point, it means search date is after the last
+                # setting of the day
+                return copy.deepcopy(tp_day.settings[-1])
+        return None
 
     def get_next(self, search_date: datetime) -> TimePeriodSetting:
         """

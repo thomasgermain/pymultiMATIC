@@ -61,10 +61,10 @@ def quickmode(quick_mode: str, duration: Optional[int] = None) -> Dict[str, Any]
 
     Duration is mandatory (Duration is in minutes, max 1440 =24 hours).
     """
-    payload = {"quickmode": {"quickmode": quick_mode}}
+    payload: Dict[str, Any] = {"quickmode": {"quickmode": quick_mode}}
 
     if duration:
-        payload["quickmode"]["duration"] = str(duration)
+        payload["quickmode"].update({"duration": duration})
 
     return payload
 

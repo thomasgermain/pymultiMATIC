@@ -302,6 +302,7 @@ class SystemManager:
         dhw = await self._call_api(urls.hot_water, params={"id": dhw_id}, schema=schemas.FUNCTION)
         return mapper.map_hot_water(dhw, dhw_id)
 
+    @ignore_http_409()
     async def get_dhw(self) -> Optional[Dhw]:
         """Get the :class:`~pymultimatic.model.Dhw` (Domestic Hot Water)
 
@@ -311,6 +312,7 @@ class SystemManager:
         dhw = await self._call_api(urls.dhws, schema=schemas.DHWS)
         return mapper.map_dhw(dhw)
 
+    @ignore_http_409(return_value=[])
     async def get_rooms(self) -> Optional[List[Room]]:
         """Get a list of :class:`~pymultimatic.model.component.Room`
 
@@ -334,6 +336,7 @@ class SystemManager:
         new_room = await self._call_api(urls.room, params={"id": room_id}, schema=schemas.ROOM)
         return mapper.map_room(new_room)
 
+    @ignore_http_409(return_value=[])
     async def get_zones(self) -> Optional[List[Zone]]:
         """Get a list of :class:`~pymultimatic.model.component.Zone`
 
@@ -382,7 +385,9 @@ class SystemManager:
             quick_mode (QuickMode): the quick mode to set, see
                 :class:`~pymultimatic.model.mode.QuickModes`
         """
-        await self._call_api(urls.system_quickmode, payload=payloads.quickmode(quick_mode.name))
+        await self._call_api(
+            urls.system_quickmode, payload=payloads.quickmode(quick_mode.name, quick_mode.duration)
+        )
 
     @ignore_http_409(return_value=False)
     async def remove_quick_mode(self) -> bool:
