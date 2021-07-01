@@ -7,7 +7,7 @@ import attr
 
 from . import ApiError, defaults, urls
 
-_LOGGER = logging.getLogger("Connector")
+_LOGGER = logging.getLogger(__name__)
 
 HEADER = {"content-type": "application/json", "Accept": "application/json"}
 

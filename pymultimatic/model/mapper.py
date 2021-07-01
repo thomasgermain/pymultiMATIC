@@ -32,6 +32,7 @@ from . import (
 )
 
 _DATE_FORMAT = "%Y-%m-%d"
+_DAYS_OF_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
 
 def map_gateway(json) -> str:
@@ -74,9 +75,12 @@ def _map_holiday_mode(json) -> HolidayMode:
     mode = HolidayMode(False)
     if json:
         mode.is_active = bool(json.get("active"))
-        mode.target = float(json.get("temperature_setpoint"))
-        mode.start_date = datetime.strptime(json.get("start_date"), _DATE_FORMAT).date()
-        mode.end_date = datetime.strptime(json.get("end_date"), _DATE_FORMAT).date()
+        target = json.get("temperature_setpoint")
+        mode.target = float(target) if target else None
+        start_date = json.get("start_date")
+        end_date = json.get("end_date")
+        mode.start_date = datetime.strptime(start_date, _DATE_FORMAT).date() if start_date else None
+        mode.end_date = datetime.strptime(end_date, _DATE_FORMAT).date() if end_date else None
     return mode
 
 
@@ -105,13 +109,10 @@ def map_outdoor_temp_from_system(json) -> Optional[float]:
 
 def map_rooms(raw_rooms) -> List[Room]:
     """Map *rooms*."""
+
     rooms: List[Room] = []
     if raw_rooms:
-        for raw_room in raw_rooms.get("body", {}).get("rooms", []):
-            room = map_room(raw_room)
-            if room:
-                rooms.append(room)
-
+        rooms = [map_room(raw_room) for raw_room in raw_rooms.get("body", {}).get("rooms", [])]
     return rooms
 
 
@@ -123,7 +124,7 @@ def map_room(raw_room) -> Optional[Room]:
         if raw_room:
             config = raw_room.get("configuration", {})
 
-            func = _map_function(raw_room)
+            t_prog, mode, high, low = _map_function(raw_room)
 
             room_id = raw_room.get("roomIndex")
             child_lock = config.get("childLock")
@@ -144,10 +145,10 @@ def map_room(raw_room) -> Optional[Room]:
             return Room(
                 id=room_id,
                 name=name,
-                time_program=func[0],
+                time_program=t_prog,
                 temperature=current_temp,
-                target_high=func[2],
-                operating_mode=func[1],
+                target_high=high,
+                operating_mode=mode,
                 quick_veto=quick_veto,
                 child_lock=child_lock,
                 window_open=window_open,
@@ -176,13 +177,8 @@ def map_time_program(raw_time_program, key: Optional[str] = None) -> TimeProgram
     """Map *time program*."""
     result = {}
     if raw_time_program:
-        result["monday"] = map_time_program_day(raw_time_program.get("monday"), key)
-        result["tuesday"] = map_time_program_day(raw_time_program.get("tuesday"), key)
-        result["wednesday"] = map_time_program_day(raw_time_program.get("wednesday"), key)
-        result["thursday"] = map_time_program_day(raw_time_program.get("thursday"), key)
-        result["friday"] = map_time_program_day(raw_time_program.get("friday"), key)
-        result["saturday"] = map_time_program_day(raw_time_program.get("saturday"), key)
-        result["sunday"] = map_time_program_day(raw_time_program.get("sunday"), key)
+        for day_of_week in _DAYS_OF_WEEK:
+            result[day_of_week] = map_time_program_day(raw_time_program.get(day_of_week), key)
 
     return TimeProgram(result)
 
@@ -511,7 +507,7 @@ def _map_report(json) -> Optional[Report]:
 
 
 def _map_hot_water(raw_hot_water, dhw_id, current_temp) -> Optional[HotWater]:
-    timep, mode, high, low = _map_function(raw_hot_water, "mode")  # pylint: disable=unused-variable
+    timep, mode, high, low = _map_function(raw_hot_water, "mode")
     return HotWater(
         id=dhw_id,
         name="hotwater",

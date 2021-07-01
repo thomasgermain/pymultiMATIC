@@ -70,7 +70,7 @@ class Room(Function, Component):
 
     @property
     def active_mode(self) -> ActiveMode:
-        """ ""ActiveMode: Get the :class:`~pymultimatic.model.mode.ActiveMode`
+        """ActiveMode: Get the :class:`~pymultimatic.model.mode.ActiveMode`
         for this function. All operating modes are handled,
         **but not quick veto nor quick mode.**
         """
