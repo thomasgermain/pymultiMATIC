@@ -113,6 +113,7 @@ class SystemManager:
     Args:
         user (str): User to login with.
         password (str): Password associated with the user.
+        session: (aiohttp.ClientSession): Session.
         smartphone_id (str): This is required by the API to login.
         serial (str): If you have multiple facilities,
             you can specify which one to access
@@ -347,7 +348,7 @@ class SystemManager:
         return mapper.map_zones(rooms)
 
     async def get_zone(self, zone_id: str) -> Optional[Zone]:
-        """ "Get the :class:`~pymultimatic.model.component.Zone` information
+        """Get the :class:`~pymultimatic.model.component.Zone` information
         for the given id.
 
         Args:
@@ -361,7 +362,7 @@ class SystemManager:
         return mapper.map_zone(new_zone)
 
     async def get_circulation(self, dhw_id: str) -> Optional[Circulation]:
-        """ "Get the :class:`~pymultimatic.model.component.Circulation`
+        """Get the :class:`~pymultimatic.model.component.Circulation`
         information for the given id.
 
         Args:
