@@ -115,9 +115,3 @@ In case of error coming from the API, a `pymultimtic.api.Error` is raised, conta
 I would recommend using this layer if you want to do more complex things, e.g: if you want to get the target temperature for 
 a room or a zone, it can become a bit complex since you have to deal with holiday mode, quick mode, quick veto, time program, etc.
 This layer is hiding you this complexity.
-
-## Documentation
-You can find a deeper documentation [here](https://thomasgermain.github.io/pymultiMATIC/).
-
-## Todo's
-- Moving some constructors (System) to **kwargs
