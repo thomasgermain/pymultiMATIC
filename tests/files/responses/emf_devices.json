@@ -1,0 +1,68 @@
+{
+  "body": [
+    {
+      "id": "SomeOtherDevice",
+      "type": "HEAT_PUMP",
+      "marketingName": "Some Other Device",
+      "reports": [
+        {
+          "function": "COOLING",
+          "energyType": "ENVIRONMENTAL_YIELD",
+          "currentMeterReading": 1.0,
+          "from": "2020-12-08",
+          "to": "2020-12-09"
+        }
+      ]
+    },
+    {
+      "id": "NoneGateway-LL_HMU00_0304_flexoTHERM_PR_EBUS",
+      "type": "HEAT_PUMP",
+      "marketingName": "VWF 117/4",
+      "reports": [
+        {
+          "function": "COOLING",
+          "energyType": "ENVIRONMENTAL_YIELD",
+          "currentMeterReading": 66.0,
+          "from": "2020-12-08",
+          "to": "2020-12-09"
+        },
+        {
+          "function": "CENTRAL_HEATING",
+          "energyType": "ENVIRONMENTAL_YIELD",
+          "currentMeterReading": 27515000.0,
+          "from": "2020-12-08",
+          "to": "2020-12-09"
+        },
+        {
+          "function": "DHW",
+          "energyType": "CONSUMED_ELECTRICAL_POWER",
+          "currentMeterReading": 752000.0,
+          "from": "2020-12-08",
+          "to": "2020-12-09"
+        },
+        {
+          "function": "DHW",
+          "energyType": "ENVIRONMENTAL_YIELD",
+          "currentMeterReading": 466000.0,
+          "from": "2020-12-08",
+          "to": "2020-12-09"
+        },
+        {
+          "function": "COOLING",
+          "energyType": "CONSUMED_ELECTRICAL_POWER",
+          "currentMeterReading": 0.0,
+          "from": "2020-12-08",
+          "to": "2020-12-09"
+        },
+        {
+          "function": "CENTRAL_HEATING",
+          "energyType": "CONSUMED_ELECTRICAL_POWER",
+          "currentMeterReading": 18352000.0,
+          "from": "2020-12-08",
+          "to": "2020-12-09"
+        }
+      ]
+    }
+  ],
+  "meta": {}
+}

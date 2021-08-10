@@ -28,6 +28,7 @@ from .model import (
     ZoneHeating,
     constants,
     mapper,
+    EmfReport,
 )
 
 _LOGGER = logging.getLogger("SystemManager")
@@ -198,6 +199,15 @@ class SystemManager:
             ventilation=ventilation,
             gateway=gateway,
         )
+
+    @ignore_http_409(return_value=[])
+    async def get_emf_devices(self) -> List[EmfReport]:
+        """Get all the EMF reports available.
+
+        Returns:
+            The list of report emf devices
+        """
+        return mapper.map_emf_reports(await self._call_api(urls.emf_devices))
 
     async def get_gateway(self) -> str:
         """Get the gateway type (VR900, VR920, etc)

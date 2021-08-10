@@ -29,10 +29,35 @@ from . import (
     Zone,
     ZoneCooling,
     ZoneHeating,
+    EmfReport,
 )
 
 _DATE_FORMAT = "%Y-%m-%d"
 _DAYS_OF_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
+
+def map_emf_reports(json) -> List[EmfReport]:
+    """Map emf reports"""
+    reports = []
+    if json and json.get("body"):
+        for raw_devices in json.get("body"):
+            device_id = raw_devices.get("id")
+            device_type = raw_devices.get("type")
+            device_name = raw_devices.get("marketingName")
+            for raw_report in raw_devices.get("reports"):
+                reports.append(
+                    EmfReport(
+                        device_id,
+                        device_name,
+                        device_type,
+                        raw_report.get("function"),
+                        raw_report.get("energyType"),
+                        raw_report.get("currentMeterReading"),
+                        datetime.strptime(raw_report.get("from"), _DATE_FORMAT).date(),
+                        datetime.strptime(raw_report.get("to"), _DATE_FORMAT).date(),
+                    )
+                )
+    return reports
 
 
 def map_gateway(json) -> str:
