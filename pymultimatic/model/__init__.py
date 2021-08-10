@@ -15,7 +15,7 @@ from .room import Device, Room  # noqa: F401
 from .status import HvacStatus, BoilerStatus, Error  # noqa: F401
 from .syncstate import SyncState  # noqa: F401
 from .dhw import Dhw, HotWater, Circulation  # noqa: F401
-from .report import Report  # noqa: F401
+from .report import Report, EmfReport  # noqa: F401
 from .ventilation import Ventilation  # noqa: F401
 from .quick_mode import QuickMode, QuickModes, HolidayMode  # noqa: F401
 from .info import FacilityDetail  # noqa: F401

@@ -479,3 +479,17 @@ class MapperTest(unittest.TestCase):
             self.assertIsNotNone(zones)
             self.assertIsNotNone(zones[0])
             self.assertIsNotNone(zones[1])
+
+    def test_map_emf_reports(self) -> None:
+        with open(path("files/responses/emf_devices"), "r") as file:
+            raw_emf_reports = json.loads(file.read())
+        reports = mapper.map_emf_reports(raw_emf_reports)
+        self.assertEqual(7, len(reports))
+        self.assertEqual("VWF 117/4", reports[1].device_name)
+        self.assertEqual("NoneGateway-LL_HMU00_0304_flexoTHERM_PR_EBUS", reports[1].device_id)
+        self.assertEqual("HEAT_PUMP", reports[1].device_type)
+        self.assertEqual("COOLING", reports[1].function)
+        self.assertEqual("ENVIRONMENTAL_YIELD", reports[1].energyType)
+        self.assertEqual(66.0, reports[1].value)
+        self.assertEqual(date(2020, 12, 8), reports[1].from_date)
+        self.assertEqual(date(2020, 12, 9), reports[1].to_date)

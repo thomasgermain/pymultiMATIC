@@ -748,6 +748,23 @@ async def test_get_ventilation(manager: SystemManager, resp: aioresponses) -> No
     _assert_calls(1, manager, [url])
 
 
+@pytest.mark.asyncio
+async def test_get_emf_devices(manager: SystemManager, resp: aioresponses) -> None:
+    url = urls.emf_devices(
+        serial=SERIAL,
+    )
+
+    with open(path("files/responses/emf_devices"), "r") as file:
+        json_raw = json.loads(file.read())
+
+    resp.get(url, status=200, payload=json_raw)
+
+    emf_reports = await manager.get_emf_devices()
+    assert emf_reports is not None
+    assert len(emf_reports) == 7
+    _assert_calls(1, manager, [url])
+
+
 def _mock_urls(
     resp: aioresponses,
     hvacstate_data: Any,
