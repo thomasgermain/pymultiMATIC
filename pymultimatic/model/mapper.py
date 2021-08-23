@@ -303,7 +303,7 @@ def map_zone(raw_zone) -> Optional[Zone]:
         enabled = configuration.get("enabled", bool())
 
         zone_cooling = None
-        func = _map_function(raw_heating, "setting", rbr)
+        func = _map_function(raw_heating, "setting", rbr, quick_veto is not None)
         zone_heating = ZoneHeating(func[0], func[1], func[2], func[3])
 
         if raw_cooling:
@@ -352,7 +352,9 @@ def _map_ventilation(json) -> Optional[Ventilation]:
     )
 
 
-def _map_function(raw, tp_key=None, rbr=False) -> Tuple[TimeProgram, OperatingMode, float, float]:
+def _map_function(
+    raw, tp_key=None, rbr=False, quick_veto=False
+) -> Tuple[TimeProgram, OperatingMode, float, float]:
     conf = raw.get("configuration", {})
     mode = conf.get("mode")
     if not mode:
@@ -363,8 +365,11 @@ def _map_function(raw, tp_key=None, rbr=False) -> Tuple[TimeProgram, OperatingMo
     operating_mode: OperatingMode
     if rbr:
         operating_mode = OperatingModes.get(mode) if mode else None
+    elif quick_veto:
+        operating_mode = OperatingModes.QUICK_VETO
     else:
         operating_mode = OperatingModes.get(mode)
+
     target_high = conf.get("setpoint_temperature", None)
     if not target_high:
         target_high = conf.get("temperature_setpoint", None)

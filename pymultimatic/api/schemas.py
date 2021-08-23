@@ -12,10 +12,10 @@ FACILITIES = Schema(
                 {
                     "serialNumber": non_empty_str,
                     "name": non_empty_str,
-                    "responsibleCountryCode": non_empty_str,
-                    "supportedBrand": non_empty_str,
+                    Optional("responsibleCountryCode"): non_empty_str,
+                    Optional("supportedBrand"): non_empty_str,
                     "firmwareVersion": non_empty_str,
-                    "capabilities": [non_empty_str],
+                    Optional("capabilities"): [non_empty_str],
                     "networkInformation": {
                         "macAddressEthernet": non_empty_str,
                         Optional("macAddressWifiAccessPoint"): non_empty_str,
@@ -57,18 +57,29 @@ CONTROLLED_BY = Schema(
         "name": not_rbr,
         Optional("link"): {
             Optional("rel"): str,
-            "resourceLink": str,
+            Optional("resourceLink"): str,
             Optional("name"): str,
         },
     }
 )
 
-CONTROLLED_BY_RBR = Schema(
+_CONTROLLED_BY_RBR = Schema(
     {
         "name": Or("RBR", "rbr"),
         Optional("link"): {
             Optional("rel"): str,
-            "resourceLink": str,
+            Optional("resourceLink"): str,
+            Optional("name"): str,
+        },
+    }
+)
+
+_CONTROLLED_BY_QUICK_VETO = Schema(
+    {
+        "name": "QUICK_VETO",
+        Optional("link"): {
+            Optional("rel"): str,
+            Optional("resourceLink"): str,
             Optional("name"): str,
         },
     }
@@ -140,9 +151,24 @@ _ZONE_CONFIGURATION = Schema(
     }
 )
 
+_DISABLED_ZONE_CONFIGURATION = Schema(
+    {
+        Optional("name"): non_empty_str,
+        "enabled": False,
+        Optional("inside_temperature"): numeric,
+        Optional("active_function"): non_empty_str,  # TODO: add ENUM validation
+        Optional("quick_veto"): {
+            "active": bool,
+            "setpoint_temperature": numeric,
+        },
+        Optional("quickmode"): QUICK_MODE,
+    }
+)
+
+
 _ZONE_PART = Schema(
     Or(
-        Schema(
+        Schema(  # most common zone response
             {
                 "_id": non_empty_str,
                 "configuration": _ZONE_CONFIGURATION,
@@ -151,11 +177,29 @@ _ZONE_PART = Schema(
                 Optional("cooling"): FUNCTION_PART,
             }
         ),
-        Schema(
+        Schema(  # disabled zone, in that case, almost everything is optional
+            {
+                "_id": non_empty_str,
+                "configuration": _DISABLED_ZONE_CONFIGURATION,
+                Optional("currently_controlled_by"): CONTROLLED_BY,
+                Optional("heating"): _OPTIONAL_CONFIG_FUNCTION_PART,
+                Optional("cooling"): _OPTIONAL_CONFIG_FUNCTION_PART,
+            }
+        ),
+        Schema(  # rbr zone, in that case, almost everything is optional
             {
                 "_id": non_empty_str,
                 Optional("configuration"): _ZONE_CONFIGURATION,
-                "currently_controlled_by": CONTROLLED_BY_RBR,
+                Optional("currently_controlled_by"): _CONTROLLED_BY_RBR,
+                Optional("heating"): _OPTIONAL_CONFIG_FUNCTION_PART,
+                Optional("cooling"): _OPTIONAL_CONFIG_FUNCTION_PART,
+            }
+        ),
+        Schema(  # quick veto set on a zone, configuration of heating (or cooling) is optional
+            {
+                "_id": non_empty_str,
+                "configuration": _ZONE_CONFIGURATION,
+                Optional("currently_controlled_by"): _CONTROLLED_BY_QUICK_VETO,
                 Optional("heating"): _OPTIONAL_CONFIG_FUNCTION_PART,
                 Optional("cooling"): _OPTIONAL_CONFIG_FUNCTION_PART,
             }

@@ -36,6 +36,18 @@ class MapperTest(unittest.TestCase):
             zones = mapper.map_zones(json_raw)
             self.assertEqual(2, len(zones))
 
+    def test_map_zones_3_zones(self) -> None:
+        with open(path("files/responses/zones_3_zones"), "r") as file:
+            json_raw = json.loads(file.read())
+            zones = mapper.map_zones(json_raw)
+            self.assertEqual(3, len(zones))
+
+    def test_map_zones_quick_veto_no_heating_config(self) -> None:
+        with open(path("files/responses/zones_missing_heating_config_quick_veto"), "r") as file:
+            json_raw = json.loads(file.read())
+            zones = mapper.map_zones(json_raw)
+            self.assertEqual(3, len(zones))
+
     def test_map_dhw(self) -> None:
         with open(path("files/responses/dhws"), "r") as file:
             raw_dhw = json.loads(file.read())
