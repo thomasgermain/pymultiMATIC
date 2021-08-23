@@ -226,6 +226,7 @@ class SystemManager:
         """
         return mapper.map_outdoor_temp(await self._call_api(urls.system_status))
 
+    @ignore_http_409()
     async def get_hvac_status(self) -> HvacStatus:
         """Get the :class:`~pymultimatic.model.HvacStatus`
 
@@ -281,6 +282,7 @@ class SystemManager:
             await self._call_api(urls.system_ventilation, schema=schemas.VENTILATION_LIST)
         )
 
+    @ignore_http_409()
     async def get_holiday_mode(self) -> HolidayMode:
         """Get the :class:`~pymultimatic.model.quick_mode.HolidayMode`
 
@@ -299,6 +301,7 @@ class SystemManager:
         """
         return mapper.map_quick_mode(await self._call_api(urls.system_quickmode))
 
+    @ignore_http_409()
     async def get_hot_water(self, dhw_id: str) -> Optional[HotWater]:
         """Get the :class:`~pymultimatic.model.component.HotWater`
         information for the given id.
@@ -333,6 +336,7 @@ class SystemManager:
         rooms = await self._call_api(urls.rooms, schema=schemas.ROOM_LIST)
         return mapper.map_rooms(rooms)
 
+    @ignore_http_409()
     async def get_room(self, room_id: str) -> Optional[Room]:
         """Get the :class:`~pymultimatic.model.component.Room` information
         for the given id.
@@ -357,6 +361,7 @@ class SystemManager:
         rooms = await self._call_api(urls.zones, schema=schemas.ZONE_LIST)
         return mapper.map_zones(rooms)
 
+    @ignore_http_409()
     async def get_zone(self, zone_id: str) -> Optional[Zone]:
         """Get the :class:`~pymultimatic.model.component.Zone` information
         for the given id.
@@ -371,6 +376,7 @@ class SystemManager:
         new_zone = await self._call_api(urls.zone, params={"id": zone_id}, schema=schemas.ZONE)
         return mapper.map_zone(new_zone)
 
+    @ignore_http_409()
     async def get_circulation(self, dhw_id: str) -> Optional[Circulation]:
         """Get the :class:`~pymultimatic.model.component.Circulation`
         information for the given id.

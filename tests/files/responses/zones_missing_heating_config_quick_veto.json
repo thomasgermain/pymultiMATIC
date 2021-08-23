@@ -1,0 +1,302 @@
+{
+  "body": [
+    {
+      "heating": {
+        "timeprogram": {
+          "monday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "tuesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "wednesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "thursday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "friday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "saturday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "07:30",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "23:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "sunday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "07:30",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ]
+        }
+      },
+      "configuration": {
+        "name": "HEIZKOPER ",
+        "enabled": true,
+        "active_function": "HEATING",
+        "quickmode": {
+          "quickmode": "QM_QUICK_VETO"
+        },
+        "quick_veto": {
+          "active": true,
+          "setpoint_temperature": 19.5
+        }
+      },
+      "currently_controlled_by": {
+        "name": "QUICK_VETO",
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones"
+        }
+      },
+      "_id": "Control_ZO1"
+    },
+    {
+      "heating": {
+        "configuration": {
+          "mode": "AUTO",
+          "setback_temperature": 19.0,
+          "setpoint_temperature": 20.0
+        },
+        "timeprogram": {
+          "monday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "tuesday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "wednesday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "thursday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "friday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "saturday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "sunday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ]
+        }
+      },
+      "configuration": {
+        "name": "FUSSBODEN ",
+        "enabled": true,
+        "active_function": "HEATING",
+        "quick_veto": {
+          "active": false,
+          "setpoint_temperature": 20.0
+        }
+      },
+      "_id": "Control_ZO2"
+    },
+    {
+      "heating": {
+        "configuration": {
+          "mode": "AUTO",
+          "setback_temperature": 15.0,
+          "setpoint_temperature": 20.0
+        }
+      },
+      "configuration": {
+        "name": "ZONE 3    ",
+        "enabled": false,
+        "active_function": "HEATING",
+        "quick_veto": {
+          "active": false,
+          "setpoint_temperature": 19.5
+        }
+      },
+      "_id": "Control_ZO3"
+    }
+  ],
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822788469,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO1/heating/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629829631000,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO1/heating/timeprogram"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822788469,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO1/configuration/quick_veto"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822796091,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO1/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822785875,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO2/heating/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629829631000,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO2/heating/timeprogram"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822785875,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO2/configuration/quick_veto"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822785875,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO2/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822745782,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO3/heating/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822745782,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO3/configuration/quick_veto"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1629822745782,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxx/systemcontrol/v1/zones/Control_ZO3/configuration"
+        }
+      }
+    ]
+  }
+}
