@@ -242,6 +242,18 @@ class MapperTest(unittest.TestCase):
         self.assertEqual(False, devices_room1[1].radio_out_of_reach)
         self.assertEqual(False, devices_room1[1].radio_out_of_reach)
 
+    def test_map_devices_no_name(self) -> None:
+        """Test map devices."""
+        with open(path("files/responses/room_empty_device_name"), "r") as file:
+            raw_room = json.loads(file.read())
+
+        room = mapper.map_room(raw_room)
+        self.assertIsNotNone(room)
+        self.assertEqual(2, len(room.devices))
+
+        self.assertEqual("", room.devices[0].name)
+        self.assertEqual(None, room.devices[1].name)
+
     def test_holiday_mode_none(self) -> None:
         """Test map no holiday mode."""
         with open(path("files/responses/systemcontrol"), "r") as file:

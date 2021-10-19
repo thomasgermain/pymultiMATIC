@@ -143,6 +143,19 @@ class SchemaTest(unittest.TestCase):
                 json_val.pop("meta")
                 self.assertDictEqual(result, json_val, "error for " + file)
 
+    def test_schema_room_validation(self) -> None:
+        """Ensure schema validation doesn't alter the response"""
+        my_path = "files/responses/"
+
+        files = ["room", "room_empty_device_name"]
+
+        for file in files:
+            with open(path(my_path + file), "r") as open_f:
+                json_val = json.loads(open_f.read())
+                result = schemas.ROOM.validate(json_val)
+                json_val.pop("meta")
+                self.assertDictEqual(result, json_val, "error for " + file)
+
     def test_schema_dhw_validation(self) -> None:
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
