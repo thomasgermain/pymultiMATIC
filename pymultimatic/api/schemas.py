@@ -2,6 +2,7 @@
 from schema import And, Optional, Or, Schema
 
 non_empty_str = And(str, len)  # pylint: disable=invalid-name
+optional_str = Or(str, None)
 numeric = Or(int, float)  # pylint: disable=invalid-name
 not_rbr = And(non_empty_str, lambda v: v not in ("RBR", "rbr"))  # pylint: disable=invalid-name
 
@@ -280,7 +281,7 @@ ROOM_PART = Schema(
             Optional("currentHumidity"): numeric,
             "devices": [
                 {
-                    "name": non_empty_str,
+                    "name": optional_str,
                     "sgtin": non_empty_str,
                     "deviceType": non_empty_str,  # TODO: ENUM
                     "isBatteryLow": bool,
