@@ -46,7 +46,7 @@ def _active_mode_for_zone(
     mode: Optional[ActiveMode] = zone.active_mode
 
     # Holiday mode takes precedence over everything
-    if holiday.active_mode:
+    if holiday and holiday.active_mode:
         mode = holiday.active_mode
 
     # Global system quick mode takes over zone settings
@@ -91,7 +91,7 @@ def _active_mode_for_room(
         ActiveMode: The active mode.
     """
     # Holiday mode takes precedence over everything
-    if holiday.active_mode:
+    if holiday and holiday.active_mode:
         return holiday.active_mode
 
     # Global system quick mode takes over room settings
@@ -118,7 +118,7 @@ def _active_mode_for_circulation(
     Returns:
         ActiveMode: The active mode.
     """
-    if holiday.active_mode:
+    if holiday and holiday.active_mode:
         active_mode = holiday.active_mode
         active_mode.target = None
         return active_mode
@@ -146,7 +146,7 @@ def _active_mode_for_hot_water(
         ActiveMode: The active mode.
     """
 
-    if holiday.active_mode:
+    if holiday and holiday.active_mode:
         active_mode = holiday.active_mode
         active_mode.target = constants.FROST_PROTECTION_TEMP
         return active_mode
@@ -180,7 +180,7 @@ def _active_mode_for_ventilation(
     """
     mode: ActiveMode = ventilation.active_mode
 
-    if holiday.active_mode:
+    if holiday and holiday.active_mode:
         active_mode = holiday.active_mode
         active_mode.target = Ventilation.MIN_LEVEL
         return active_mode
