@@ -108,3 +108,10 @@ def ventilation_operating_mode(mode: str) -> Dict[str, Any]:
     :class:`~pymultimatic.model.Ventilation`.
     """
     return {"mode": mode}
+
+
+def ventilation_level(level: int) -> Dict[str, Any]:
+    """Payload to set level for
+    :class:`~pymultimatic.model.Ventilation`.
+    """
+    return {"level": level}
