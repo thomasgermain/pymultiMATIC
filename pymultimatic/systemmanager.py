@@ -749,7 +749,7 @@ class SystemManager:
     async def set_ventilation_operating_mode(
         self, ventilation_id: str, mode: OperatingMode
     ) -> None:
-        """Set ventilation at night level.
+        """Set ventilation operating mode.
          Compatible modes are listed here
          :class:`~pymultimatic.model.Ventilation.MODES`
 
@@ -761,6 +761,32 @@ class SystemManager:
             urls.set_ventilation_operating_mode,
             params={"id": ventilation_id},
             payload=payloads.ventilation_operating_mode(mode.name),
+        )
+
+    async def set_ventilation_day_level(self, ventilation_id: str, level: int) -> None:
+        """Set ventilation day level
+
+        Args:
+            ventilation_id (str): id of the ventilation
+            level (int): Level between 1 and 6
+        """
+        await self._call_api(
+            urls.set_ventilation_day_level,
+            params={"id": ventilation_id},
+            payload=payloads.ventilation_level(level),
+        )
+
+    async def set_ventilation_night_level(self, ventilation_id: str, level: int) -> None:
+        """Set ventilation night level
+
+        Args:
+            ventilation_id (str): id of the ventilation
+            level (int): Level between 1 and 6
+        """
+        await self._call_api(
+            urls.set_ventilation_night_level,
+            params={"id": ventilation_id},
+            payload=payloads.ventilation_level(level),
         )
 
     async def request_hvac_update(self) -> None:
