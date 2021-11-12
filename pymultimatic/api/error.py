@@ -14,6 +14,12 @@ class ApiError(Exception):
     status = attr.ib(type=int)
     payload = attr.ib(type=Any, default=None)
 
+    def __str__(self) -> str:
+        return (
+            f"{self.message}, status: {self.status}, response: {self.response},"
+            f"payload: {self.payload}"
+        )
+
 
 @attr.s
 class WrongResponseError(ApiError):
