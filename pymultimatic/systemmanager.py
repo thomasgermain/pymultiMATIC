@@ -173,7 +173,7 @@ class SystemManager:
         hvac_status = mapper.map_hvac_status(hvac_state)
         holiday = mapper.map_holiday_mode_from_system(full_system)
         zones = mapper.map_zones_from_system(full_system)
-        outdoor_temp = mapper.map_outdoor_temp(full_system)
+        outdoor_temp = mapper.map_outdoor_temp_from_system(full_system)
         quick_mode = mapper.map_quick_mode_from_system(full_system)
         ventilation = mapper.map_ventilation_from_system(full_system)
         dhw = mapper.map_dhw_from_system(full_system, live_report)
