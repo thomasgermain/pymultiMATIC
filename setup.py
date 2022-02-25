@@ -8,7 +8,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="pymultiMATIC",
-    version="0.6.6",
+    version="0.6.7",
     description="Python interface with Vaillant multiMATIC",
     long_description_content_type="text/markdown",
     long_description=long_description,
@@ -20,17 +20,17 @@ setup(
     zip_safe=False,
     setup_requires=["pytest-runner"],
     install_requires=[
-        "attrs==21.2.0",
-        "aiohttp==3.7.4.post0",
-        "schema==0.7.4",
+        "attrs>=21.2.0,<22.0.0",
+        "aiohttp>=3.8.0,<4.0.0",
+        "schema>=0.7.4,<0.8.0",
     ],
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Home Automation",
     ],
 )

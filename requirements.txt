@@ -1,7 +1,7 @@
 #Application
-attrs==21.2.0
-aiohttp==3.7.4.post0
-schema==0.7.4
+attrs>=21.2.0,<22.0.0
+aiohttp>=3.8.0,<4.0.0
+schema>=0.7.4,<0.8.0
 
 #Test
 aioresponses==0.7.2
