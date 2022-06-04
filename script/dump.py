@@ -9,13 +9,23 @@ import aiohttp
 
 
 sys.path.append("../")
-from pymultimatic.systemmanager import SystemManager
 from pymultimatic.api import Connector, ApiError, urls
-from pymultimatic.model import mapper, QuickModes
+from pymultimatic.model import mapper
 
-URLS = [
-
-]
+URLS = {
+    urls.zones: {},
+    urls.gateway_type: {},
+    urls.facilities_details: {},
+    urls.system_holiday_mode: {},
+    urls.hvac: {},
+    urls.live_report: {},
+    urls.system_status: {},
+    urls.system_quickmode: {},
+    urls.dhw: {'id': 'Control_DHW'},
+    urls.rooms: {},
+    urls.system: {},
+    urls.system_ventilation: {},
+}
 
 
 async def main(user, passw):
@@ -38,9 +48,11 @@ async def main(user, passw):
         serial = mapper.map_serial_number(facilities)
 
         requests = {}
-        for url in URLS:
+        for url, param in URLS.items():
             print('requesting ' + url.__name__)
-            req = connector.get(url(**{'serial': serial}))
+            params = {'serial': serial}
+            params.update(param)
+            req = connector.get(url(**params))
             requests.update({url.__name__: req})
 
         print('did {} requests'.format(len(requests)))
@@ -49,7 +61,9 @@ async def main(user, passw):
         for key in requests:
             try:
                 responses.update({key: await requests[key]})
-            except:
+            except ApiError as api_err:
+                responses.update({key: api_err.response})
+            except err:
                 print('Cannot get response for {}, skipping it'.format(key))
 
         print('received {} responses'.format(len(responses)))
@@ -62,27 +76,6 @@ async def main(user, passw):
                     json.dump(json.loads(data), file, indent=4)
             except:
                 print('cannot write to file {}'.format(file.name))
-
-        manager = SystemManager(user, passw, sess)
-        """print(await manager.get_zones())
-        print(await manager.get_gateway())
-        print(await manager.get_facility_detail())
-        print(await manager.get_holiday_mode())
-        print(await manager.get_hvac_status())
-        print(await manager.get_live_reports())
-        print(await manager.get_outdoor_temperature())
-        print(await manager.get_ventilation())
-        print(await manager.get_quick_mode())
-        print(await manager.get_dhw())
-        print(await manager.get_rooms())
-        print(await manager.get_live_report('DomesticHotWaterTankTemperature', 'Control_DHW'))
-        print(await manager.get_hot_water('Control_DHW'))
-        print(await manager.get_room('1'))
-        print(await manager.get_zone('Control_ZO1'))
-        print(await manager.get_system())
-        print(await manager.get_circulation('Control_DHW'))"""
-        print(await manager.set_quick_mode(QuickModes.get('QM_COOLING_FOR_X_DAYS', 2)))
-        print(await manager.get_quick_mode())
 
 
 if __name__ == "__main__":
