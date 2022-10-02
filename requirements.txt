@@ -12,8 +12,8 @@ yarl==1.6.3
 
 #Build
 mypy==0.910
-flake8==3.9.2
-black==21.6b0
+flake8==5.0.4
+black==22.8.0
 wheel==0.36.2
-flake8-comprehensions==3.5.0
-flake8-eradicate==1.1.0
+flake8-comprehensions==3.10.0
+flake8-eradicate==1.4.0

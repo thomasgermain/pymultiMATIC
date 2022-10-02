@@ -517,3 +517,9 @@ class MapperTest(unittest.TestCase):
         self.assertEqual(66.0, reports[1].value)
         self.assertEqual(date(2020, 12, 8), reports[1].from_date)
         self.assertEqual(date(2020, 12, 9), reports[1].to_date)
+
+    def test_map_hvac_no_status_messages(self) -> None:
+        with open(path("files/responses/hvacstate_no_status_messages"), "r") as file:
+            raw_hvacstate = json.loads(file.read())
+            hvac_status = mapper.map_hvac_status(raw_hvacstate)
+            self.assertEqual(2, len(hvac_status.errors))
