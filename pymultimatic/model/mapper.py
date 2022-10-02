@@ -466,7 +466,7 @@ def map_errors(hvac_state) -> List[Error]:
     """Map *errors*."""
     errors = []
     for error in hvac_state.get("body", {}).get("errorMessages", []):
-        if error.get("type") == "ERROR":
+        if error.get("type") != "STATUS":
             errors.append(
                 Error(
                     error.get("deviceName"),

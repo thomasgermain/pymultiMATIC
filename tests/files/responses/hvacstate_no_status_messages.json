@@ -1,0 +1,51 @@
+{
+  "body": {
+    "errorMessages": [
+      {
+        "deviceName": "VC BE 246/5-3",
+        "type": "STATUS",
+        "title": "Mode été : aucune demande d’eau chaude sanitaire",
+        "statusCode": "S.31",
+        "description": "Le mode chauffage est désactivé et il n’y a pas de demande d’eau chaude sanitaire.",
+        "hint": "...",
+        "timestamp": 1562356114295
+      },
+      {
+        "deviceName": "VC 276/5-7 (N-DE)",
+        "type": "LIMP_HOME",
+        "title": "FLIDE",
+        "statusCode": "N.22",
+        "description": "...",
+        "hint": "...",
+        "timestamp": 1663503743906
+      },
+      {
+        "deviceName": "VC 276/5-7 (N-DE)",
+        "type": "MAINTENANCE",
+        "title": "Komfortsicherungsbetrieb aktiv",
+        "statusCode": "M.22",
+        "description": "Ausfall/Defekt des CO-Sensors",
+        "hint": "Das Gerät läuft ohne Modulation auf ca. 60% der max. Gerätebelastung, 1) E.18-Wert auslesen/notieren, dann CO-Sensor tauschen, 2) Wenn E.18 = 0, dann zusätzlich Zündung und Verbrennung kontrollieren",
+        "timestamp": 1663503743906
+      }
+    ]
+  },
+  "meta": {
+    "onlineStatus": {
+      "status": "ONLINE"
+    },
+    "firmwareUpdateStatus": {
+      "status": "UPDATE_NOT_PENDING"
+    },
+    "syncState": [
+      {
+        "state": "PENDING",
+        "timestamp": 1562922596282,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/1234567890123456789012345678/hvacstate/v1/overview"
+        }
+      }
+    ]
+  }
+}
