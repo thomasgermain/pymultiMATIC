@@ -828,7 +828,9 @@ class SystemManager:
         Args:
             dt (datetime): the datetime to set
         """
-        await self._call_api(urls.system_datetime, "put", payload={"datetime": dt.isoformat(timespec="microseconds")})
+        await self._call_api(
+            urls.system_datetime, "put", payload={"datetime": dt.isoformat(timespec="microseconds")}
+        )
 
     @staticmethod
     def _round(number: float) -> float:
