@@ -1,3 +1,4 @@
+import datetime
 import json
 from datetime import date, timedelta
 from typing import Any, AsyncGenerator, Dict, List, Tuple, Type
@@ -764,6 +765,32 @@ async def test_get_emf_devices(manager: SystemManager, resp: aioresponses) -> No
     assert len(emf_reports) == 7
     _assert_calls(1, manager, [url])
 
+
+@pytest.mark.asyncio
+async def test_setdatetime(manager: SystemManager, resp: aioresponses) -> None:
+    url = urls.system_datetime(
+        serial=SERIAL,
+    )
+
+    resp.put(url, status=200)
+
+    dt = datetime.datetime.now()
+    payload = {"datetime": dt.isoformat(timespec="microseconds")}
+    await manager.set_datetime(dt)
+    _assert_calls(1, manager, [url], [payload])
+
+@pytest.mark.asyncio
+async def test_setdatetime_no_micro(manager: SystemManager, resp: aioresponses) -> None:
+    url = urls.system_datetime(
+        serial=SERIAL,
+    )
+
+    resp.put(url, status=200)
+
+    dt = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+    payload = {"datetime": dt.isoformat(timespec="microseconds")}
+    await manager.set_datetime(dt)
+    _assert_calls(1, manager, [url], [payload])
 
 def _mock_urls(
     resp: aioresponses,
