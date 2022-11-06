@@ -1,7 +1,7 @@
 """Convenient manager to easily gets data from API."""
 import asyncio
 import logging
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from typing import Any, Callable, List, Optional, Tuple, Type
 
 from aiohttp import ClientSession
@@ -790,7 +790,7 @@ class SystemManager:
         )
 
     async def request_hvac_update(self) -> None:
-        """Request an hvac update. This allow the vaillant API to read the data from your system.
+        """Request a hvac update. This allows the vaillant API to read the data from your system.
 
         This is necessary to update
         :class:`~pymultimatic.model.status.BoilerStatus` and
@@ -821,6 +821,14 @@ class SystemManager:
 
         if state and not state.is_pending:
             await self._call_api(urls.hvac_update, "put")
+
+    async def set_datetime(self, dt: datetime) -> None:
+        """Sets the system datetime
+
+        Args:
+            dt (datetime): the datetime to set
+        """
+        await self._call_api(urls.system_datetime, "put", payload={"datetime": dt.isoformat()})
 
     @staticmethod
     def _round(number: float) -> float:
