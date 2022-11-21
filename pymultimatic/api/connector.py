@@ -9,7 +9,12 @@ from . import ApiError, defaults, urls
 
 _LOGGER = logging.getLogger(__name__)
 
-HEADER = {"content-type": "application/json", "Accept": "application/json"}
+HEADER = {
+    "content-type": "application/json; charset=UTF-8",
+    "Accept-Encoding": "gzip",
+    "Accept": "application/json",
+    "Vaillant-Mobile-App": "multiMATIC v2.1.45 b389 (Android)",
+}
 
 
 @attr.s
