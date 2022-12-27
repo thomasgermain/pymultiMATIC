@@ -78,7 +78,8 @@ _HOT_WATER_OPERATING_MODE = _HOT_WATER_CONFIGURATION + "/operation_mode"
 _HOT_WATER_TEMPERATURE_SETPOINT = _HOT_WATER_CONFIGURATION + "/temperature_setpoint"
 
 """Ventilation"""
-_VENTILATION = _SYSTEM + "/ventilation/{id}"
+_SYSTEM_VENTILATION = _SYSTEM + "/ventilation"
+_VENTILATION = _SYSTEM_VENTILATION + "/{id}"
 _VENTILATION_CONFIGURATION = _VENTILATION + "/fan/configuration"
 _VENTILATION_TIMEPROGRAM = _VENTILATION_CONFIGURATION + "/timeprogram"
 _VENTILATION_DAY_LEVEL = _VENTILATION_CONFIGURATION + "/day_level"
@@ -414,6 +415,11 @@ def hot_water_temperature_setpoint(**kwargs: Any) -> str:
 def ventilation(**kwargs: Any) -> str:
     """Url to get ventilation details."""
     return _VENTILATION.format(**kwargs)
+
+
+def system_ventilation(**kwargs: Any) -> str:
+    """Url to get ventilation details."""
+    return _SYSTEM_VENTILATION.format(**kwargs)
 
 
 def ventilation_configuration(**kwargs: Any) -> str:

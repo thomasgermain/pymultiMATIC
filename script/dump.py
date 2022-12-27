@@ -9,24 +9,28 @@ import aiohttp
 
 
 sys.path.append("../")
-from pymultimatic.api import Connector, ApiError, urls
+from pymultimatic.api import defaults, Connector, ApiError, urls, urls_senso
 from pymultimatic.model import mapper
 
-URLS = {
-    urls.zones: {},
-    urls.gateway_type: {},
-    urls.facilities_details: {},
-    urls.system_holiday_mode: {},
-    urls.hvac: {},
-    urls.live_report: {},
-    urls.system_status: {},
-    urls.system_quickmode: {},
-    urls.dhw: {'id': 'Control_DHW'},
-    urls.rooms: {},
-    urls.system: {},
-    urls.system_ventilation: {},
+url_class_map = {
+    defaults.SENSO: urls_senso,
+    defaults.MULTIMATIC: urls
 }
 
+URLS = {
+    "zones": {},
+    "gateway_type": {},
+    "facilities_details": {},
+    "system_holiday_mode": {},
+    "hvac": {},
+    "live_report": {},
+    "system_status": {},
+    "system_quickmode": {},
+    "dhw": {'id': 'Control_DHW'},
+    "rooms": {},
+    "system": {},
+    "system_ventilation": {},
+}
 
 async def main(user, passw):
     print('Trying to connect with user ' + user)
@@ -46,9 +50,11 @@ async def main(user, passw):
 
         facilities = await connector.get(urls.facilities_list())
         serial = mapper.map_serial_number(facilities)
-
+        system_control = mapper.map_systemcontrol(facilities)
+        url_class = url_class_map.get(system_control, urls)
         requests = {}
-        for url, param in URLS.items():
+        for urlName, param in URLS.items():
+            url = getattr(url_class, urlName)
             print('requesting ' + url.__name__)
             params = {'serial': serial}
             params.update(param)

@@ -494,6 +494,13 @@ def map_serial_number(facilities) -> str:
     return str(facility.get("serialNumber", None))
 
 
+def map_systemcontrol(facilities) -> str:
+    """Map system control found in capabilities."""
+    facility = facilities.get("body", {}).get("facilitiesList", [])[0]
+    capabilities = facility.get("capabilities", [])
+    return str([s for s in capabilities if s.startswith("SYSTEMCONTROL_")][0])
+
+
 def _map_state(raw_state) -> Optional[SyncState]:
     state = str(raw_state.get("state"))
     timestamp = _datetime_mandatory(raw_state.get("timestamp"))
