@@ -250,7 +250,8 @@ class SystemManager:
         """
         serial = serial if serial is not None else self._serial
         return mapper.map_facility_detail(
-            await self._call_api(self.urls.facilities_list, schema=schemas.FACILITIES), serial
+            await self._call_api(self.urls.facilities_list, schema=schemas.FACILITIES),
+            serial,
         )
 
     @ignore_http_409()
@@ -484,7 +485,9 @@ class SystemManager:
         payload = payloads.hotwater_temperature_setpoint(self._round(temperature))
 
         await self._call_api(
-            self.urls.hot_water_temperature_setpoint, params={"id": dhw_id}, payload=payload
+            self.urls.hot_water_temperature_setpoint,
+            params={"id": dhw_id},
+            payload=payload,
         )
 
     async def set_hot_water_operating_mode(self, dhw_id: str, new_mode: OperatingMode) -> None:

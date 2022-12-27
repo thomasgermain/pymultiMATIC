@@ -54,16 +54,20 @@ _EMF_REPORT = _FACILITIES + "/emf/v1/devices"
 _EMF_REPORT_DEVICE = _EMF_REPORT + "/{device_id}"
 
 """System control"""
-_SYSTEM = _FACILITIES + "/systemcontrol/tli/v1/"
+_SYSTEM = _FACILITIES + "/systemcontrol/tli/v1"
 _SYSTEM_CONFIGURATION = _SYSTEM + "/configuration"
 _SYSTEM_STATUS = _SYSTEM + "/status"
 _SYSTEM_DATETIME = _SYSTEM_STATUS + "/datetime"
 _SYSTEM_PARAMETERS = _SYSTEM + "/parameters"
-_SYSTEM_QUICK_MODE = _SYSTEM_CONFIGURATION + "/quickmode"
-_SYSTEM_HOLIDAY_MODE = _SYSTEM_CONFIGURATION + "/holidaymode"
+""" Quick Mode and Holiday Mode are only compatible with MULTIMATIC"""
+_SYSTEM_MULTIMATIC_CONFIGUTATION = _FACILITIES + "/systemcontrol/v1/configuration"
+_SYSTEM_QUICK_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/quickmode"
+_SYSTEM_HOLIDAY_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/holidaymode"
 
 """DHW (Domestic Hot Water)"""
-_DHW = _SYSTEM + "/dhw/{id}"
+_DHWS = _SYSTEM + "/dhw"
+"""No id in the Senso API"""
+_DHW = _SYSTEM + "/dhw"
 
 """Circulation"""
 _CIRCULATION = _DHW + "/circulation"
@@ -358,6 +362,14 @@ def dhw(**kwargs: Any) -> str:
     :class:`~pymultimatic.model.component.Circulation`).
     """
     return _DHW.format(**kwargs)
+
+
+def dhws(**kwargs: Any) -> str:
+    """Url to get all domestic hot water
+    (:class:`~pymultimatic.model.component.HotWater` and
+    :class:`~pymultimatic.model.component.Circulation`).
+    """
+    return _DHWS.format(**kwargs)
 
 
 def circulation(**kwargs: Any) -> str:

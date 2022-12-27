@@ -26,6 +26,8 @@ URLS = {
     "live_report": {},
     "system_status": {},
     "system_quickmode": {},
+    "system_configuration": {},
+    "dhws": {},
     "dhw": {'id': 'Control_DHW'},
     "rooms": {},
     "system": {},
