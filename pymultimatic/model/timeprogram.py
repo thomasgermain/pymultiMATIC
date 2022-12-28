@@ -48,20 +48,33 @@ class TimePeriodSetting:
     absolute_minutes = attr.ib(type=int, init=False)
     """Represents :attr:`start_time` in absolute minute. hours * 60 + minutes.
     This is more convenient to compare TimePeriodSetting using this."""
+    end_time = attr.ib(type=str, default=None)
 
     def __attrs_post_init__(self) -> None:
         self.absolute_minutes = _to_absolute_minutes(self.start_time)
         self.hour = int(self.start_time.split(":")[0])
         self.minute = int(self.start_time.split(":")[1])
 
-    @start_time.validator
-    def _validate_start_time(self, attribute: Any, value: Any) -> None:
+    @staticmethod
+    def _validate_time(value: Any) -> None:
         validator = re.compile("[0-9]{1,2}:[0-9]{2}")
         if not validator.match(value):
             raise ValueError(value)
 
+    @start_time.validator
+    def _validate_start_time(self, attribute: Any, value: Any) -> None:
+        self._validate_time(value)
+
+    @end_time.validator
+    def _validate_end_time(self, attribute: Any, value: Any) -> None:
+        # end time is only present on Senso timeprogram
+        if value is not None:
+            self._validate_time(value)
+
     def __deepcopy__(self, memodict: Any = None) -> "TimePeriodSetting":
-        return TimePeriodSetting(self.start_time, self.target_temperature, self.setting)
+        return TimePeriodSetting(
+            self.start_time, self.target_temperature, self.setting, self.end_time
+        )
 
 
 @attr.s

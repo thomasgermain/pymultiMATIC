@@ -33,7 +33,15 @@ from . import (
 )
 
 _DATE_FORMAT = "%Y-%m-%d"
-_DAYS_OF_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+_DAYS_OF_WEEK = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+]
 
 
 def map_emf_reports(json) -> List[EmfReport]:
@@ -213,14 +221,21 @@ def map_time_program_day(raw_time_program_day, key: Optional[str] = None) -> Tim
     settings = []
     if raw_time_program_day:
         for time_setting in raw_time_program_day:
-            start_time = time_setting.get("startTime")
-            target_temp = time_setting.get("temperatureSetpoint")
-
+            # Try if multimatic or senso
+            multimatic_timeprogram = "startTime" in time_setting
             mode = None
-            if key:
-                mode = SettingModes.get(time_setting.get(key))
+            end_time = None
+            if multimatic_timeprogram:
+                start_time = time_setting.get("startTime")
+                target_temp = time_setting.get("temperatureSetpoint")
+                if key:
+                    mode = SettingModes.get(time_setting.get(key))
+            else:
+                start_time = time_setting.get("start_time")
+                end_time = time_setting.get("end_time")
+                target_temp = time_setting.get("setpoint")
 
-            settings.append(TimePeriodSetting(start_time, target_temp, mode))
+            settings.append(TimePeriodSetting(start_time, target_temp, mode, end_time))
 
     return TimeProgramDay(settings)
 
@@ -391,6 +406,9 @@ def map_hot_water_from_system(full_system, live_reports) -> Optional[HotWater]:
     dhws = full_system.get("body", {}).get("dhw")
 
     if dhws:
+        # In Senso API, dhws is not a array
+        if isinstance(dhws, dict):
+            dhws = [dhws]
         hotwater = dhws[0].get("hotwater")
         dhw_id = dhws[0].get("_id")
         temp = _get_report_value(_find_dhw_temperature_report(live_reports))
@@ -401,7 +419,11 @@ def map_hot_water_from_system(full_system, live_reports) -> Optional[HotWater]:
 
 def map_hot_water_from_dhw(json) -> Optional[HotWater]:
     """Mapp hotware from dhw."""
-    dhw = json.get("body")[0]
+    dhws = json.get("body", [])
+    # In Senso API, dhws is not a array
+    if isinstance(dhws, dict):
+        dhws = [dhws]
+    dhw = dhws[0]
     dhw_id = dhw.get("_id")
     return _map_hot_water(dhw.get("hotwater"), dhw_id, None)
 
@@ -432,6 +454,9 @@ def map_circulation_from_dhw(json) -> Optional[Circulation]:
     """Map *circulation*."""
     if json:
         dhws = json.get("body", [])
+        # In Senso API, dhws is not a array
+        if isinstance(dhws, dict):
+            dhws = [dhws]
 
         if dhws:
             circulation = dhws[0].get("circulation")
@@ -444,6 +469,9 @@ def map_circulation_from_system(full_system) -> Optional[Circulation]:
     """Map *circulation*."""
     if full_system:
         hot_water_list = full_system.get("body", {}).get("dhw", [])
+        # In Senso API, hot water is not a array
+        if isinstance(hot_water_list, dict):
+            hot_water_list = [hot_water_list]
 
         if hot_water_list:
             raw_circulation = hot_water_list[0].get("circulation")

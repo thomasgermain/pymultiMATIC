@@ -8,7 +8,15 @@ import pytest
 from aiohttp import ClientSession
 from aioresponses import aioresponses
 
-from pymultimatic.api import ApiError, Connector, WrongResponseError, payloads, urls
+from pymultimatic.api import (
+    ApiError,
+    defaults,
+    Connector,
+    WrongResponseError,
+    payloads,
+    urls,
+    urls_senso,
+)
 from pymultimatic.model import OperatingModes, QuickModes, QuickVeto, constants, mapper
 from pymultimatic.systemmanager import SystemManager, retry_async
 from tests.conftest import mock_auth, path
@@ -29,6 +37,17 @@ async def fixture_manager(
     session: ClientSession, connector: Connector
 ) -> AsyncGenerator[SystemManager, None]:
     manager = SystemManager("user", "pass", session, "pymultiMATIC", SERIAL)
+    await connector.login()
+    with mock.patch.object(connector, "request", wraps=connector.request):
+        manager._connector = connector
+        yield manager
+
+
+@pytest.fixture(name="senso_manager")
+async def fixture_senso_manager(
+    session: ClientSession, connector: Connector
+) -> AsyncGenerator[SystemManager, None]:
+    manager = SystemManager("user", "pass", session, "pymultiMATIC", SERIAL, defaults.SENSO)
     await connector.login()
     with mock.patch.object(connector, "request", wraps=connector.request):
         manager._connector = connector
@@ -73,6 +92,48 @@ async def test_system(manager: SystemManager, resp: aioresponses) -> None:
     assert len(system.rooms) == 4
     _assert_calls(6, manager)
     assert manager._fixed_serial
+
+
+@pytest.mark.asyncio
+async def test_system_senso(senso_manager: SystemManager, resp: aioresponses) -> None:
+    with open(path("files/responses/livereport_senso"), "r") as file:
+        livereport_data = json.loads(file.read())
+
+    with open(path("files/responses/rooms_senso"), "r") as file:
+        rooms_data = json.loads(file.read())
+
+    with open(path("files/responses/systemcontrol_senso"), "r") as file:
+        system_data = json.loads(file.read())
+
+    with open(path("files/responses/hvacstate_senso"), "r") as file:
+        hvacstate_data = json.loads(file.read())
+
+    with open(path("files/responses/facilities_senso"), "r") as file:
+        facilities = json.loads(file.read())
+
+    with open(path("files/responses/gateway_senso"), "r") as file:
+        gateway = json.loads(file.read())
+
+    _mock(
+        urls_senso,
+        resp,
+        hvacstate_data,
+        livereport_data,
+        rooms_data,
+        system_data,
+        facilities,
+        gateway,
+    )
+
+    system = await senso_manager.get_system()
+
+    assert system is not None
+
+    assert len(system.zones) == 3
+    assert len(system.rooms) == 0
+    # Rooms API is not called
+    _assert_calls(5, senso_manager)
+    assert senso_manager._fixed_serial
 
 
 @pytest.mark.asyncio
@@ -734,6 +795,22 @@ async def test_get_zones(manager: SystemManager, resp: aioresponses) -> None:
 
 
 @pytest.mark.asyncio
+async def test_get_zones_senso(senso_manager: SystemManager, resp: aioresponses) -> None:
+    url = urls_senso.zones(
+        serial=SERIAL,
+    )
+
+    with open(path("files/responses/zones_senso"), "r") as file:
+        json_raw = json.loads(file.read())
+
+    resp.get(url, status=200, payload=json_raw)
+
+    zones = await senso_manager.get_zones()
+    assert zones is not None and len(zones) > 0
+    _assert_calls(1, senso_manager, [url])
+
+
+@pytest.mark.asyncio
 async def test_get_ventilation(manager: SystemManager, resp: aioresponses) -> None:
     url = urls.system_ventilation(
         serial=SERIAL,
@@ -796,6 +873,28 @@ async def test_setdatetime_no_micro(manager: SystemManager, resp: aioresponses) 
     _assert_calls(1, manager, [url], [payload])
 
 
+def _mock(
+    urls_class: Any,
+    resp: aioresponses,
+    hvacstate_data: Any,
+    livereport_data: Any,
+    rooms_data: Any,
+    system_data: Any,
+    facilities: Any = None,
+    gateway: Any = None,
+) -> None:
+    resp.get(urls_class.live_report(serial=SERIAL), payload=livereport_data, status=200)
+    resp.get(urls_class.rooms(serial=SERIAL), payload=rooms_data, status=200)
+    resp.get(urls_class.system(serial=SERIAL), payload=system_data, status=200)
+    resp.get(urls_class.hvac(serial=SERIAL), payload=hvacstate_data, status=200)
+
+    if facilities:
+        resp.get(urls_class.facilities_list(), payload=facilities, status=200)
+
+    if gateway:
+        resp.get(urls_class.gateway_type(serial=SERIAL), payload=gateway, status=200)
+
+
 def _mock_urls(
     resp: aioresponses,
     hvacstate_data: Any,
@@ -805,16 +904,16 @@ def _mock_urls(
     facilities: Any = None,
     gateway: Any = None,
 ) -> None:
-    resp.get(urls.live_report(serial=SERIAL), payload=livereport_data, status=200)
-    resp.get(urls.rooms(serial=SERIAL), payload=rooms_data, status=200)
-    resp.get(urls.system(serial=SERIAL), payload=system_data, status=200)
-    resp.get(urls.hvac(serial=SERIAL), payload=hvacstate_data, status=200)
-
-    if facilities:
-        resp.get(urls.facilities_list(), payload=facilities, status=200)
-
-    if gateway:
-        resp.get(urls.gateway_type(serial=SERIAL), payload=gateway, status=200)
+    _mock(
+        urls,
+        resp,
+        hvacstate_data,
+        livereport_data,
+        rooms_data,
+        system_data,
+        facilities,
+        gateway,
+    )
 
 
 def _assert_calls(

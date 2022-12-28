@@ -36,6 +36,12 @@ class MapperTest(unittest.TestCase):
             zones = mapper.map_zones(json_raw)
             self.assertEqual(2, len(zones))
 
+    def test_map_zones_senso(self) -> None:
+        with open(path("files/responses/zones_senso"), "r") as file:
+            json_raw = json.loads(file.read())
+            zones = mapper.map_zones(json_raw)
+            self.assertEqual(3, len(zones))
+
     def test_map_zones_3_zones(self) -> None:
         with open(path("files/responses/zones_3_zones"), "r") as file:
             json_raw = json.loads(file.read())
@@ -56,8 +62,25 @@ class MapperTest(unittest.TestCase):
             self.assertIsNone(dhw.hotwater.temperature)
             self.assertIsNotNone(dhw.circulation)
 
+    def test_map_dhw_senso(self) -> None:
+        with open(path("files/responses/dhws_senso"), "r") as file:
+            raw_dhw = json.loads(file.read())
+            dhw = mapper.map_dhw(raw_dhw)
+            self.assertIsNotNone(dhw.hotwater)
+            self.assertIsNone(dhw.hotwater.temperature)
+            self.assertIsNotNone(dhw.circulation)
+
     def test_map_dhw_no_timeprogram(self) -> None:
         with open(path("files/responses/dhws_minimal"), "r") as file:
+            raw_dhw = json.loads(file.read())
+            dhw = mapper.map_dhw(raw_dhw)
+            self.assertIsNotNone(dhw.hotwater)
+            self.assertIsNotNone(dhw.circulation)
+            self.assertIsNotNone(dhw.circulation.time_program)
+            self.assertIsNotNone(dhw.hotwater.time_program)
+
+    def test_map_dhw_no_timeprogram_senso(self) -> None:
+        with open(path("files/responses/dhws_minimal_senso"), "r") as file:
             raw_dhw = json.loads(file.read())
             dhw = mapper.map_dhw(raw_dhw)
             self.assertIsNotNone(dhw.hotwater)
@@ -447,6 +470,16 @@ class MapperTest(unittest.TestCase):
         self.assertEqual("Home", sys_info.name)
         self.assertEqual("01:23:45:67:89:AB", sys_info.ethernet_mac)
         self.assertEqual("1.2.3", sys_info.firmware_version)
+
+    def test_map_facility_detail_senso(self) -> None:
+        with open(path("files/responses/facilities_senso"), "r") as file:
+            facilities = json.loads(file.read())
+
+        sys_info = mapper.map_facility_detail(facilities)
+        self.assertEqual("SERIAL_NUMBER", sys_info.serial_number)
+        self.assertEqual("Maison", sys_info.name)
+        self.assertEqual("01:23:45:67:89:AB", sys_info.ethernet_mac)
+        self.assertEqual("0357.27.06", sys_info.firmware_version)
 
     def test_map_system_info_specific_serial(self) -> None:
         with open(path("files/responses/facilities_multiple"), "r") as file:
