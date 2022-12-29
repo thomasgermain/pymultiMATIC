@@ -50,8 +50,8 @@ _HVAC_REQUEST_UPDATE = _FACILITIES + "/hvacstate/v1/hvacMessages/update"
 _LIVE_REPORT = _FACILITIES + "/livereport/v1"
 _LIVE_REPORT_DEVICE = _LIVE_REPORT + "/devices/{device_id}/reports/{report_id}"
 _PHOTOVOLTAICS_REPORT = _FACILITIES + "/spine/v1/currentPVMeteringInfo"
-_EMF_REPORT = _FACILITIES + "/emf/v1/devices"
-_EMF_REPORT_DEVICE = _EMF_REPORT + "/{device_id}"
+_EMF_DEVICES = _FACILITIES + "/emf/v1/devices"
+_EMF_REPORT_DEVICE = _EMF_DEVICES + "/{device_id}"
 
 """System control"""
 _SYSTEM = _FACILITIES + "/systemcontrol/tli/v1"
@@ -267,9 +267,9 @@ def photovoltaics(**kwargs: Any) -> str:
     return _PHOTOVOLTAICS_REPORT.format(**kwargs)
 
 
-def emf_report(**kwargs: Any) -> str:
+def emf_devices(**kwargs: Any) -> str:
     """Url to get emf (Embedded Metering Function) report."""
-    return _EMF_REPORT.format(**kwargs)
+    return _EMF_DEVICES.format(**kwargs)
 
 
 # pylint: disable=too-many-arguments
