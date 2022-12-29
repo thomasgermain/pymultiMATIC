@@ -410,7 +410,8 @@ def map_hot_water_from_system(full_system, live_reports) -> Optional[HotWater]:
         if isinstance(dhws, dict):
             dhws = [dhws]
         hotwater = dhws[0].get("hotwater")
-        dhw_id = dhws[0].get("_id")
+        # Senso API does not provide an ID
+        dhw_id = dhws[0].get("_id", "Control_DHW")
         temp = _get_report_value(_find_dhw_temperature_report(live_reports))
         return _map_hot_water(hotwater, dhw_id, temp)
 
@@ -424,7 +425,8 @@ def map_hot_water_from_dhw(json) -> Optional[HotWater]:
     if isinstance(dhws, dict):
         dhws = [dhws]
     dhw = dhws[0]
-    dhw_id = dhw.get("_id")
+    # Senso API does not provide an ID
+    dhw_id = dhw.get("_id", "Control_DHW")
     return _map_hot_water(dhw.get("hotwater"), dhw_id, None)
 
 
@@ -460,7 +462,8 @@ def map_circulation_from_dhw(json) -> Optional[Circulation]:
 
         if dhws:
             circulation = dhws[0].get("circulation")
-            dhw_id = dhws[0].get("_id")
+            # Senso API does not provide an ID
+            dhw_id = dhws[0].get("_id", "Control_DHW")
             return _map_circulation(circulation, dhw_id)
     return None
 
@@ -475,7 +478,8 @@ def map_circulation_from_system(full_system) -> Optional[Circulation]:
 
         if hot_water_list:
             raw_circulation = hot_water_list[0].get("circulation")
-            dhw_id = hot_water_list[0].get("_id")
+            # Senso API does not provide an ID
+            dhw_id = hot_water_list[0].get("_id", "Control_DHW")
 
             if raw_circulation:
                 return _map_circulation(raw_circulation, dhw_id)
