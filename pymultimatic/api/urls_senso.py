@@ -63,6 +63,7 @@ _SYSTEM_PARAMETERS = _SYSTEM + "/parameters"
 _SYSTEM_MULTIMATIC_CONFIGUTATION = _FACILITIES + "/systemcontrol/v1/configuration"
 _SYSTEM_QUICK_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/quickmode"
 _SYSTEM_HOLIDAY_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/holidaymode"
+_SYSTEM_AWAY_MODE = _SYSTEM_CONFIGURATION + "/away"
 
 """DHW (Domestic Hot Water)"""
 _DHWS = _SYSTEM + "/dhw"
@@ -354,6 +355,11 @@ def system_quickmode(**kwargs: Any) -> str:
 def system_holiday_mode(**kwargs: Any) -> str:
     """Url to get system :class:`~pymultimatic.model.mode.HolidayMode`."""
     return _SYSTEM_HOLIDAY_MODE.format(**kwargs)
+
+
+def system_away_mode(**kwargs: Any) -> str:
+    """Url to put system away."""
+    return _SYSTEM_AWAY_MODE.format(**kwargs)
 
 
 def dhw(**kwargs: Any) -> str:

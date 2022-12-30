@@ -155,7 +155,7 @@ async def test_set_hot_water_setpoint_temperature(
     manager: SystemManager, resp: aioresponses
 ) -> None:
     url = urls.hot_water_temperature_setpoint(id="id", serial=SERIAL)
-    payload = payloads.hotwater_temperature_setpoint(60.0)
+    payload = payloads.hotwater_temperature_setpoint(manager._application, 60.0)
 
     resp.put(url, status=200)
 
@@ -169,7 +169,7 @@ async def test_set_hot_water_setpoint_temp_number_to_round(
     manager: SystemManager, resp: aioresponses
 ) -> None:
     url = urls.hot_water_temperature_setpoint(serial=SERIAL, id="id")
-    payload = payloads.hotwater_temperature_setpoint(60.5)
+    payload = payloads.hotwater_temperature_setpoint(manager._application, 60.5)
 
     resp.put(url, status=200)
 
@@ -322,7 +322,7 @@ async def test_get_circulation(manager: SystemManager, resp: aioresponses) -> No
 @pytest.mark.asyncio
 async def test_set_room_setpoint_temperature(manager: SystemManager, resp: aioresponses) -> None:
     url = urls.room_temperature_setpoint(id="1", serial=SERIAL)
-    payload = payloads.room_temperature_setpoint(22.0)
+    payload = payloads.room_temperature_setpoint(defaults.MULTIMATIC, 22.0)
     resp.put(url, status=200)
 
     await manager.set_room_setpoint_temperature("1", 22)
@@ -332,7 +332,7 @@ async def test_set_room_setpoint_temperature(manager: SystemManager, resp: aiore
 @pytest.mark.asyncio
 async def test_set_zone_setpoint_temperature(manager: SystemManager, resp: aioresponses) -> None:
     url = urls.zone_heating_setpoint_temperature(id="Zone1", serial=SERIAL)
-    payload = payloads.zone_temperature_setpoint(25.5)
+    payload = payloads.zone_temperature_setpoint(defaults.MULTIMATIC, 25.5)
 
     resp.put(url, status=200)
 
@@ -343,7 +343,7 @@ async def test_set_zone_setpoint_temperature(manager: SystemManager, resp: aiore
 @pytest.mark.asyncio
 async def test_set_zone_setback_temperature(manager: SystemManager, resp: aioresponses) -> None:
     url = urls.zone_heating_setback_temperature(id="Zone1", serial=SERIAL)
-    payload = payloads.zone_temperature_setback(18.0)
+    payload = payloads.zone_temperature_setback(defaults.MULTIMATIC, 18.0)
 
     resp.put(url, status=200)
 
@@ -467,7 +467,7 @@ async def test_quick_veto_temperature_room_rounded(
     manager: SystemManager, resp: aioresponses
 ) -> None:
     url = urls.room_quick_veto(id="0", serial=SERIAL)
-    payload = payloads.room_quick_veto(22.5, 180)
+    payload = payloads.room_quick_veto(defaults.MULTIMATIC, 22.5, 180)
     resp.put(url, status=200)
 
     qveto = QuickVeto(180, 22.7)
@@ -481,7 +481,7 @@ async def test_quick_veto_temperature_zone_rounded(
     manager: SystemManager, resp: aioresponses
 ) -> None:
     url = urls.zone_quick_veto(id="zone1", serial=SERIAL)
-    payload = payloads.zone_quick_veto(22.5)
+    payload = payloads.zone_quick_veto(defaults.MULTIMATIC, 22.5)
     resp.put(url, status=200)
 
     qveto = QuickVeto(duration=35, target=22.7)
@@ -583,7 +583,7 @@ async def test_set_ventilation_operating_mode(manager: SystemManager, resp: aior
     )
     resp.put(url, status=200)
 
-    payload = payloads.ventilation_operating_mode("OFF")
+    payload = payloads.ventilation_operating_mode(defaults.MULTIMATIC, "OFF")
 
     await manager.set_ventilation_operating_mode("123", OperatingModes.OFF)
 

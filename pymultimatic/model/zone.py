@@ -26,7 +26,10 @@ class ZoneHeating(Function):
         OperatingModes.OFF,
         OperatingModes.DAY,
         OperatingModes.NIGHT,
+        OperatingModes.NORMAL,
         OperatingModes.QUICK_VETO,
+        OperatingModes.REDUCED,
+        OperatingModes.TIME_CONTROLLED,
     ]
 
     def _active_mode(self) -> ActiveMode:

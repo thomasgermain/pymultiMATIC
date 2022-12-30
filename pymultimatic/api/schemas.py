@@ -160,10 +160,17 @@ _ZONE_CONFIGURATION = Schema(
         Optional("enabled"): bool,
         Optional("inside_temperature"): numeric,
         Optional("active_function"): non_empty_str,  # TODO: add ENUM validation
-        Optional("quick_veto"): {
-            "active": bool,
-            "setpoint_temperature": numeric,
-        },
+        Optional("current_quickmode"): non_empty_str,
+        Optional("quick_veto"): Or(
+            {
+                "active": bool,
+                "setpoint_temperature": numeric,
+            },
+            {
+                Optional("expires_at"): str,
+                "temperature_setpoint": numeric,
+            },
+        ),
         Optional("quickmode"): QUICK_MODE,
         Optional("eco_mode"): bool,
         Optional("current_desired_setpoint"): numeric,

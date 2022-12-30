@@ -127,7 +127,13 @@ class SchemaTest(unittest.TestCase):
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
 
-        files = ["zones", "zones_3_zones", "zones_missing_heating_config_quick_veto", "zones_senso"]
+        files = [
+            "zones",
+            "zones_3_zones",
+            "zones_missing_heating_config_quick_veto",
+            "zones_senso",
+            "zones_senso_manual",
+        ]
 
         for file in files:
             with open(path(my_path + file), "r") as open_f:

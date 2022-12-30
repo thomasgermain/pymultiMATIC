@@ -16,6 +16,7 @@ url_class_map = {defaults.SENSO: urls_senso, defaults.MULTIMATIC: urls}
 
 URLS = {
     "zones": {},
+    "zone_quick_veto": {"id": "Control_ZO1"},
     "gateway_type": {},
     "facilities_details": {},
     "facilities_list": {},

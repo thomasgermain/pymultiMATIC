@@ -5,7 +5,7 @@ import unittest
 from datetime import date, datetime
 from typing import Any, Dict, Union
 
-from pymultimatic.api import payloads
+from pymultimatic.api import defaults, payloads
 
 
 class PayloadsTest(unittest.TestCase):
@@ -27,7 +27,7 @@ class PayloadsTest(unittest.TestCase):
                 payload = function[1](**args)
                 self._assert_function_call(payload)
 
-        payload = payloads.room_quick_veto(15, None)
+        payload = payloads.room_quick_veto(defaults.MULTIMATIC, 15, None)
         self._assert_function_call(payload)
         assert payload["duration"] == 180
 
@@ -41,6 +41,8 @@ class PayloadsTest(unittest.TestCase):
             if cls == bool:
                 args[item[0]] = False
             elif cls == float:
+                args[item[0]] = 10.0
+            elif cls == Union[float, None]:
                 args[item[0]] = 10.0
             elif cls == date:
                 args[item[0]] = datetime.now()

@@ -2,57 +2,106 @@
 
 from datetime import date
 from typing import Any, Dict, Optional
+from . import defaults
 
 _DATE_FORMAT = "%Y-%m-%d"
+_HOTWATER_OPERATION_MODE = "hot_water_operating_mode"
+_HOTWATER_TEMPERATURE_SETPOINT = "hotwater_temperature_setpoint"
+_ROOM_DURATION = "room_duration"
+_ROOM_OPERATION_MODE = "room_operating_mode"
+_ROOM_TEMPERATURE_SETPOINT = "room_temperature_setpoint"
+_VENTILATION_DAY_LEVEL = "ventilation_day_level"
+_VENTILATION_NIGHT_LEVEL = "ventilation_night_level"
+_VENTILATION_OPERATION_MODE = "ventilation_operation_mode"
+_ZONE_OPERATION_MODE = "zone_operation_mode"
+_ZONE_TEMPERATURE_SETBACK = "setback_temperature_setpoint"
+_ZONE_TEMPERATURE_SETPOINT = "zone_temperature_setback"
 
 
-def hotwater_temperature_setpoint(temperature: float) -> Dict[str, Any]:
+APPLICATION_VOCABULARY_MAP = {
+    defaults.MULTIMATIC: {
+        _HOTWATER_OPERATION_MODE: "operation_mode",
+        _HOTWATER_TEMPERATURE_SETPOINT: "temperature_setpoint",
+        _ROOM_DURATION: "duration",
+        _ROOM_OPERATION_MODE: "operationMode",
+        _ROOM_TEMPERATURE_SETPOINT: "temperatureSetpoint",
+        _VENTILATION_DAY_LEVEL: "level",
+        _VENTILATION_NIGHT_LEVEL: "level",
+        _VENTILATION_OPERATION_MODE: "mode",
+        _ZONE_OPERATION_MODE: "mode",
+        _ZONE_TEMPERATURE_SETBACK: "setback_temperature",
+        _ZONE_TEMPERATURE_SETPOINT: "setpoint_temperature",
+    },
+    defaults.SENSO: {
+        _HOTWATER_OPERATION_MODE: "operation_mode",
+        _HOTWATER_TEMPERATURE_SETPOINT: "hotwater_temperature_setpoint",
+        _ROOM_DURATION: "duration",
+        _ROOM_OPERATION_MODE: "operationMode",
+        _ROOM_TEMPERATURE_SETPOINT: "temperatureSetpoint",
+        _VENTILATION_DAY_LEVEL: "max_day_level",
+        _VENTILATION_NIGHT_LEVEL: "max_night_level",
+        _VENTILATION_OPERATION_MODE: "operation_mode",
+        _ZONE_OPERATION_MODE: "operation_mode",
+        _ZONE_TEMPERATURE_SETBACK: "setback_temperature_setpoint",
+        _ZONE_TEMPERATURE_SETPOINT: "temperature_setpoint",
+    },
+}
+
+
+def _vocabulary(application: str, operation: str) -> str:
+    vocabulary = APPLICATION_VOCABULARY_MAP.get(application) or APPLICATION_VOCABULARY_MAP.get(
+        defaults.MULTIMATIC
+    )
+    return vocabulary.get(operation)
+
+
+def hotwater_temperature_setpoint(application: str, temperature: float) -> Dict[str, Any]:
     """Payload used to set target temperature for
     :class:`~pymultimatic.model.component.HotWater`.
     """
-    return {"temperature_setpoint": temperature}
+    return {_vocabulary(application, _HOTWATER_TEMPERATURE_SETPOINT): temperature}
 
 
-def room_temperature_setpoint(temperature: float) -> Dict[str, Any]:
+def room_temperature_setpoint(application: str, temperature: float) -> Dict[str, Any]:
     """Payload used to set target temperature for
     :class:`~pymultimatic.model.component.Room`.
     """
-    return {"temperatureSetpoint": temperature}
+    return {_vocabulary(application, _ROOM_TEMPERATURE_SETPOINT): temperature}
 
 
-def zone_temperature_setpoint(temperature: float) -> Dict[str, Any]:
+def zone_temperature_setpoint(application: str, temperature: float) -> Dict[str, Any]:
     """Payload used to set target temperature for
     :class:`~pymultimatic.model.component.Zone`.
     """
-    return {"setpoint_temperature": temperature}
+    return {_vocabulary(application, _ZONE_TEMPERATURE_SETPOINT): temperature}
 
 
-def zone_temperature_setback(temperature: float) -> Dict[str, Any]:
+def zone_temperature_setback(application: str, temperature: float) -> Dict[str, Any]:
     """Payload used to set setback temperature for
     :class:`~pymultimatic.model.component.Zone`.
     """
-    return {"setback_temperature": temperature}
+    return {_vocabulary(application, _ZONE_TEMPERATURE_SETBACK): temperature}
 
 
-def hot_water_operating_mode(mode: str) -> Dict[str, Any]:
+def hot_water_operating_mode(application: str, mode: str) -> Dict[str, Any]:
     """Payload to set operating mode for
     :class:`~pymultimatic.model.component.HotWater`.
     """
-    return {"operation_mode": mode}
+    return {_vocabulary(application, _HOTWATER_OPERATION_MODE): mode}
 
 
-def room_operating_mode(mode: str) -> Dict[str, Any]:
+def room_operating_mode(application: str, mode: str) -> Dict[str, Any]:
     """Payload to set operating mode for
     :class:`~pymultimatic.model.component.Room`.
     """
-    return {"operationMode": mode}
+    return {_vocabulary(application, _ROOM_OPERATION_MODE): mode}
 
 
-def zone_operating_mode(mode: str) -> Dict[str, Any]:
+def zone_operating_mode(application: str, mode: str) -> Dict[str, Any]:
     """Payload to set operating mode for
     :class:`~pymultimatic.model.component.Zone`.
     """
-    return {"mode": mode}
+    return {_vocabulary(application, _ZONE_OPERATION_MODE): mode}
 
 
 def quickmode(quick_mode: str, duration: Optional[int] = None) -> Dict[str, Any]:
@@ -60,6 +109,8 @@ def quickmode(quick_mode: str, duration: Optional[int] = None) -> Dict[str, Any]
     system.
 
     Duration is mandatory (Duration is in minutes, max 1440 =24 hours).
+
+    Only for MULTIMATIC.
     """
     payload: Dict[str, Any] = {"quickmode": {"quickmode": quick_mode}}
 
@@ -69,16 +120,24 @@ def quickmode(quick_mode: str, duration: Optional[int] = None) -> Dict[str, Any]
     return payload
 
 
-def zone_quick_veto(temperature: float) -> Dict[str, Any]:
+def zone_quick_veto(
+    application: str, temperature: float, duration: Optional[float] = None
+) -> Dict[str, Any]:
     """Payload to set a :class:`~pymultimatic.model.mode.QuickVeto` for a
     :class:`~pymultimatic.model.component.Zone`.
 
-    The duration is not configurable by the API, it's 6 hours
+    With MULTIMATIC, The duration is not configurable by the API, it's 6 hours
     """
-    return {"setpoint_temperature": temperature}
+    payload = {_vocabulary(application, _ZONE_TEMPERATURE_SETPOINT): temperature}
+
+    if application == defaults.SENSO and duration:
+        payload.update({_vocabulary(application, _ROOM_DURATION): duration})
+    return payload
 
 
-def room_quick_veto(temperature: float, duration: Optional[int]) -> Dict[str, Any]:
+def room_quick_veto(
+    application: str, temperature: float, duration: Optional[int] = None
+) -> Dict[str, Any]:
     """Payload to set a :class:`~pymultimatic.model.mode.QuickVeto` for a
     :class:`~pymultimatic.model.component.Room`.
 
@@ -88,7 +147,10 @@ def room_quick_veto(temperature: float, duration: Optional[int]) -> Dict[str, An
     if not duration:
         duration = 180
 
-    return {"temperatureSetpoint": temperature, "duration": duration}
+    return {
+        _vocabulary(application, _ROOM_TEMPERATURE_SETPOINT): temperature,
+        _vocabulary(application, _ROOM_DURATION): duration,
+    }
 
 
 def holiday_mode(
@@ -103,15 +165,22 @@ def holiday_mode(
     }
 
 
-def ventilation_operating_mode(mode: str) -> Dict[str, Any]:
+def ventilation_operating_mode(application: str, mode: str) -> Dict[str, Any]:
     """Payload to set operating mode for
     :class:`~pymultimatic.model.Ventilation`.
     """
-    return {"mode": mode}
+    return {_vocabulary(application, _VENTILATION_OPERATION_MODE): mode}
 
 
-def ventilation_level(level: int) -> Dict[str, Any]:
+def ventilation_day_level(application: str, level: int) -> Dict[str, Any]:
     """Payload to set level for
     :class:`~pymultimatic.model.Ventilation`.
     """
-    return {"level": level}
+    return {_vocabulary(application, _VENTILATION_DAY_LEVEL): level}
+
+
+def ventilation_night_level(application: str, level: int) -> Dict[str, Any]:
+    """Payload to set level for
+    :class:`~pymultimatic.model.Ventilation`.
+    """
+    return {_vocabulary(application, _VENTILATION_NIGHT_LEVEL): level}
