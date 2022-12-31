@@ -20,7 +20,7 @@ setup(
     zip_safe=False,
     setup_requires=["pytest-runner"],
     install_requires=[
-        "attrs>=21.2.0,<22.0.0",
+        "attrs>=22.0.0,<23.0.0",
         "aiohttp>=3.8.0,<4.0.0",
         "schema>=0.7.4,<0.8.0",
     ],
