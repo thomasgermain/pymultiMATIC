@@ -219,6 +219,20 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(SettingModes.NIGHT, active_mode.sub)
         self.assertEqual(zone.heating.target_low, active_mode.target)
 
+    def test_get_active_mode_manual_senso_zone(self) -> None:
+        """Test get active mode for zone with manual mode."""
+
+        zone = _zone(True)
+        zone.heating.operating_mode = OperatingModes.MANUAL
+        zone.heating.target_high = 25
+        system = System(zones=[zone])
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(OperatingModes.MANUAL, active_mode.current)
+        self.assertIsNone(active_mode.sub)
+        self.assertEqual(zone.heating.target_high, active_mode.target)
+
     def test_get_active_mode_zone_quick_veto(self) -> None:
         """Test get active mode for zone quick veto."""
         quickveto = QuickVeto(target=30)

@@ -392,6 +392,8 @@ def _map_function(
             target_high = conf.get("temperatureSetpoint", None)
         if not target_high:
             target_high = conf.get("day_level", None)
+        if not target_high:
+            target_high = conf.get("manual_mode_temperature_setpoint", None)
 
     target_low = conf.get("setback_temperature", None)
     if not target_low:
