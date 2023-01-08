@@ -187,7 +187,11 @@ class SystemTest(unittest.TestCase):
 
         self.assertEqual(OperatingModes.TIME_CONTROLLED, active_mode.current)
         self.assertEqual(SettingModes.DAY, active_mode.sub)
-        self.assertEqual(zone.heating.target_high, active_mode.target)
+        today = datetime.datetime.now().strftime("%A").lower()
+        self.assertEqual(
+            zone.heating.time_program.days.get(today).settings[0].target_temperature,
+            active_mode.target,
+        )
 
     def test_get_active_mode_zone_off(self) -> None:
         """Test get active mode for zone off."""

@@ -54,7 +54,11 @@ class Function:
                 setting = self.time_program.get_for(datetime.now())
                 if setting:
                     if setting.setting in [SettingModes.DAY, SettingModes.ON]:
-                        mode = ActiveMode(self.target_high, self.operating_mode, setting.setting)
+                        if self.operating_mode == OperatingModes.AUTO:
+                            target = self.target_high
+                        else:
+                            target = setting.target_temperature
+                        mode = ActiveMode(target, self.operating_mode, setting.setting)
                     else:
                         mode = ActiveMode(self.target_low, self.operating_mode, setting.setting)
         if not mode:

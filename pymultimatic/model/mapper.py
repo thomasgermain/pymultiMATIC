@@ -396,6 +396,9 @@ def _map_function(
     target_low = conf.get("setback_temperature", None)
     if not target_low:
         target_low = conf.get("night_level", None)
+    if not target_low:
+        target_low = conf.get("setback_temperature_setpoint", None)
+
     time_program = map_time_program(raw.get("timeprogram"), tp_key)
 
     return time_program, operating_mode, target_high, target_low

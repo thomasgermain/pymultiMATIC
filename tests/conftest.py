@@ -99,13 +99,15 @@ def _hotwater() -> HotWater:
 
 
 def _zone(senso: Optional[bool] = False) -> Zone:
-    timeprogram = _time_program(SettingModes.DAY)
+    timeprogram = _time_program(SettingModes.DAY, 25)
     heating = ZoneHeating(
         time_program=timeprogram,
         operating_mode=OperatingModes.TIME_CONTROLLED if senso else OperatingModes.AUTO,
-        target_high=25,
         target_low=22,
     )
+    if not senso:
+        heating.target_high = 25
+
     return Zone(  # type: ignore
         id="zone",
         name="Zone",
@@ -145,7 +147,7 @@ def _time_program(
     mode: Optional[SettingMode] = SettingModes.ON, temperature: Optional[float] = None
 ) -> TimeProgram:
     if mode in [SettingModes.DAY, SettingModes.NIGHT]:
-        timeprogram_day_setting = TimePeriodSetting("00:00", None, mode)
+        timeprogram_day_setting = TimePeriodSetting("00:00", temperature, mode)
     else:
         timeprogram_day_setting = TimePeriodSetting("00:00", temperature, mode)
 
