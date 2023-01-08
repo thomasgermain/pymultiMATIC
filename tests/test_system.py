@@ -177,6 +177,18 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(SettingModes.DAY, active_mode.sub)
         self.assertEqual(zone.heating.target_high, active_mode.target)
 
+    def test_get_active_mode_senso_zone(self) -> None:
+        """Test get active mode for zone."""
+
+        zone = _zone(True)
+        system = System(zones=[zone])
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(OperatingModes.TIME_CONTROLLED, active_mode.current)
+        self.assertEqual(SettingModes.DAY, active_mode.sub)
+        self.assertEqual(zone.heating.target_high, active_mode.target)
+
     def test_get_active_mode_zone_off(self) -> None:
         """Test get active mode for zone off."""
         zone = _zone()
@@ -187,6 +199,19 @@ class SystemTest(unittest.TestCase):
         active_mode = system.get_active_mode_zone(zone)
 
         self.assertEqual(OperatingModes.AUTO, active_mode.current)
+        self.assertEqual(SettingModes.NIGHT, active_mode.sub)
+        self.assertEqual(zone.heating.target_low, active_mode.target)
+
+    def test_get_active_mode_senso_zone_off(self) -> None:
+        """Test get active mode for zone off."""
+        zone = _zone(True)
+        zone.heating.time_program = _time_program(SettingModes.NIGHT)
+
+        system = System(zones=[zone])
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(OperatingModes.TIME_CONTROLLED, active_mode.current)
         self.assertEqual(SettingModes.NIGHT, active_mode.sub)
         self.assertEqual(zone.heating.target_low, active_mode.target)
 

@@ -46,14 +46,17 @@ class Function:
         :class:`~pymultimatic.model.system.System` for that.
         """
         mode = None
-        if self.operating_mode == OperatingModes.AUTO:
+        if (
+            self.operating_mode == OperatingModes.AUTO
+            or self.operating_mode == OperatingModes.TIME_CONTROLLED
+        ):
             if self.time_program:
                 setting = self.time_program.get_for(datetime.now())
                 if setting:
                     if setting.setting in [SettingModes.DAY, SettingModes.ON]:
-                        mode = ActiveMode(self.target_high, OperatingModes.AUTO, setting.setting)
+                        mode = ActiveMode(self.target_high, self.operating_mode, setting.setting)
                     else:
-                        mode = ActiveMode(self.target_low, OperatingModes.AUTO, setting.setting)
+                        mode = ActiveMode(self.target_low, self.operating_mode, setting.setting)
         if not mode:
             mode = self._active_mode()
         return mode
