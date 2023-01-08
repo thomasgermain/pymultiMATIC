@@ -220,6 +220,8 @@ def map_time_program_day(raw_time_program_day, key: Optional[str] = None) -> Tim
     """Map *time program day* and *time program day settings*."""
     settings = []
     if raw_time_program_day:
+        # By default in multimatic mode
+        multimatic_timeprogram = True
         for time_setting in raw_time_program_day:
             # Try if multimatic or senso
             multimatic_timeprogram = "startTime" in time_setting
@@ -234,10 +236,16 @@ def map_time_program_day(raw_time_program_day, key: Optional[str] = None) -> Tim
                 start_time = time_setting.get("start_time")
                 end_time = time_setting.get("end_time")
                 target_temp = time_setting.get("setpoint")
+                mode = SettingModes.DAY
 
             settings.append(TimePeriodSetting(start_time, target_temp, mode, end_time))
 
-    return TimeProgramDay(settings)
+        time_program_day = TimeProgramDay(settings)
+        # In senso mode, deactivated periods are not declared.
+        if not multimatic_timeprogram:
+            time_program_day.complete_empty_periods(SettingModes.NIGHT)
+
+    return time_program_day
 
 
 def _map_boiler_status(hvac_state) -> Optional[BoilerStatus]:

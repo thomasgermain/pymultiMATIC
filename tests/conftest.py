@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from http.cookies import SimpleCookie
 from typing import AsyncGenerator, Optional
 
@@ -74,7 +75,7 @@ def mock_auth(resp_mock: aioresponses) -> None:
 
 
 def _room() -> Room:
-    timeprogram = _time_program(None, 20)
+    timeprogram = _full_day_time_program(None, 20)
 
     return Room(
         id="id",
@@ -87,7 +88,7 @@ def _room() -> Room:
 
 
 def _hotwater() -> HotWater:
-    timeprogram = _time_program()
+    timeprogram = _full_day_time_program()
     return HotWater(
         id="dhw",
         name="HotWater",
@@ -98,15 +99,31 @@ def _hotwater() -> HotWater:
     )
 
 
-def _zone(senso: Optional[bool] = False) -> Zone:
-    timeprogram = _time_program(SettingModes.DAY, 25)
+def _zone() -> Zone:
+    timeprogram = _full_day_time_program(SettingModes.DAY)
     heating = ZoneHeating(
         time_program=timeprogram,
-        operating_mode=OperatingModes.TIME_CONTROLLED if senso else OperatingModes.AUTO,
+        operating_mode=OperatingModes.AUTO,
+        target_high=25,
         target_low=22,
     )
-    if not senso:
-        heating.target_high = 25
+    return Zone(  # type: ignore
+        id="zone",
+        name="Zone",
+        temperature=22,
+        active_function=ActiveFunction.HEATING,
+        rbr=False,
+        heating=heating,
+    )
+
+
+def _zone_senso(active_period_day: Optional[bool] = True) -> Zone:
+    timeprogram = _split_day_time_program(temperature=25, active_period_day=active_period_day)
+    heating = ZoneHeating(
+        time_program=timeprogram,
+        operating_mode=OperatingModes.TIME_CONTROLLED,
+        target_low=22,
+    )
 
     return Zone(  # type: ignore
         id="zone",
@@ -119,7 +136,7 @@ def _zone(senso: Optional[bool] = False) -> Zone:
 
 
 def _zone_cooling() -> Zone:
-    timeprogram = _time_program(SettingModes.ON)
+    timeprogram = _full_day_time_program(SettingModes.ON)
     cooling = ZoneCooling(
         time_program=timeprogram, operating_mode=OperatingModes.AUTO, target_high=23
     )
@@ -134,7 +151,7 @@ def _zone_cooling() -> Zone:
 
 
 def _circulation() -> Circulation:
-    timeprogram = _time_program()
+    timeprogram = _full_day_time_program()
     return Circulation(
         id="dhw",
         name="Circulation",
@@ -143,11 +160,11 @@ def _circulation() -> Circulation:
     )
 
 
-def _time_program(
+def _full_day_time_program(
     mode: Optional[SettingMode] = SettingModes.ON, temperature: Optional[float] = None
 ) -> TimeProgram:
     if mode in [SettingModes.DAY, SettingModes.NIGHT]:
-        timeprogram_day_setting = TimePeriodSetting("00:00", temperature, mode)
+        timeprogram_day_setting = TimePeriodSetting("00:00", None, mode)
     else:
         timeprogram_day_setting = TimePeriodSetting("00:00", temperature, mode)
 
@@ -164,8 +181,53 @@ def _time_program(
     return TimeProgram(timeprogram_days)
 
 
+def _split_day_time_program(
+    temperature: Optional[float] = None, active_period_day: Optional[bool] = True
+) -> TimeProgram:
+    """Creates a time program with the current time encompassed in a period of 3 hours in DAY mode
+    if "active_period_day" set to True and Night otherwise.
+    """
+    current_hour = datetime.now().hour
+    if current_hour == 23:
+        # To obtain 3 active hours, it is necessary to build 2 periods (22->00, 00->01)
+        periods = [
+            {"start_time": "00:00", "end_time": "01:00"},
+            {"start_time": "22:00", "end_time": "24:00"},
+        ]
+    elif current_hour == 0:
+        # To obtain 3 active hours, it is necessary to build 2 periods (23->00, 00->02)
+        periods = [
+            {"start_time": "00:00", "end_time": "02:00"},
+            {"start_time": "23:00", "end_time": "24:00"},
+        ]
+    else:
+        periods = [
+            {"start_time": f"{current_hour-1:02n}:00", "end_time": f"{current_hour + 2:02n}:00"}
+        ]
+
+    settings = [
+        TimePeriodSetting(
+            start_time=period["start_time"],
+            target_temperature=temperature,
+            setting=SettingModes.DAY if active_period_day else SettingModes.NIGHT,
+            end_time=period["end_time"],
+        )
+        for period in periods
+    ]
+
+    timeprogram_day = TimeProgramDay(settings)
+    timeprogram_day.complete_empty_periods(
+        SettingModes.NIGHT if active_period_day else SettingModes.DAY
+    )
+    timeprogram_days = {
+        day: timeprogram_day
+        for day in ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    }
+    return TimeProgram(timeprogram_days)
+
+
 def _ventilation() -> Ventilation:
-    timeprogram = _time_program()
+    timeprogram = _full_day_time_program()
     ventilation = Ventilation(
         id="fan_id",
         name="Ventilation",
