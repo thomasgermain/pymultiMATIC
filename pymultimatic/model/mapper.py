@@ -1,5 +1,5 @@
 """Mappers from json to model classes."""
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, List, Optional, Tuple
 
 from . import (
@@ -33,6 +33,7 @@ from . import (
 )
 
 _DATE_FORMAT = "%Y-%m-%d"
+_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 _DAYS_OF_WEEK = [
     "monday",
     "tuesday",
@@ -634,9 +635,20 @@ def _get_report_value(report) -> Any:
 
 
 def _map_quick_veto_zone(raw_quick_veto) -> Optional[QuickVeto]:
-    if raw_quick_veto and raw_quick_veto.get("active"):
-        # No way to find start_date, Quick veto on zone lasts 6 hours
-        return QuickVeto(target=raw_quick_veto.get("setpoint_temperature"))
+    if raw_quick_veto and ("active" not in raw_quick_veto or raw_quick_veto.get("active")):
+        # No way to find the start date, the quick zone veto lasts 6 hours for Multimatic.
+        # For Senso, the expiry date is not immediately present.
+        expires_at = raw_quick_veto.get("expires_at")
+        duration = None
+        if expires_at:
+            expires_at_datetime = datetime.strptime(expires_at, _DATE_TIME_FORMAT)
+            duration, _ = divmod(expires_at_datetime - datetime.utcnow(), timedelta(minutes=1))
+            if duration <= 0:
+                return None
+        target = raw_quick_veto.get("setpoint_temperature")
+        if not target:
+            target = raw_quick_veto.get("temperature_setpoint")
+        return QuickVeto(target=target, duration=duration)
     return None
 
 

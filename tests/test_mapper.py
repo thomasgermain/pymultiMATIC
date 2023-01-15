@@ -1,7 +1,7 @@
 """Test for the model mapper."""
 import json
 import unittest
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from pymultimatic.model import ActiveFunction, OperatingModes, QuickModes, mapper
 from tests.conftest import path
@@ -144,6 +144,39 @@ class MapperTest(unittest.TestCase):
             if zone.id == "Control_ZO2":
                 self.assertIsNotNone(zone.quick_veto)
                 self.assertEqual(18.5, zone.quick_veto.target)
+                self.assertIsNone(zone.quick_veto.duration)
+                return
+        self.fail("Wrong zone found")
+
+    def test_map_quick_veto_senso_zone(self) -> None:
+        """Test map quick veto zone for Senso."""
+        with open(path("files/responses/systemcontrol_senso_quick_veto"), "r") as file:
+            system = json.loads(file.read())
+        # update of the expiry date for the tests
+        system.get("body", {}).get("zones", [])[0]["configuration"]["quick_veto"]["expires_at"] = (
+            datetime.utcnow() + timedelta(hours=2)
+        ).strftime(mapper._DATE_TIME_FORMAT)
+        zones = mapper.map_zones_from_system(system)
+
+        for zone in zones:
+            if zone.id == "Control_ZO1":
+                self.assertIsNotNone(zone.quick_veto)
+                self.assertEqual(22.0, zone.quick_veto.target)
+                self.assertTrue(zone.quick_veto.duration <= 120)
+                return
+        self.fail("Wrong zone found")
+
+    def test_map_quick_veto_senso_zone_after_put(self) -> None:
+        """Test map quick veto zone for Senso after put quick veto.
+        The expiry date is not immediately filled in."""
+        with open(path("files/responses/systemcontrol_senso_quick_veto_after_put"), "r") as file:
+            system = json.loads(file.read())
+        zones = mapper.map_zones_from_system(system)
+
+        for zone in zones:
+            if zone.id == "Control_ZO1":
+                self.assertIsNotNone(zone.quick_veto)
+                self.assertEqual(22.0, zone.quick_veto.target)
                 self.assertIsNone(zone.quick_veto.duration)
                 return
         self.fail("Wrong zone found")
