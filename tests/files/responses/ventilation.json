@@ -1,0 +1,226 @@
+{
+  "body": [
+      {
+        "fan": {
+          "configuration": {
+            "day_level": 3,
+            "night_level": 1,
+            "operation_mode": "AUTO"
+          },
+          "timeprogram": {
+            "monday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "tuesday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "wednesday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "thursday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "friday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "saturday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ],
+            "sunday": [
+              {
+                "startTime": "0:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "05:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "08:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "16:00",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "22:00",
+                "setting": "NIGHT"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              },
+              {
+                "startTime": "23:30",
+                "setting": "DAY"
+              }
+            ]
+          }
+        },
+        "_id": "_template"
+      }
+    ]
+}

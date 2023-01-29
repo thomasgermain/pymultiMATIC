@@ -1,5 +1,6 @@
 """Vaillant operation modes."""
 from typing import Optional
+
 import attr
 
 
@@ -24,41 +25,41 @@ class OperatingMode(Mode):
 class OperatingModes:
     """Groups all :class:`OperatingMode` together."""
 
-    AUTO = OperatingMode('AUTO')
+    AUTO = OperatingMode("AUTO")
     """The automatic mode controls the heating circuit in accordance with the
     set desired temperature and the set time slots.
     """
 
-    DAY = OperatingMode('DAY')
+    DAY = OperatingMode("DAY")
     """The Day operating mode brings the heating circuit to the desired Day
     temperature set, without taking time periods into account.
     """
 
-    NIGHT = OperatingMode('NIGHT')
+    NIGHT = OperatingMode("NIGHT")
     """The Set-back (Night) operating mode brings the heating circuit to the
     desired Set-back temperature set, without taking time periods into
     consideration.
     """
 
-    ON = OperatingMode('ON')
+    ON = OperatingMode("ON")
     """The operating mode "On" applies to
     :class:`~pymultimatic.model.component.Hotwater` and
     :class:`~pymultimatic.model.component.Circulation`, it means the
     :class:`~pymultimatic.model.component.Component` is running on.
     """
 
-    OFF = OperatingMode('OFF')
+    OFF = OperatingMode("OFF")
     """The operating mode "Off" switches the corresponding function off. The
     frost protection function is activated.
     """
 
-    MANUAL = OperatingMode('MANUAL')
+    MANUAL = OperatingMode("MANUAL")
     """The manual operating mode is used by a
     :class:`~pymultimatic.model.component.Room` to set manually the target
     temperature and keep it until next manual change.
     """
 
-    QUICK_VETO = OperatingMode('QUICK_VETO')
+    QUICK_VETO = OperatingMode("QUICK_VETO")
     """The Quick veto function can be used to make one-off changes to the
     temperature. This function sets the desired target temperature, which may
     differ from that configured in the
@@ -66,8 +67,7 @@ class OperatingModes:
     . The newly set temperature will be applied for a certain period of
     time."""
 
-    _VALUES = {opm.name: opm for opm in [AUTO, DAY, NIGHT, ON, OFF, MANUAL,
-                                         QUICK_VETO]}
+    _VALUES = {opm.name: opm for opm in [AUTO, DAY, NIGHT, ON, OFF, MANUAL, QUICK_VETO]}
 
     @classmethod
     def get(cls, name: str) -> OperatingMode:
@@ -109,21 +109,15 @@ class QuickVeto(Mode):
     duration = attr.ib(type=Optional[int], default=None)
     target = attr.ib(type=float, default=None)
 
-    # pylint: disable=no-self-use
     @duration.validator
-    def _duration_validator(self, attribute: str,
-                            value: Optional[int]) -> None:
+    def _duration_validator(self, attribute: str, value: Optional[int]) -> None:
         if value is not None and value > 1440:
-            raise ValueError('{} with value {} is not valid'
-                             .format(attribute, value))
+            raise ValueError("{} with value {} is not valid".format(attribute, value))
 
-    # pylint: disable=no-self-use
     @target.validator
-    def _target_validator(self, attribute: str,
-                          value: Optional[float]) -> None:
+    def _target_validator(self, attribute: str, value: Optional[float]) -> None:
         if value is None or not 5 <= value <= 30:
-            raise ValueError('{} with value {} is not valid'
-                             .format(attribute, value))
+            raise ValueError("{} with value {} is not valid".format(attribute, value))
 
 
 @attr.s(frozen=True)
@@ -135,7 +129,7 @@ class SettingMode(Mode):
 class SettingModes:
     """Groups all :class:`SettingMode` together."""
 
-    ON = SettingMode('ON')
+    ON = SettingMode("ON")
     """Within the time period,
     :class:`~pymultimatic.model.component.HotWater` generation is switched on
     and maintains the hot water in the domestic hot water cylinder at the
@@ -143,19 +137,19 @@ class SettingModes:
     :class:`~pymultimatic.model.component.Circulation` is switched off.
     """
 
-    OFF = SettingMode('OFF')
+    OFF = SettingMode("OFF")
     """Outside the time period,
     :class:`~pymultimatic.model.component.HotWater` generation (and
     :class:`~pymultimatic.model.component.Circulation`) is switched off.
     """
 
-    DAY = SettingMode('DAY')
+    DAY = SettingMode("DAY")
     """Within the time periods, the controller brings the
     :class:`~pymultimatic.model.component.Zone` temperature to the `DAY`
     temp. heating that has been set (Comfort mode).
     """
 
-    NIGHT = SettingMode('NIGHT')
+    NIGHT = SettingMode("NIGHT")
     """Outside of the time period, the controller brings the
     :class:`~pymultimatic.model.component.Zone` temperature to the Set-back
     temp. heating (`NIGHT`) that has been set.

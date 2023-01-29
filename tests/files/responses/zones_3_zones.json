@@ -1,0 +1,206 @@
+{
+  "body": [
+    {
+      "heating": {
+        "configuration": {
+          "mode": "AUTO",
+          "setback_temperature": 16.0,
+          "setpoint_temperature": 21.0
+        },
+        "timeprogram": {
+          "monday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "tuesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "wednesday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "thursday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "friday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "06:00",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ],
+          "saturday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "07:30",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "23:30",
+              "setting": "NIGHT"
+            }
+          ],
+          "sunday": [
+            {
+              "startTime": "00:00",
+              "setting": "NIGHT"
+            },
+            {
+              "startTime": "07:30",
+              "setting": "DAY"
+            },
+            {
+              "startTime": "22:00",
+              "setting": "NIGHT"
+            }
+          ]
+        }
+      },
+      "configuration": {
+        "name": "HEIZKOPER ",
+        "enabled": true,
+        "active_function": "STANDBY",
+        "quick_veto": {
+          "active": false,
+          "setpoint_temperature": 19.5
+        }
+      },
+      "_id": "Control_ZO1"
+    },
+    {
+      "heating": {
+        "configuration": {
+          "mode": "AUTO",
+          "setback_temperature": 19.0,
+          "setpoint_temperature": 22.5
+        },
+        "timeprogram": {
+          "monday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "tuesday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "wednesday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "thursday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "friday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "saturday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ],
+          "sunday": [
+            {
+              "startTime": "00:00",
+              "setting": "DAY"
+            }
+          ]
+        }
+      },
+      "configuration": {
+        "name": "FUSSBODEN ",
+        "enabled": true,
+        "active_function": "STANDBY",
+        "quick_veto": {
+          "active": false,
+          "setpoint_temperature": 23.5
+        }
+      },
+      "_id": "Control_ZO2"
+    },
+    {
+      "heating": {
+        "configuration": {
+          "mode": "AUTO",
+          "setback_temperature": 15.0,
+          "setpoint_temperature": 20.0
+        }
+      },
+      "configuration": {
+        "name": "ZONE 3    ",
+        "enabled": false,
+        "active_function": "HEATING",
+        "quick_veto": {
+          "active": false,
+          "setpoint_temperature": 19.5
+        }
+      },
+      "_id": "Control_ZO3"
+    }
+  ],
+  "meta": {}
+}

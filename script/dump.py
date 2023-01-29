@@ -7,19 +7,25 @@ import sys
 
 import aiohttp
 
+
 sys.path.append("../")
 from pymultimatic.api import Connector, ApiError, urls
 from pymultimatic.model import mapper
 
-URLS = [
-    urls.system,
-    urls.rooms,
-    urls.live_report,
-    urls.hvac,
-    urls.gateway_type,
-    urls.emf_report,
-    urls.photovoltaics
-]
+URLS = {
+    urls.zones: {},
+    urls.gateway_type: {},
+    urls.facilities_details: {},
+    urls.system_holiday_mode: {},
+    urls.hvac: {},
+    urls.live_report: {},
+    urls.system_status: {},
+    urls.system_quickmode: {},
+    urls.dhw: {'id': 'Control_DHW'},
+    urls.rooms: {},
+    urls.system: {},
+    urls.system_ventilation: {},
+}
 
 
 async def main(user, passw):
@@ -42,9 +48,11 @@ async def main(user, passw):
         serial = mapper.map_serial_number(facilities)
 
         requests = {}
-        for url in URLS:
+        for url, param in URLS.items():
             print('requesting ' + url.__name__)
-            req = connector.get(url(**{'serial': serial}))
+            params = {'serial': serial}
+            params.update(param)
+            req = connector.get(url(**params))
             requests.update({url.__name__: req})
 
         print('did {} requests'.format(len(requests)))
@@ -53,7 +61,9 @@ async def main(user, passw):
         for key in requests:
             try:
                 responses.update({key: await requests[key]})
-            except:
+            except ApiError as api_err:
+                responses.update({key: api_err.response})
+            except err:
                 print('Cannot get response for {}, skipping it'.format(key))
 
         print('received {} responses'.format(len(responses)))

@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import attr
 
-from . import (Component, Function, OperatingModes, constants, ActiveMode)
+from . import ActiveMode, Component, Function, OperatingModes, constants
 
 
 @attr.s
@@ -48,8 +48,12 @@ class Room(Function, Component):
         devices (List[Device]): List of :class:`Device` inside the room.
     """
 
-    MODES = [OperatingModes.OFF, OperatingModes.MANUAL, OperatingModes.AUTO,
-             OperatingModes.QUICK_VETO]
+    MODES = [
+        OperatingModes.OFF,
+        OperatingModes.MANUAL,
+        OperatingModes.AUTO,
+        OperatingModes.QUICK_VETO,
+    ]
     """List of mode that are applicable to rooms component."""
 
     MIN_TARGET_TEMP = constants.FROST_PROTECTION_TEMP
@@ -66,18 +70,16 @@ class Room(Function, Component):
 
     @property
     def active_mode(self) -> ActiveMode:
-        """""ActiveMode: Get the :class:`~pymultimatic.model.mode.ActiveMode`
+        """ActiveMode: Get the :class:`~pymultimatic.model.mode.ActiveMode`
         for this function. All operating modes are handled,
         **but not quick veto nor quick mode.**
         """
         if self.quick_veto:
-            mode = ActiveMode(self.quick_veto.target,
-                              OperatingModes.QUICK_VETO)
+            mode = ActiveMode(self.quick_veto.target, OperatingModes.QUICK_VETO)
 
         elif self.operating_mode == OperatingModes.AUTO:
             setting = self.time_program.get_for(datetime.now())
-            mode = ActiveMode(setting.target_temperature,
-                              OperatingModes.AUTO, setting.setting)
+            mode = ActiveMode(setting.target_temperature, OperatingModes.AUTO, setting.setting)
 
         elif self.operating_mode == OperatingModes.OFF:
             mode = ActiveMode(self.MIN_TARGET_TEMP, OperatingModes.OFF)

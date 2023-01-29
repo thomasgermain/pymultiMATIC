@@ -1,0 +1,18 @@
+{
+  "body": {
+    "quickmode": "QM_SYSTEM_OFF",
+    "duration": 0
+  },
+  "meta": {
+    "resourceState": [
+      {
+        "state": "PENDING",
+        "timestamp": 1624284477699,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxx/systemcontrol/v1/configuration/quickmode"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "body": {
+    "unit": "\u00b0C",
+    "name": "Temp\u00e9rature ECS ballon",
+    "value": 52.0,
+    "_id": "DomesticHotWaterTankTemperature",
+    "measurement_category": "TEMPERATURE",
+    "associated_device_function": "DHW"
+  },
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1624347855,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/xxx/livereport/v1/devices/Control_DHW/reports/DomesticHotWaterTankTemperature"
+        }
+      }
+    ]
+  }
+}

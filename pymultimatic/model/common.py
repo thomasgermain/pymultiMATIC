@@ -6,8 +6,7 @@ from typing import Optional
 
 import attr
 
-from . import TimeProgram, OperatingMode, QuickVeto, \
-    ActiveMode, SettingModes, OperatingModes
+from . import ActiveMode, OperatingMode, OperatingModes, QuickVeto, SettingModes, TimeProgram
 
 
 @attr.s
@@ -46,17 +45,15 @@ class Function:
         may not receive the active mode that is really applied. You should use
         :class:`~pymultimatic.model.system.System` for that.
         """
-
         mode = None
         if self.operating_mode == OperatingModes.AUTO:
-            setting = self.time_program.get_for(datetime.now())
-
-            if setting.setting in [SettingModes.DAY, SettingModes.ON]:
-                mode = ActiveMode(self.target_high, OperatingModes.AUTO,
-                                  setting.setting)
-            else:
-                mode = ActiveMode(self.target_low, OperatingModes.AUTO,
-                                  setting.setting)
+            if self.time_program:
+                setting = self.time_program.get_for(datetime.now())
+                if setting:
+                    if setting.setting in [SettingModes.DAY, SettingModes.ON]:
+                        mode = ActiveMode(self.target_high, OperatingModes.AUTO, setting.setting)
+                    else:
+                        mode = ActiveMode(self.target_low, OperatingModes.AUTO, setting.setting)
         if not mode:
             mode = self._active_mode()
         return mode
@@ -95,7 +92,6 @@ class Component:
             `None` for :class:`Circulation` and :class:`HotWater`.
     """
 
-    # pylint: disable=invalid-name
     id = attr.ib(type=str, default=None)
     name = attr.ib(type=str, default=None)
     temperature = attr.ib(type=Optional[float], default=None)

@@ -1,5 +1,7 @@
 """Grouping status"""
 from datetime import datetime
+from typing import List, Optional
+
 import attr
 
 
@@ -37,5 +39,33 @@ class BoilerStatus(Error):
     @property
     def is_error(self) -> bool:
         """bool: Checks if there is an error at boiler side."""
-        return self.status_code is not None \
-            and (self.status_code.startswith('F') or self.status_code == 'con')
+        return self.status_code is not None and (
+            self.status_code.startswith("F") or self.status_code == "con"
+        )
+
+
+@attr.s
+class HvacStatus:
+    """HVAC status.
+
+    Args:
+        online (str): Indicate if the system is connected to the cloud.
+        update (str): Indicate if there is available update.
+        boiler_status (BoilerStatus): Status of the boiler.
+        errors (List[Error]): If there are errors, you can find them here.
+    """
+
+    online = attr.ib(type=str)
+    update = attr.ib(type=str)
+    boiler_status = attr.ib(type=Optional[BoilerStatus], default=None)
+    errors = attr.ib(type=List[Error], default=[])
+
+    @property
+    def is_online(self) -> bool:
+        """bool: Checks if the system is connected to the internet."""
+        return self.online == "ONLINE"
+
+    @property
+    def is_up_to_date(self) -> bool:
+        """bool: Checks if the system is up to date."""
+        return self.update == "UPDATE_NOT_PENDING"

@@ -1,7 +1,6 @@
 # pymultiMATIC
 ![PyPI - License](https://img.shields.io/github/license/thomasgermain/pymultiMATIC)
-[![Build Status](https://travis-ci.org/thomasgermain/pymultiMATIC.svg?branch=master)](https://travis-ci.org/thomasgermain/pymultiMATIC)
-[![Coverage Status](https://coveralls.io/repos/github/thomasgermain/pymultiMATIC/badge.svg?branch=master)](https://coveralls.io/github/thomasgermain/pymultiMATIC?branch=master)
+[![codecov](https://codecov.io/gh/thomasgermain/pymultiMATIC/branch/master/graph/badge.svg?token=KKM0BRHJR7)](https://codecov.io/gh/thomasgermain/pymultiMATIC)
 ![PyPI](https://img.shields.io/pypi/v/pymultiMATIC)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pymultiMATIC.svg)
 
@@ -117,8 +116,5 @@ I would recommend using this layer if you want to do more complex things, e.g: i
 a room or a zone, it can become a bit complex since you have to deal with holiday mode, quick mode, quick veto, time program, etc.
 This layer is hiding you this complexity.
 
-## Documentation
-You can find a deeper documentation [here](https://thomasgermain.github.io/pymultiMATIC/).
-
-## Todo's
-- Moving some constructors (System) to **kwargs
+---
+<a href="https://www.buymeacoffee.com/tgermain" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>

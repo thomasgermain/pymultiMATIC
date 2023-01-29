@@ -1,0 +1,206 @@
+{
+  "body": {
+    "roomIndex": 1,
+    "configuration": {
+      "name": "Room 1",
+      "temperatureSetpoint": 18.5,
+      "operationMode": "AUTO",
+      "currentTemperature": 23.4,
+      "childLock": false,
+      "isWindowOpen": false,
+      "devices": [
+        {
+          "name": "",
+          "sgtin": "R13456789012345678901234",
+          "deviceType": "VALVE",
+          "isBatteryLow": false,
+          "isRadioOutOfReach": false
+        },
+        {
+          "name": null,
+          "sgtin": "R13456789012345678901235",
+          "deviceType": "VALVE",
+          "isBatteryLow": false,
+          "isRadioOutOfReach": false
+        }
+      ],
+      "iconId": "BATHROOM"
+    },
+    "timeprogram": {
+      "monday": [
+        {
+          "startTime": "00:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "05:30",
+          "temperatureSetpoint": 23.5
+        },
+        {
+          "startTime": "07:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "16:20",
+          "temperatureSetpoint": 25
+        },
+        {
+          "startTime": "18:30",
+          "temperatureSetpoint": 18.5
+        }
+      ],
+      "tuesday": [
+        {
+          "startTime": "00:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "05:30",
+          "temperatureSetpoint": 23.5
+        },
+        {
+          "startTime": "07:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "16:20",
+          "temperatureSetpoint": 25
+        },
+        {
+          "startTime": "18:30",
+          "temperatureSetpoint": 18.5
+        }
+      ],
+      "wednesday": [
+        {
+          "startTime": "00:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "05:30",
+          "temperatureSetpoint": 23.5
+        },
+        {
+          "startTime": "07:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "16:20",
+          "temperatureSetpoint": 25
+        },
+        {
+          "startTime": "18:30",
+          "temperatureSetpoint": 18.5
+        }
+      ],
+      "thursday": [
+        {
+          "startTime": "00:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "05:30",
+          "temperatureSetpoint": 23.5
+        },
+        {
+          "startTime": "07:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "16:20",
+          "temperatureSetpoint": 25
+        },
+        {
+          "startTime": "18:30",
+          "temperatureSetpoint": 18.5
+        }
+      ],
+      "friday": [
+        {
+          "startTime": "00:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "05:30",
+          "temperatureSetpoint": 23.5
+        },
+        {
+          "startTime": "07:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "16:20",
+          "temperatureSetpoint": 25
+        },
+        {
+          "startTime": "18:30",
+          "temperatureSetpoint": 18.5
+        }
+      ],
+      "saturday": [
+        {
+          "startTime": "00:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "06:00",
+          "temperatureSetpoint": 23.5
+        },
+        {
+          "startTime": "08:30",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "16:20",
+          "temperatureSetpoint": 25
+        },
+        {
+          "startTime": "18:30",
+          "temperatureSetpoint": 18.5
+        }
+      ],
+      "sunday": [
+        {
+          "startTime": "00:00",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "06:00",
+          "temperatureSetpoint": 23.5
+        },
+        {
+          "startTime": "08:30",
+          "temperatureSetpoint": 18.5
+        },
+        {
+          "startTime": "16:20",
+          "temperatureSetpoint": 25
+        },
+        {
+          "startTime": "18:30",
+          "temperatureSetpoint": 18.5
+        }
+      ]
+    }
+  },
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1555450178000,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/1234567890123456789012345678/rbr/v1/rooms/1/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1554175239000,
+        "link": {
+          "rel": "child",
+          "resourceLink": "/facilities/1234567890123456789012345678/rbr/v1/rooms/1/timeprogram"
+        }
+      }
+    ]
+  }
+}

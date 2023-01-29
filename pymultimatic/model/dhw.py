@@ -3,14 +3,14 @@ from typing import Optional
 
 import attr
 
-from . import ActiveMode, OperatingModes, constants, Component, Function
+from . import ActiveMode, Component, Function, OperatingModes, SettingModes, constants
 
 
 @attr.s
 class HotWater(Function, Component):
     """This is representing the hot water from the system.
 
-       There is no `quick_veto` available for this component.
+    There is no `quick_veto` available for this component.
     """
 
     MODES = [OperatingModes.ON, OperatingModes.OFF, OperatingModes.AUTO]
@@ -26,11 +26,15 @@ class HotWater(Function, Component):
     target_low = attr.ib(default=MIN_TARGET_TEMP, init=False)
 
     def _active_mode(self) -> ActiveMode:
-        if self.operating_mode == OperatingModes.ON:
+        mode: ActiveMode
+        if (
+            self.operating_mode == OperatingModes.AUTO
+        ):  # auto at this point mean we have a "direct heater"
+            mode = ActiveMode(self.target_high, OperatingModes.AUTO, SettingModes.ON)
+        elif self.operating_mode == OperatingModes.ON:
             mode = ActiveMode(self.target_high, OperatingModes.ON)
         else:  # MODE_OFF
-            mode = ActiveMode(constants.FROST_PROTECTION_TEMP,
-                              OperatingModes.OFF)
+            mode = ActiveMode(constants.FROST_PROTECTION_TEMP, OperatingModes.OFF)
         return mode
 
 
@@ -50,7 +54,12 @@ class Circulation(Function, Component):
     target_low = attr.ib(default=None, init=False)
 
     def _active_mode(self) -> ActiveMode:
-        if self.operating_mode == OperatingModes.ON:
+        mode: ActiveMode
+        if (
+            self.operating_mode == OperatingModes.AUTO
+        ):  # auto at this point mean we have a "direct heater"
+            mode = ActiveMode(self.target_low, OperatingModes.AUTO, SettingModes.OFF)
+        elif self.operating_mode == OperatingModes.ON:
             mode = ActiveMode(self.target_high, OperatingModes.ON)
         else:  # MODE_OFF
             mode = ActiveMode(self.target_low, OperatingModes.OFF)
