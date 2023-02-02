@@ -66,6 +66,26 @@ async def connector(session: ClientSession) -> AsyncGenerator[Connector, None]:
     yield con
 
 
+# It's necessary to differentiate the connectors so that they can be launched in the same test.
+@pytest.fixture(autouse=True)
+async def senso_connector(session: ClientSession) -> AsyncGenerator[Connector, None]:
+    con = Connector("test", "test", session)
+    orig_login = con.login
+
+    async def new_login(force: bool = False) -> bool:
+        result = await orig_login(force)
+        cookie = SimpleCookie()  # type: SimpleCookie[str]
+        cookie["test"] = "value"
+        cookie["test"]["httponly"] = True
+        cookie["test"]["secure"] = True
+        cookie["test"]["path"] = "/"
+        session.cookie_jar.update_cookies(cookie, URL(urls.authenticate()))
+        return result
+
+    setattr(con, "login", new_login)
+    yield con
+
+
 def mock_auth(resp_mock: aioresponses) -> None:
     resp_mock.post(urls.new_token(), status=200, payload={"body": {"authToken": "123"}})
 

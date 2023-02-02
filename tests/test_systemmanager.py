@@ -13,7 +13,6 @@ from pymultimatic.api import (
     defaults,
     Connector,
     WrongResponseError,
-    payloads,
     urls,
     urls_senso,
 )
@@ -45,13 +44,23 @@ async def fixture_manager(
 
 @pytest.fixture(name="senso_manager")
 async def fixture_senso_manager(
-    session: ClientSession, connector: Connector
+    session: ClientSession, senso_connector: Connector
 ) -> AsyncGenerator[SystemManager, None]:
     manager = SystemManager("user", "pass", session, "pymultiMATIC", SERIAL, defaults.SENSO)
-    await connector.login()
-    with mock.patch.object(connector, "request", wraps=connector.request):
-        manager._connector = connector
+    await senso_connector.login()
+    with mock.patch.object(senso_connector, "request", wraps=senso_connector.request):
+        manager._connector = senso_connector
         yield manager
+
+
+@pytest.fixture(name="managers")
+async def fixture_managers(
+    session: ClientSession,
+    connector: Connector,
+    manager: SystemManager,
+    senso_manager: SystemManager,
+) -> AsyncGenerator[List[SystemManager], None]:
+    yield [manager, senso_manager]
 
 
 @pytest.mark.asyncio
@@ -137,300 +146,338 @@ async def test_system_senso(senso_manager: SystemManager, resp: aioresponses) ->
 
 
 @pytest.mark.asyncio
-async def test_get_hot_water(manager: SystemManager, resp: aioresponses) -> None:
-    with open(path("files/responses/hotwater"), "r") as file:
-        raw_hotwater = json.loads(file.read())
+async def test_get_hot_water(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        with open(path("files/responses/hotwater"), "r") as file:
+            raw_hotwater = json.loads(file.read())
 
-    dhw_url = urls.hot_water(id="Control_DHW", serial=SERIAL)
-    resp.get(dhw_url, payload=raw_hotwater, status=200)
+        dhw_url = manager.urls.hot_water(id="Control_DHW", serial=SERIAL)
+        resp.get(dhw_url, payload=raw_hotwater, status=200)
 
-    hot_water = await manager.get_hot_water("Control_DHW")
+        hot_water = await manager.get_hot_water("Control_DHW")
 
-    assert hot_water is not None
-    _assert_calls(1, manager, [dhw_url])
+        assert hot_water is not None
+        _assert_calls(1, manager, [dhw_url])
 
 
 @pytest.mark.asyncio
 async def test_set_hot_water_setpoint_temperature(
-    manager: SystemManager, resp: aioresponses
+    managers: List[SystemManager], resp: aioresponses
 ) -> None:
-    url = urls.hot_water_temperature_setpoint(id="id", serial=SERIAL)
-    payload = payloads.hotwater_temperature_setpoint(manager._application, 60.0)
+    for manager in managers:
+        url = manager.urls.hot_water_temperature_setpoint(id="id", serial=SERIAL)
+        payload = manager.payloads.hotwater_temperature_setpoint(60.0)
 
-    resp.put(url, status=200)
+        resp.put(url, status=200)
 
-    await manager.set_hot_water_setpoint_temperature("id", 60)
+        await manager.set_hot_water_setpoint_temperature("id", 60)
 
-    _assert_calls(1, manager, [url], [payload])
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
 async def test_set_hot_water_setpoint_temp_number_to_round(
-    manager: SystemManager, resp: aioresponses
+    managers: List[SystemManager], resp: aioresponses
 ) -> None:
-    url = urls.hot_water_temperature_setpoint(serial=SERIAL, id="id")
-    payload = payloads.hotwater_temperature_setpoint(manager._application, 60.5)
+    for manager in managers:
+        url = manager.urls.hot_water_temperature_setpoint(serial=SERIAL, id="id")
+        payload = manager.payloads.hotwater_temperature_setpoint(60.5)
 
-    resp.put(url, status=200)
+        resp.put(url, status=200)
 
-    await manager.set_hot_water_setpoint_temperature("id", 60.4)
-    _assert_calls(1, manager, [url], [payload])
+        await manager.set_hot_water_setpoint_temperature("id", 60.4)
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
 async def test_set_quick_mode_no_current_quick_mode(
-    manager: SystemManager, resp: aioresponses
+    managers: List[SystemManager], resp: aioresponses
 ) -> None:
-    url = urls.system_quickmode(serial=SERIAL)
-    payload = payloads.quickmode(QuickModes.VENTILATION_BOOST.name)
+    for manager in managers:
+        url = manager.urls.system_quickmode(serial=SERIAL)
+        payload = manager.payloads.quickmode(QuickModes.VENTILATION_BOOST.name)
 
-    resp.put(url, status=200)
+        resp.put(url, status=200)
 
-    await manager.set_quick_mode(QuickModes.VENTILATION_BOOST)
-    _assert_calls(1, manager, [url], [payload])
+        await manager.set_quick_mode(QuickModes.VENTILATION_BOOST)
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
 async def test_logout(manager: SystemManager) -> None:
     await manager.logout()
-    _assert_calls(1, manager, [urls.logout()])
+    _assert_calls(1, manager, [manager.urls.logout()])
+
+
+# logout tests need to be run individually (loss of cookie)
+@pytest.mark.asyncio
+async def test_logout_senso(senso_manager: SystemManager) -> None:
+    test_logout(senso_manager)
 
 
 @pytest.mark.asyncio
-async def test_set_quick_veto_room(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.room_quick_veto(serial=SERIAL, id="1")
+async def test_set_quick_veto_room(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.room_quick_veto(serial=SERIAL, id="1")
 
-    quick_veto = QuickVeto(100, 25)
-    resp.put(url, status=200)
+        quick_veto = QuickVeto(100, 25)
+        resp.put(url, status=200)
 
-    await manager.set_room_quick_veto("1", quick_veto)
-    _assert_calls(1, manager, [url])
+        await manager.set_room_quick_veto("1", quick_veto)
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_set_hot_water_operation_mode_wrong_mode(manager: SystemManager) -> None:
-    await manager.set_hot_water_operating_mode("hotwater", OperatingModes.NIGHT)
+async def test_set_hot_water_operation_mode_wrong_mode(managers: List[SystemManager]) -> None:
+    for manager in managers:
+        await manager.set_hot_water_operating_mode("hotwater", OperatingModes.NIGHT)
 
-    _assert_calls(0, manager)
+        _assert_calls(0, manager)
 
 
 @pytest.mark.asyncio
 async def test_set_hot_water_operation_mode_heating_mode(
-    manager: SystemManager, resp: aioresponses
+    managers: List[SystemManager], resp: aioresponses
 ) -> None:
-    url = urls.hot_water_operating_mode(serial=SERIAL, id="hotwater")
+    for manager in managers:
+        url = manager.urls.hot_water_operating_mode(serial=SERIAL, id="hotwater")
 
-    resp.put(url, status=200)
-    await manager.set_hot_water_operating_mode("hotwater", OperatingModes.ON)
-    _assert_calls(1, manager, [url])
+        resp.put(url, status=200)
+        await manager.set_hot_water_operating_mode("hotwater", OperatingModes.ON)
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_set_quick_veto_zone(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.zone_quick_veto(id="Zone1", serial=SERIAL)
+async def test_set_quick_veto_zone(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.zone_quick_veto(id="Zone1", serial=SERIAL)
 
-    quick_veto = QuickVeto(duration=100, target=25)
-    resp.put(url, status=200)
+        quick_veto = QuickVeto(duration=100, target=25)
+        resp.put(url, status=200)
 
-    await manager.set_zone_quick_veto("Zone1", quick_veto)
-    _assert_calls(1, manager, [url])
+        await manager.set_zone_quick_veto("Zone1", quick_veto)
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
 async def test_set_room_operation_mode_heating_mode(
-    manager: SystemManager, resp: aioresponses
+    managers: List[SystemManager], resp: aioresponses
 ) -> None:
-    url = urls.room_operating_mode(id="1", serial=SERIAL)
-    print(url)
+    for manager in managers:
+        url = manager.urls.room_operating_mode(id="1", serial=SERIAL)
+        print(url)
 
-    resp.put(url, status=200)
-    await manager.set_room_operating_mode("1", OperatingModes.AUTO)
-    _assert_calls(1, manager, [url])
-
-
-@pytest.mark.asyncio
-async def test_set_room_operation_mode_no_new_mode(manager: SystemManager) -> None:
-    await manager.set_room_operating_mode("1", None)
-    _assert_calls(0, manager)
+        resp.put(url, status=200)
+        await manager.set_room_operating_mode("1", OperatingModes.AUTO)
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_set_room_operation_mode_wrong_mode(manager: SystemManager) -> None:
-    await manager.set_room_operating_mode("1", OperatingModes.NIGHT)
+async def test_set_room_operation_mode_no_new_mode(managers: List[SystemManager]) -> None:
+    for manager in managers:
+        await manager.set_room_operating_mode("1", None)
+        _assert_calls(0, manager)
+
+
+@pytest.mark.asyncio
+async def test_set_room_operation_mode_wrong_mode(managers: List[SystemManager]) -> None:
+    for manager in managers:
+        await manager.set_room_operating_mode("1", OperatingModes.NIGHT)
 
 
 @pytest.mark.asyncio
 async def test_set_zone_operation_mode_heating_mode(
-    manager: SystemManager, resp: aioresponses
+    managers: List[SystemManager], resp: aioresponses
 ) -> None:
-    url = urls.zone_heating_mode(id="Zone1", serial=SERIAL)
+    for manager in managers:
+        url = manager.urls.zone_heating_mode(id="Zone1", serial=SERIAL)
 
-    resp.put(url, status=200)
-    await manager.set_zone_heating_operating_mode("Zone1", OperatingModes.AUTO)
-    _assert_calls(1, manager, [url])
-
-
-@pytest.mark.asyncio
-async def test_set_zone_operation_mode_no_new_mode(manager: SystemManager) -> None:
-    await manager.set_zone_heating_operating_mode("Zone1", None)
-    _assert_calls(0, manager)
+        resp.put(url, status=200)
+        await manager.set_zone_heating_operating_mode("Zone1", OperatingModes.AUTO)
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_set_zone_operation_mode_no_zone(manager: SystemManager) -> None:
-    await manager.set_zone_heating_operating_mode(None, OperatingModes.MANUAL)
-    _assert_calls(0, manager)
+async def test_set_zone_operation_mode_no_new_mode(managers: List[SystemManager]) -> None:
+    for manager in managers:
+        await manager.set_zone_heating_operating_mode("Zone1", None)
+        _assert_calls(0, manager)
 
 
 @pytest.mark.asyncio
-async def test_get_room(manager: SystemManager, resp: aioresponses) -> None:
-    with open(path("files/responses/room"), "r") as file:
-        raw_rooms = json.loads(file.read())
-
-    resp.get(urls.room(id="1", serial=SERIAL), payload=raw_rooms, status=200)
-
-    new_room = await manager.get_room("1")
-    assert new_room is not None
+async def test_set_zone_operation_mode_no_zone(managers: List[SystemManager]) -> None:
+    for manager in managers:
+        await manager.set_zone_heating_operating_mode(None, OperatingModes.MANUAL)
+        _assert_calls(0, manager)
 
 
 @pytest.mark.asyncio
-async def test_get_zone(manager: SystemManager, resp: aioresponses) -> None:
-    with open(path("files/responses/zone"), "r") as file:
-        raw_zone = json.loads(file.read())
+async def test_get_room(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        with open(path("files/responses/room"), "r") as file:
+            raw_rooms = json.loads(file.read())
 
-    url = urls.zone(serial=SERIAL, id="Control_ZO2")
-    resp.get(url, payload=raw_zone, status=200)
+        resp.get(manager.urls.room(id="1", serial=SERIAL), payload=raw_rooms, status=200)
 
-    new_zone = await manager.get_zone("Control_ZO2")
-    assert new_zone is not None
-    _assert_calls(1, manager, [url])
-
-
-@pytest.mark.asyncio
-async def test_get_circulation(manager: SystemManager, resp: aioresponses) -> None:
-    with open(path("files/responses/circulation"), "r") as file:
-        raw_circulation = json.loads(file.read())
-
-    url = urls.circulation(id="id_dhw", serial=SERIAL)
-    resp.get(url, payload=raw_circulation, status=200)
-
-    new_circulation = await manager.get_circulation("id_dhw")
-    assert new_circulation is not None
-    _assert_calls(1, manager, [url])
+        new_room = await manager.get_room("1")
+        assert new_room is not None
 
 
 @pytest.mark.asyncio
-async def test_set_room_setpoint_temperature(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.room_temperature_setpoint(id="1", serial=SERIAL)
-    payload = payloads.room_temperature_setpoint(defaults.MULTIMATIC, 22.0)
-    resp.put(url, status=200)
+async def test_get_zone(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        with open(path("files/responses/zone"), "r") as file:
+            raw_zone = json.loads(file.read())
 
-    await manager.set_room_setpoint_temperature("1", 22)
-    _assert_calls(1, manager, [url], [payload])
+        url = manager.urls.zone(serial=SERIAL, id="Control_ZO2")
+        resp.get(url, payload=raw_zone, status=200)
 
-
-@pytest.mark.asyncio
-async def test_set_zone_setpoint_temperature(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.zone_heating_setpoint_temperature(id="Zone1", serial=SERIAL)
-    payload = payloads.zone_temperature_setpoint(defaults.MULTIMATIC, 25.5)
-
-    resp.put(url, status=200)
-
-    await manager.set_zone_heating_setpoint_temperature("Zone1", 25.5)
-    _assert_calls(1, manager, [url], [payload])
+        new_zone = await manager.get_zone("Control_ZO2")
+        assert new_zone is not None
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_set_zone_setback_temperature(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.zone_heating_setback_temperature(id="Zone1", serial=SERIAL)
-    payload = payloads.zone_temperature_setback(defaults.MULTIMATIC, 18.0)
+async def test_get_circulation(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        with open(path("files/responses/circulation"), "r") as file:
+            raw_circulation = json.loads(file.read())
 
-    resp.put(url, status=200)
+        url = manager.urls.circulation(id="id_dhw", serial=SERIAL)
+        resp.get(url, payload=raw_circulation, status=200)
 
-    await manager.set_zone_heating_setback_temperature("Zone1", 18)
-    _assert_calls(1, manager, [url], [payload])
-
-
-@pytest.mark.asyncio
-async def test_set_holiday_mode(manager: SystemManager, resp: aioresponses) -> None:
-    tomorrow = date.today() + timedelta(days=1)
-    after_tomorrow = tomorrow + timedelta(days=1)
-
-    url = urls.system_holiday_mode(serial=SERIAL)
-    resp.put(url, status=200)
-    payload = payloads.holiday_mode(True, tomorrow, after_tomorrow, 15.0)
-
-    await manager.set_holiday_mode(tomorrow, after_tomorrow, 15)
-    _assert_calls(1, manager, [url], [payload])
+        new_circulation = await manager.get_circulation("id_dhw")
+        assert new_circulation is not None
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_remove_holiday_mode(manager: SystemManager, resp: aioresponses) -> None:
-    yesterday = date.today() - timedelta(days=1)
-    before_yesterday = yesterday - timedelta(days=1)
+async def test_set_room_setpoint_temperature(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.room_temperature_setpoint(id="1", serial=SERIAL)
+        payload = manager.payloads.room_temperature_setpoint(22.0)
+        resp.put(url, status=200)
 
-    url = urls.system_holiday_mode(serial=SERIAL)
-    resp.put(url, status=200)
-    payload = payloads.holiday_mode(
-        False, before_yesterday, yesterday, constants.FROST_PROTECTION_TEMP
-    )
-
-    await manager.remove_holiday_mode()
-    _assert_calls(1, manager, [url], [payload])
+        await manager.set_room_setpoint_temperature("1", 22)
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
-async def test_remove_zone_quick_veto(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.zone_quick_veto(id="id", serial=SERIAL)
-    resp.delete(url, status=200)
+async def test_set_zone_setpoint_temperature(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.zone_heating_setpoint_temperature(id="Zone1", serial=SERIAL)
+        payload = manager.payloads.zone_temperature_setpoint(25.5)
 
-    await manager.remove_zone_quick_veto("id")
-    _assert_calls(1, manager, [url])
+        resp.put(url, status=200)
 
-
-@pytest.mark.asyncio
-async def test_remove_room_quick_veto(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.room_quick_veto(id="1", serial=SERIAL)
-    resp.delete(url, status=200)
-
-    await manager.remove_room_quick_veto("1")
-    _assert_calls(1, manager, [url])
+        await manager.set_zone_heating_setpoint_temperature("Zone1", 25.5)
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
-async def test_request_hvac_update(manager: SystemManager, resp: aioresponses) -> None:
-    url_update = urls.hvac_update(serial=SERIAL)
-    resp.put(url_update, status=200)
+async def test_set_zone_setback_temperature(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.zone_heating_setback_temperature(id="Zone1", serial=SERIAL)
+        payload = manager.payloads.zone_temperature_setback(18.0)
 
-    with open(path("files/responses/hvacstate"), "r") as file:
-        hvacstate_data = json.loads(file.read())
+        resp.put(url, status=200)
 
-    url_hvac = urls.hvac(serial=SERIAL)
-    resp.get(url_hvac, payload=hvacstate_data, status=200)
-
-    await manager.request_hvac_update()
-
-    _assert_calls(2, manager, [url_hvac, url_update])
+        await manager.set_zone_heating_setback_temperature("Zone1", 18)
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
-async def test_request_hvac_not_sync(manager: SystemManager, resp: aioresponses) -> None:
-    url_update = urls.hvac_update(serial=SERIAL)
-    resp.put(url_update, status=200)
+async def test_set_holiday_mode(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        tomorrow = date.today() + timedelta(days=1)
+        after_tomorrow = tomorrow + timedelta(days=1)
 
-    with open(path("files/responses/hvacstate_pending"), "r") as file:
-        hvacstate_data = json.loads(file.read())
+        url = manager.urls.system_holiday_mode(serial=SERIAL)
+        resp.put(url, status=200)
+        payload = manager.payloads.holiday_mode(True, tomorrow, after_tomorrow, 15.0)
 
-    url_hvac = urls.hvac(serial=SERIAL)
-    resp.get(url_hvac, payload=hvacstate_data, status=200)
+        await manager.set_holiday_mode(tomorrow, after_tomorrow, 15)
+        _assert_calls(1, manager, [url], [payload])
 
-    await manager.request_hvac_update()
-    _assert_calls(1, manager, [url_hvac])
+
+@pytest.mark.asyncio
+async def test_remove_holiday_mode(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        yesterday = date.today() - timedelta(days=1)
+        before_yesterday = yesterday - timedelta(days=1)
+
+        url = manager.urls.system_holiday_mode(serial=SERIAL)
+        resp.put(url, status=200)
+        payload = manager.payloads.holiday_mode(
+            False, before_yesterday, yesterday, constants.FROST_PROTECTION_TEMP
+        )
+
+        await manager.remove_holiday_mode()
+        _assert_calls(1, manager, [url], [payload])
+
+
+@pytest.mark.asyncio
+async def test_remove_zone_quick_veto(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.zone_quick_veto(id="id", serial=SERIAL)
+        resp.delete(url, status=200)
+
+        await manager.remove_zone_quick_veto("id")
+        _assert_calls(1, manager, [url])
+
+
+@pytest.mark.asyncio
+async def test_remove_room_quick_veto(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.room_quick_veto(id="1", serial=SERIAL)
+        resp.delete(url, status=200)
+
+        await manager.remove_room_quick_veto("1")
+        _assert_calls(1, manager, [url])
+
+
+@pytest.mark.asyncio
+async def test_request_hvac_update(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url_update = manager.urls.hvac_update(serial=SERIAL)
+        resp.put(url_update, status=200)
+
+        with open(path("files/responses/hvacstate"), "r") as file:
+            hvacstate_data = json.loads(file.read())
+
+        url_hvac = manager.urls.hvac(serial=SERIAL)
+        resp.get(url_hvac, payload=hvacstate_data, status=200)
+
+        await manager.request_hvac_update()
+
+        _assert_calls(2, manager, [url_hvac, url_update])
+
+
+@pytest.mark.asyncio
+async def test_request_hvac_not_sync(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url_update = manager.urls.hvac_update(serial=SERIAL)
+        resp.put(url_update, status=200)
+
+        with open(path("files/responses/hvacstate_pending"), "r") as file:
+            hvacstate_data = json.loads(file.read())
+
+        url_hvac = manager.urls.hvac(serial=SERIAL)
+        resp.get(url_hvac, payload=hvacstate_data, status=200)
+
+        await manager.request_hvac_update()
+        _assert_calls(1, manager, [url_hvac])
 
 
 @pytest.mark.asyncio
 async def test_remove_quick_mode(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_quickmode(serial=SERIAL)
+    url = manager.urls.system_quickmode(serial=SERIAL)
     resp.delete(url, status=200)
 
     await manager.remove_quick_mode()
@@ -438,10 +485,21 @@ async def test_remove_quick_mode(manager: SystemManager, resp: aioresponses) -> 
 
 
 @pytest.mark.asyncio
+async def test_remove_quick_mode_senso(senso_manager: SystemManager, resp: aioresponses) -> None:
+    url = senso_manager.urls.system_quickmode(serial=SERIAL)
+    resp.delete(url, status=200)
+
+    await senso_manager.remove_quick_mode()
+    # The QuickMode APIs are not compatible with SENSO and are therefore not called.
+    calls = senso_manager._connector.request.call_args_list  # type: ignore
+    assert 0 == len(calls)
+
+
+@pytest.mark.asyncio
 async def test_remove_quick_mode_no_active_quick_mode(
     manager: SystemManager, resp: aioresponses
 ) -> None:
-    url = urls.system_quickmode(serial=SERIAL)
+    url = manager.urls.system_quickmode(serial=SERIAL)
     resp.delete(url, status=409)
 
     await manager.remove_quick_mode()
@@ -449,8 +507,21 @@ async def test_remove_quick_mode_no_active_quick_mode(
 
 
 @pytest.mark.asyncio
+async def test_remove_quick_mode_no_active_quick_mode_senso(
+    senso_manager: SystemManager, resp: aioresponses
+) -> None:
+    url = senso_manager.urls.system_quickmode(serial=SERIAL)
+    resp.delete(url, status=409)
+
+    await senso_manager.remove_quick_mode()
+    # The QuickMode APIs are not compatible with SENSO and are therefore not called.
+    calls = senso_manager._connector.request.call_args_list  # type: ignore
+    assert 0 == len(calls)
+
+
+@pytest.mark.asyncio
 async def test_remove_quick_mode_error(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_quickmode(serial=SERIAL)
+    url = manager.urls.system_quickmode(serial=SERIAL)
     resp.delete(url, status=400)
 
     try:
@@ -463,25 +534,40 @@ async def test_remove_quick_mode_error(manager: SystemManager, resp: aioresponse
 
 
 @pytest.mark.asyncio
-async def test_quick_veto_temperature_room_rounded(
-    manager: SystemManager, resp: aioresponses
+async def test_remove_quick_mode_error_senso(
+    senso_manager: SystemManager, resp: aioresponses
 ) -> None:
-    url = urls.room_quick_veto(id="0", serial=SERIAL)
-    payload = payloads.room_quick_veto(defaults.MULTIMATIC, 22.5, 180)
-    resp.put(url, status=200)
+    url = senso_manager.urls.system_quickmode(serial=SERIAL)
+    resp.delete(url, status=400)
 
-    qveto = QuickVeto(180, 22.7)
-    await manager.set_room_quick_veto("0", qveto)
+    await senso_manager.remove_quick_mode()
 
-    _assert_calls(1, manager, [url], [payload])
+    # The QuickMode APIs are not compatible with SENSO and are therefore not called.
+    calls = senso_manager._connector.request.call_args_list  # type: ignore
+    assert 0 == len(calls)
+
+
+@pytest.mark.asyncio
+async def test_quick_veto_temperature_room_rounded(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.room_quick_veto(id="0", serial=SERIAL)
+        payload = manager.payloads.room_quick_veto(22.5, 180)
+        resp.put(url, status=200)
+
+        qveto = QuickVeto(180, 22.7)
+        await manager.set_room_quick_veto("0", qveto)
+
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
 async def test_quick_veto_temperature_zone_rounded(
     manager: SystemManager, resp: aioresponses
 ) -> None:
-    url = urls.zone_quick_veto(id="zone1", serial=SERIAL)
-    payload = payloads.zone_quick_veto(defaults.MULTIMATIC, 22.5)
+    url = manager.urls.zone_quick_veto(id="zone1", serial=SERIAL)
+    payload = manager.payloads.zone_quick_veto(22.5)
     resp.put(url, status=200)
 
     qveto = QuickVeto(duration=35, target=22.7)
@@ -491,18 +577,35 @@ async def test_quick_veto_temperature_zone_rounded(
 
 
 @pytest.mark.asyncio
-async def test_holiday_mode_temperature_rounded(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_holiday_mode(serial=SERIAL)
+async def test_quick_veto_temperature_zone_rounded_senso(
+    senso_manager: SystemManager, resp: aioresponses
+) -> None:
+    url = senso_manager.urls.zone_quick_veto(id="zone1", serial=SERIAL)
+    payload = senso_manager.payloads.zone_quick_veto(22.5, 35)
     resp.put(url, status=200)
 
-    tomorrow = date.today() + timedelta(days=1)
-    after_tomorrow = tomorrow + timedelta(days=1)
+    qveto = QuickVeto(duration=35, target=22.7)
+    await senso_manager.set_zone_quick_veto("zone1", qveto)
 
-    payload = payloads.holiday_mode(True, tomorrow, after_tomorrow, 22.5)
+    _assert_calls(1, senso_manager, [url], [payload])
 
-    await manager.set_holiday_mode(tomorrow, after_tomorrow, 22.7)
 
-    _assert_calls(1, manager, [url], [payload])
+@pytest.mark.asyncio
+async def test_holiday_mode_temperature_rounded(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.system_holiday_mode(serial=SERIAL)
+        resp.put(url, status=200)
+
+        tomorrow = date.today() + timedelta(days=1)
+        after_tomorrow = tomorrow + timedelta(days=1)
+
+        payload = manager.payloads.holiday_mode(True, tomorrow, after_tomorrow, 22.5)
+
+        await manager.set_holiday_mode(tomorrow, after_tomorrow, 22.7)
+
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
@@ -518,7 +621,7 @@ async def test_serial_not_fixed_login(session: ClientSession, resp: aioresponses
     with open(path("files/responses/zone"), "r") as file:
         raw_zone = json.loads(file.read())
 
-    url = urls.zone(serial=SERIAL, id="zone")
+    url = manager.urls.zone(serial=SERIAL, id="zone")
     resp.get(url, payload=raw_zone, status=200)
 
     await manager.get_zone("zone")
@@ -540,10 +643,10 @@ async def test_serial_not_fixed_relogin(
 
     facilities["body"]["facilitiesList"][0]["serialNumber"] = "123"
 
-    url_zone1 = urls.zone(serial=SERIAL, id="zone")
-    url_zone2 = urls.zone(serial="123", id="zone")
+    url_zone1 = manager.urls.zone(serial=SERIAL, id="zone")
+    url_zone2 = manager.urls.zone(serial="123", id="zone")
 
-    url_facilities = urls.facilities_list(serial=SERIAL)
+    url_facilities = manager.urls.facilities_list(serial=SERIAL)
 
     resp.get(url_zone1, payload=raw_zone, status=200)
     resp.get(url_zone2, payload=raw_zone, status=200)
@@ -576,113 +679,126 @@ async def test_logout_serial_not_fixed(session: ClientSession) -> None:
 
 
 @pytest.mark.asyncio
-async def test_set_ventilation_operating_mode(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.set_ventilation_operating_mode(
-        serial=SERIAL,
-        id="123",
-    )
-    resp.put(url, status=200)
+async def test_set_ventilation_operating_mode(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.set_ventilation_operating_mode(
+            serial=SERIAL,
+            id="123",
+        )
+        resp.put(url, status=200)
 
-    payload = payloads.ventilation_operating_mode(defaults.MULTIMATIC, "OFF")
+        payload = manager.payloads.ventilation_operating_mode("OFF")
 
-    await manager.set_ventilation_operating_mode("123", OperatingModes.OFF)
+        await manager.set_ventilation_operating_mode("123", OperatingModes.OFF)
 
-    _assert_calls(1, manager, [url], [payload])
-
-
-@pytest.mark.asyncio
-async def test_get_gateway(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.gateway_type(
-        serial=SERIAL,
-    )
-    with open(path("files/responses/gateway"), "r") as file:
-        json_raw = json.loads(file.read())
-
-    resp.get(url, status=200, payload=json_raw)
-
-    gateway = await manager.get_gateway()
-    assert gateway == "VR920"
-    _assert_calls(1, manager, [url])
+        _assert_calls(1, manager, [url], [payload])
 
 
 @pytest.mark.asyncio
-async def test_get_quickmode(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_quickmode(
-        serial=SERIAL,
-    )
-    with open(path("files/responses/quick_mode"), "r") as file:
-        json_raw = json.loads(file.read())
+async def test_get_gateway(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.gateway_type(
+            serial=SERIAL,
+        )
+        with open(path("files/responses/gateway"), "r") as file:
+            json_raw = json.loads(file.read())
 
-    resp.get(url, status=200, payload=json_raw)
+        resp.get(url, status=200, payload=json_raw)
 
-    quickmode = await manager.get_quick_mode()
-    assert quickmode == QuickModes.SYSTEM_OFF
-    _assert_calls(1, manager, [url])
-
-
-@pytest.mark.asyncio
-async def test_get_quickmode_no_quickmode(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_quickmode(
-        serial=SERIAL,
-    )
-
-    resp.get(url, status=409)
-
-    quickmode = await manager.get_quick_mode()
-    assert quickmode is None
-    _assert_calls(1, manager, [url])
+        gateway = await manager.get_gateway()
+        assert gateway == "VR920"
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_get_outdoor_temperature(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_status(
-        serial=SERIAL,
-    )
+async def test_get_quickmode(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.system_quickmode(
+            serial=SERIAL,
+        )
+        with open(path("files/responses/quick_mode"), "r") as file:
+            json_raw = json.loads(file.read())
 
-    with open(path("files/responses/systemstatus"), "r") as file:
-        json_raw = json.loads(file.read())
+        resp.get(url, status=200, payload=json_raw)
 
-    resp.get(url, status=200, payload=json_raw)
-
-    temp = await manager.get_outdoor_temperature()
-    assert temp == 12.5
-    _assert_calls(1, manager, [url])
-
-
-@pytest.mark.asyncio
-async def test_get_hvac_status(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.hvac(
-        serial=SERIAL,
-    )
-
-    with open(path("files/responses/hvacstate"), "r") as file:
-        json_raw = json.loads(file.read())
-
-    resp.get(url, status=200, payload=json_raw)
-
-    await manager.get_hvac_status()
-    _assert_calls(1, manager, [url])
+        quickmode = await manager.get_quick_mode()
+        assert quickmode == QuickModes.SYSTEM_OFF
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_get_facility_detail_no_serial(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.facilities_list(
-        serial=SERIAL,
-    )
+async def test_get_quickmode_no_quickmode(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.system_quickmode(
+            serial=SERIAL,
+        )
 
-    with open(path("files/responses/facilities"), "r") as file:
-        json_raw = json.loads(file.read())
+        resp.get(url, status=409)
 
-    resp.get(url, status=200, payload=json_raw)
+        quickmode = await manager.get_quick_mode()
+        assert quickmode is None
+        _assert_calls(1, manager, [url])
 
-    details = await manager.get_facility_detail()
-    assert details.serial_number == SERIAL
-    _assert_calls(1, manager, [url])
+
+@pytest.mark.asyncio
+async def test_get_outdoor_temperature(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.system_status(
+            serial=SERIAL,
+        )
+
+        with open(path("files/responses/systemstatus"), "r") as file:
+            json_raw = json.loads(file.read())
+
+        resp.get(url, status=200, payload=json_raw)
+
+        temp = await manager.get_outdoor_temperature()
+        assert temp == 12.5
+        _assert_calls(1, manager, [url])
+
+
+@pytest.mark.asyncio
+async def test_get_hvac_status(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.hvac(
+            serial=SERIAL,
+        )
+
+        with open(path("files/responses/hvacstate"), "r") as file:
+            json_raw = json.loads(file.read())
+
+        resp.get(url, status=200, payload=json_raw)
+
+        await manager.get_hvac_status()
+        _assert_calls(1, manager, [url])
+
+
+@pytest.mark.asyncio
+async def test_get_facility_detail_no_serial(
+    managers: List[SystemManager], resp: aioresponses
+) -> None:
+    for manager in managers:
+        url = manager.urls.facilities_list(
+            serial=SERIAL,
+        )
+
+        with open(path("files/responses/facilities"), "r") as file:
+            json_raw = json.loads(file.read())
+
+        resp.get(url, status=200, payload=json_raw)
+
+        details = await manager.get_facility_detail()
+        assert details.serial_number == SERIAL
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
 async def test_get_facility_detail_other_serial(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.facilities_list(
+    url = manager.urls.facilities_list(
         serial=SERIAL,
     )
 
@@ -691,7 +807,7 @@ async def test_get_facility_detail_other_serial(manager: SystemManager, resp: ai
 
     key = None
     for match in resp._matches.items():
-        if match[1].url_or_pattern.path in urls.facilities_list():
+        if match[1].url_or_pattern.path in manager.urls.facilities_list():
             key = match[0]
     resp._matches.pop(key)
     resp.get(url, status=200, payload=json_raw)
@@ -702,80 +818,108 @@ async def test_get_facility_detail_other_serial(manager: SystemManager, resp: ai
 
 
 @pytest.mark.asyncio
-async def test_get_live_reports(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.live_report(
+async def test_get_facility_detail_other_serial_senso(
+    senso_manager: SystemManager, resp: aioresponses
+) -> None:
+    url = senso_manager.urls.facilities_list(
         serial=SERIAL,
     )
 
-    with open(path("files/responses/livereport"), "r") as file:
+    with open(path("files/responses/facilities_multiple"), "r") as file:
         json_raw = json.loads(file.read())
 
+    key = None
+    for match in resp._matches.items():
+        if match[1].url_or_pattern.path in senso_manager.urls.facilities_list():
+            key = match[0]
+    resp._matches.pop(key)
     resp.get(url, status=200, payload=json_raw)
 
-    reports = await manager.get_live_reports()
-    assert reports is not None and len(reports) > 0
-    _assert_calls(1, manager, [url])
+    details = await senso_manager.get_facility_detail("888")
+    assert details.serial_number == "888"
+    _assert_calls(1, senso_manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_get_live_report(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.live_report_device(serial=SERIAL, report_id="1", device_id="2")
+async def test_get_live_reports(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.live_report(
+            serial=SERIAL,
+        )
 
-    with open(path("files/responses/livereport_single"), "r") as file:
-        json_raw = json.loads(file.read())
+        with open(path("files/responses/livereport"), "r") as file:
+            json_raw = json.loads(file.read())
 
-    resp.get(url, status=200, payload=json_raw)
+        resp.get(url, status=200, payload=json_raw)
 
-    reports = await manager.get_live_report("1", "2")
-    assert reports is not None
-    _assert_calls(1, manager, [url])
-
-
-@pytest.mark.asyncio
-async def test_get_holiday_mode(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_holiday_mode(
-        serial=SERIAL,
-    )
-
-    with open(path("files/responses/holiday_mode"), "r") as file:
-        json_raw = json.loads(file.read())
-
-    resp.get(url, status=200, payload=json_raw)
-
-    await manager.get_holiday_mode()
-    _assert_calls(1, manager, [url])
+        reports = await manager.get_live_reports()
+        assert reports is not None and len(reports) > 0
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_get_rooms(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.rooms(
-        serial=SERIAL,
-    )
+async def test_get_live_report(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.live_report_device(serial=SERIAL, report_id="1", device_id="2")
 
-    with open(path("files/responses/rooms"), "r") as file:
-        json_raw = json.loads(file.read())
+        with open(path("files/responses/livereport_single"), "r") as file:
+            json_raw = json.loads(file.read())
 
-    resp.get(url, status=200, payload=json_raw)
+        resp.get(url, status=200, payload=json_raw)
 
-    rooms = await manager.get_rooms()
-    assert rooms is not None and len(rooms) > 0
-    _assert_calls(1, manager, [url])
+        reports = await manager.get_live_report("1", "2")
+        assert reports is not None
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_get_dhw(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.dhws(
-        serial=SERIAL,
-    )
+async def test_get_holiday_mode(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.system_holiday_mode(
+            serial=SERIAL,
+        )
 
-    with open(path("files/responses/dhws"), "r") as file:
-        json_raw = json.loads(file.read())
+        with open(path("files/responses/holiday_mode"), "r") as file:
+            json_raw = json.loads(file.read())
 
-    resp.get(url, status=200, payload=json_raw)
+        resp.get(url, status=200, payload=json_raw)
 
-    dhw = await manager.get_dhw()
-    assert dhw.hotwater is not None and dhw.circulation is not None
-    _assert_calls(1, manager, [url])
+        await manager.get_holiday_mode()
+        _assert_calls(1, manager, [url])
+
+
+@pytest.mark.asyncio
+async def test_get_rooms(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.rooms(
+            serial=SERIAL,
+        )
+
+        with open(path("files/responses/rooms"), "r") as file:
+            json_raw = json.loads(file.read())
+
+        resp.get(url, status=200, payload=json_raw)
+
+        rooms = await manager.get_rooms()
+        assert rooms is not None and len(rooms) > 0
+        _assert_calls(1, manager, [url])
+
+
+@pytest.mark.asyncio
+async def test_get_dhw(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.dhws(
+            serial=SERIAL,
+        )
+
+        with open(path("files/responses/dhws"), "r") as file:
+            json_raw = json.loads(file.read())
+
+        resp.get(url, status=200, payload=json_raw)
+
+        dhw = await manager.get_dhw()
+        assert dhw.hotwater is not None and dhw.circulation is not None
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
@@ -811,66 +955,70 @@ async def test_get_zones_senso(senso_manager: SystemManager, resp: aioresponses)
 
 
 @pytest.mark.asyncio
-async def test_get_ventilation(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_ventilation(
-        serial=SERIAL,
-    )
+async def test_get_ventilation(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.system_ventilation(
+            serial=SERIAL,
+        )
 
-    with open(path("files/responses/ventilation"), "r") as file:
-        json_raw = json.loads(file.read())
+        with open(path("files/responses/ventilation"), "r") as file:
+            json_raw = json.loads(file.read())
 
-    resp.get(url, status=200, payload=json_raw)
+        resp.get(url, status=200, payload=json_raw)
 
-    ventilation = await manager.get_ventilation()
-    assert ventilation is not None
-    _assert_calls(1, manager, [url])
-
-
-@pytest.mark.asyncio
-async def test_get_emf_devices(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.emf_devices(
-        serial=SERIAL,
-    )
-
-    with open(path("files/responses/emf_devices"), "r") as file:
-        json_raw = json.loads(file.read())
-
-    resp.get(url, status=200, payload=json_raw)
-
-    emf_reports = await manager.get_emf_devices()
-    assert emf_reports is not None
-    assert len(emf_reports) == 7
-    _assert_calls(1, manager, [url])
+        ventilation = await manager.get_ventilation()
+        assert ventilation is not None
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_setdatetime(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_datetime(
-        serial=SERIAL,
-    )
+async def test_get_emf_devices(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.emf_devices(
+            serial=SERIAL,
+        )
 
-    resp.put(url, status=200)
+        with open(path("files/responses/emf_devices"), "r") as file:
+            json_raw = json.loads(file.read())
 
-    dt = datetime.datetime.now()
-    payload = {"datetime": dt.isoformat(timespec="microseconds")}
-    await manager.set_datetime(dt)
-    _assert_calls(1, manager, [url], [payload])
+        resp.get(url, status=200, payload=json_raw)
+
+        emf_reports = await manager.get_emf_devices()
+        assert emf_reports is not None
+        assert len(emf_reports) == 7
+        _assert_calls(1, manager, [url])
 
 
 @pytest.mark.asyncio
-async def test_setdatetime_no_micro(manager: SystemManager, resp: aioresponses) -> None:
-    url = urls.system_datetime(
-        serial=SERIAL,
-    )
+async def test_setdatetime(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.system_datetime(
+            serial=SERIAL,
+        )
 
-    resp.put(url, status=200)
+        resp.put(url, status=200)
 
-    dt = datetime.datetime.strptime(
-        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"
-    )
-    payload = {"datetime": dt.isoformat(timespec="microseconds")}
-    await manager.set_datetime(dt)
-    _assert_calls(1, manager, [url], [payload])
+        dt = datetime.datetime.now()
+        payload = {"datetime": dt.isoformat(timespec="microseconds")}
+        await manager.set_datetime(dt)
+        _assert_calls(1, manager, [url], [payload])
+
+
+@pytest.mark.asyncio
+async def test_setdatetime_no_micro(managers: List[SystemManager], resp: aioresponses) -> None:
+    for manager in managers:
+        url = manager.urls.system_datetime(
+            serial=SERIAL,
+        )
+
+        resp.put(url, status=200)
+
+        dt = datetime.datetime.strptime(
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"
+        )
+        payload = {"datetime": dt.isoformat(timespec="microseconds")}
+        await manager.set_datetime(dt)
+        _assert_calls(1, manager, [url], [payload])
 
 
 def _mock(
