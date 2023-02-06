@@ -19,6 +19,13 @@ def _to_absolute_minutes(start_time: str) -> int:
     return hour + minute
 
 
+def _to_time(minutes: int) -> str:
+    """Convert absolute minutes to hh:mm."""
+    hour = minutes // 60
+    minute = minutes % 60
+    return f"{hour:02n}:{minute:02n}"
+
+
 @attr.s
 class TimePeriodSetting:
     """This is a period setting, defining what the
@@ -48,20 +55,33 @@ class TimePeriodSetting:
     absolute_minutes = attr.ib(type=int, init=False)
     """Represents :attr:`start_time` in absolute minute. hours * 60 + minutes.
     This is more convenient to compare TimePeriodSetting using this."""
+    end_time = attr.ib(type=str, default=None)
 
     def __attrs_post_init__(self) -> None:
         self.absolute_minutes = _to_absolute_minutes(self.start_time)
         self.hour = int(self.start_time.split(":")[0])
         self.minute = int(self.start_time.split(":")[1])
 
-    @start_time.validator
-    def _validate_start_time(self, attribute: Any, value: Any) -> None:
+    @staticmethod
+    def _validate_time(value: Any) -> None:
         validator = re.compile("[0-9]{1,2}:[0-9]{2}")
         if not validator.match(value):
             raise ValueError(value)
 
+    @start_time.validator
+    def _validate_start_time(self, attribute: Any, value: Any) -> None:
+        self._validate_time(value)
+
+    @end_time.validator
+    def _validate_end_time(self, attribute: Any, value: Any) -> None:
+        # end time is only present on Senso timeprogram
+        if value is not None:
+            self._validate_time(value)
+
     def __deepcopy__(self, memodict: Any = None) -> "TimePeriodSetting":
-        return TimePeriodSetting(self.start_time, self.target_temperature, self.setting)
+        return TimePeriodSetting(
+            self.start_time, self.target_temperature, self.setting, self.end_time
+        )
 
 
 @attr.s
@@ -73,6 +93,34 @@ class TimeProgramDay:
     """
 
     settings = attr.ib(type=List[TimePeriodSetting])
+
+    def complete_empty_periods(self, setting_mode_for_completion: SettingMode) -> None:
+        """Complete the empty periods with the mode provided as a parameter.
+
+        Args:
+            setting_mode_for_completion (SettingMode): mode for empty periods
+        """
+        # Sorted the configuration to find the empty periods
+        settings = sorted(self.settings, key=lambda period: period.absolute_minutes)
+        last_end_time_absolute_minutes = 0
+        to_add = []
+
+        for setting in settings:
+            if setting.absolute_minutes - last_end_time_absolute_minutes > 0:
+                start = _to_time(last_end_time_absolute_minutes)
+                end = _to_time(setting.absolute_minutes)
+                to_add.append(TimePeriodSetting(start, None, setting_mode_for_completion, end))
+            last_end_time_absolute_minutes = _to_absolute_minutes(setting.end_time)
+
+        # End of day completion if necessary
+        if last_end_time_absolute_minutes < 1440:
+            start = _to_time(
+                last_end_time_absolute_minutes if last_end_time_absolute_minutes > 0 else 0
+            )
+            to_add.append(TimePeriodSetting(start, None, setting_mode_for_completion, "24:00"))
+
+        self.settings.extend(to_add)
+        self.settings = sorted(self.settings, key=lambda period: period.absolute_minutes)
 
 
 @attr.s

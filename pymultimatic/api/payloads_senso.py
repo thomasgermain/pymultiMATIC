@@ -1,4 +1,4 @@
-"""Groups all API payloads for MULTIMATIC. Payload are always json formatted."""
+"""Groups all API payloads for SENSO. Payload are always json formatted."""
 
 from datetime import date
 from typing import Any, Dict, Optional
@@ -10,7 +10,7 @@ def hotwater_temperature_setpoint(temperature: float) -> Dict[str, Any]:
     """Payload used to set target temperature for
     :class:`~pymultimatic.model.component.HotWater`.
     """
-    return {"temperature_setpoint": temperature}
+    return {"hotwater_temperature_setpoint": temperature}
 
 
 def room_temperature_setpoint(temperature: float) -> Dict[str, Any]:
@@ -24,14 +24,14 @@ def zone_temperature_setpoint(temperature: float) -> Dict[str, Any]:
     """Payload used to set target temperature for
     :class:`~pymultimatic.model.component.Zone`.
     """
-    return {"setpoint_temperature": temperature}
+    return {"temperature_setpoint": temperature}
 
 
 def zone_temperature_setback(temperature: float) -> Dict[str, Any]:
     """Payload used to set setback temperature for
     :class:`~pymultimatic.model.component.Zone`.
     """
-    return {"setback_temperature": temperature}
+    return {"setback_temperature_setpoint": temperature}
 
 
 def hot_water_operating_mode(mode: str) -> Dict[str, Any]:
@@ -52,7 +52,7 @@ def zone_operating_mode(mode: str) -> Dict[str, Any]:
     """Payload to set operating mode for
     :class:`~pymultimatic.model.component.Zone`.
     """
-    return {"mode": mode}
+    return {"operation_mode": mode}
 
 
 def quickmode(quick_mode: str, duration: Optional[int] = None) -> Dict[str, Any]:
@@ -60,6 +60,8 @@ def quickmode(quick_mode: str, duration: Optional[int] = None) -> Dict[str, Any]
     system.
 
     Duration is mandatory (Duration is in minutes, max 1440 =24 hours).
+
+    Only for MULTIMATIC.
     """
     payload: Dict[str, Any] = {"quickmode": {"quickmode": quick_mode}}
 
@@ -69,16 +71,18 @@ def quickmode(quick_mode: str, duration: Optional[int] = None) -> Dict[str, Any]
     return payload
 
 
-def zone_quick_veto(temperature: float, duration: Optional[float] = 6) -> Dict[str, Any]:
+def zone_quick_veto(temperature: float, duration: Optional[float] = None) -> Dict[str, Any]:
     """Payload to set a :class:`~pymultimatic.model.mode.QuickVeto` for a
     :class:`~pymultimatic.model.component.Zone`.
-
-    The duration is not configurable by the API, it's 6 hours
     """
-    return {"setpoint_temperature": temperature}
+    payload = {"temperature_setpoint": temperature}
+
+    if duration:
+        payload.update({"duration": duration})
+    return payload
 
 
-def room_quick_veto(temperature: float, duration: Optional[int]) -> Dict[str, Any]:
+def room_quick_veto(temperature: float, duration: Optional[int] = None) -> Dict[str, Any]:
     """Payload to set a :class:`~pymultimatic.model.mode.QuickVeto` for a
     :class:`~pymultimatic.model.component.Room`.
 
@@ -88,7 +92,10 @@ def room_quick_veto(temperature: float, duration: Optional[int]) -> Dict[str, An
     if not duration:
         duration = 180
 
-    return {"temperatureSetpoint": temperature, "duration": duration}
+    return {
+        "temperatureSetpoint": temperature,
+        "duration": duration,
+    }
 
 
 def holiday_mode(
@@ -107,11 +114,18 @@ def ventilation_operating_mode(mode: str) -> Dict[str, Any]:
     """Payload to set operating mode for
     :class:`~pymultimatic.model.Ventilation`.
     """
-    return {"mode": mode}
+    return {"operation_mode": mode}
 
 
-def ventilation_level(level: int) -> Dict[str, Any]:
+def ventilation_day_level(level: int) -> Dict[str, Any]:
     """Payload to set level for
     :class:`~pymultimatic.model.Ventilation`.
     """
-    return {"level": level}
+    return {"max_day_level": level}
+
+
+def ventilation_night_level(level: int) -> Dict[str, Any]:
+    """Payload to set level for
+    :class:`~pymultimatic.model.Ventilation`.
+    """
+    return {"max_night_level": level}

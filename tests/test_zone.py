@@ -1,7 +1,7 @@
 import unittest
 
 from pymultimatic.model import ActiveFunction, OperatingModes, SettingModes, Zone, ZoneCooling
-from tests.conftest import _time_program, _zone, _zone_cooling
+from tests.conftest import _full_day_time_program, _zone, _zone_cooling
 
 
 class ZoneTest(unittest.TestCase):
@@ -36,7 +36,7 @@ class ZoneTest(unittest.TestCase):
     def test_cooling_active_mode_auto(self) -> None:
         cooling = ZoneCooling()
         cooling.operating_mode = OperatingModes.AUTO
-        cooling.time_program = _time_program()
+        cooling.time_program = _full_day_time_program()
 
         active_mode = cooling.active_mode
         self.assertEqual(OperatingModes.AUTO, active_mode.current)
@@ -45,7 +45,7 @@ class ZoneTest(unittest.TestCase):
     def test_cooling_active_mode_auto_off(self) -> None:
         cooling = ZoneCooling()
         cooling.operating_mode = OperatingModes.AUTO
-        cooling.time_program = _time_program(mode=SettingModes.OFF)
+        cooling.time_program = _full_day_time_program(mode=SettingModes.OFF)
 
         active_mode = cooling.active_mode
         self.assertEqual(OperatingModes.AUTO, active_mode.current)
@@ -54,7 +54,7 @@ class ZoneTest(unittest.TestCase):
     def test_cooling_active_mode_on(self) -> None:
         cooling = ZoneCooling()
         cooling.operating_mode = OperatingModes.ON
-        cooling.time_program = _time_program()
+        cooling.time_program = _full_day_time_program()
 
         active_mode = cooling.active_mode
         self.assertEqual(OperatingModes.ON, active_mode.current)
@@ -63,7 +63,7 @@ class ZoneTest(unittest.TestCase):
     def test_cooling_active_mode_off(self) -> None:
         cooling = ZoneCooling()
         cooling.operating_mode = OperatingModes.OFF
-        cooling.time_program = _time_program()
+        cooling.time_program = _full_day_time_program()
 
         active_mode = cooling.active_mode
         self.assertEqual(OperatingModes.OFF, active_mode.current)

@@ -1,0 +1,35 @@
+{
+    "body": {
+        "hotwater": {
+            "configuration": {
+                "operation_mode": "MANUAL",
+                "hotwater_temperature_setpoint": 53.0
+            }
+        },
+        "circulation": {
+            "configuration": {
+                "operation_mode": "TIME_CONTROLLED"
+            }
+        }
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1672182442754,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/circulation/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1672178785571,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/hotwater/configuration"
+                }
+            }
+        ]
+    }
+}

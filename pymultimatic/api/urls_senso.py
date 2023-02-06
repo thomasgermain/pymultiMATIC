@@ -1,5 +1,5 @@
 # pylint: disable=all
-"""Vaillant API Urls for multimatic app."""
+"""Vaillant API Urls for senso app."""
 from typing import Any
 from urllib import parse
 
@@ -54,17 +54,21 @@ _EMF_DEVICES = _FACILITIES + "/emf/v1/devices"
 _EMF_REPORT_DEVICE = _EMF_DEVICES + "/{device_id}"
 
 """System control"""
-_SYSTEM = _FACILITIES + "/systemcontrol/v1"
+_SYSTEM = _FACILITIES + "/systemcontrol/tli/v1"
 _SYSTEM_CONFIGURATION = _SYSTEM + "/configuration"
 _SYSTEM_STATUS = _SYSTEM + "/status"
 _SYSTEM_DATETIME = _SYSTEM_STATUS + "/datetime"
 _SYSTEM_PARAMETERS = _SYSTEM + "/parameters"
-_SYSTEM_QUICK_MODE = _SYSTEM_CONFIGURATION + "/quickmode"
-_SYSTEM_HOLIDAY_MODE = _SYSTEM_CONFIGURATION + "/holidaymode"
+""" Quick Mode and Holiday Mode are only compatible with MULTIMATIC"""
+_SYSTEM_MULTIMATIC_CONFIGUTATION = _FACILITIES + "/systemcontrol/v1/configuration"
+_SYSTEM_QUICK_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/quickmode"
+_SYSTEM_HOLIDAY_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/holidaymode"
+_SYSTEM_AWAY_MODE = _SYSTEM_CONFIGURATION + "/away"
 
 """DHW (Domestic Hot Water)"""
 _DHWS = _SYSTEM + "/dhw"
-_DHW = _DHWS + "/{id}"
+"""No id in the Senso API"""
+_DHW = _SYSTEM + "/dhw"
 
 """Circulation"""
 _CIRCULATION = _DHW + "/circulation"
@@ -80,7 +84,7 @@ _HOT_WATER_TEMPERATURE_SETPOINT = _HOT_WATER_CONFIGURATION + "/temperature_setpo
 
 """Ventilation"""
 _SYSTEM_VENTILATION = _SYSTEM + "/ventilation"
-_VENTILATION = _SYSTEM + "/ventilation/{id}"
+_VENTILATION = _SYSTEM_VENTILATION + "/{id}"
 _VENTILATION_CONFIGURATION = _VENTILATION + "/fan/configuration"
 _VENTILATION_TIMEPROGRAM = _VENTILATION_CONFIGURATION + "/timeprogram"
 _VENTILATION_DAY_LEVEL = _VENTILATION_CONFIGURATION + "/day_level"
@@ -97,14 +101,14 @@ _ZONE_QUICK_VETO = _ZONE_CONFIGURATION + "/quick_veto"
 """Zone heating"""
 _ZONE_HEATING_CONFIGURATION = _ZONE + "/heating/configuration"
 _ZONE_HEATING_TIMEPROGRAM = _ZONE + "/heating/timeprogram"
-_ZONE_HEATING_MODE = _ZONE_HEATING_CONFIGURATION + "/mode"
+_ZONE_HEATING_MODE = _ZONE_HEATING_CONFIGURATION + "/operation_mode"
 _ZONE_HEATING_SETPOINT_TEMPERATURE = _ZONE_HEATING_CONFIGURATION + "/setpoint_temperature"
 _ZONE_HEATING_SETBACK_TEMPERATURE = _ZONE_HEATING_CONFIGURATION + "/setback_temperature"
 
 """Zone cooling"""
 _ZONE_COOLING_CONFIGURATION = _ZONE + "/cooling/configuration"
 _ZONE_COOLING_TIMEPROGRAM = _ZONE + "/cooling/timeprogram"
-_ZONE_COOLING_MODE = _ZONE_COOLING_CONFIGURATION + "/mode"
+_ZONE_COOLING_MODE = _ZONE_COOLING_CONFIGURATION + "/operation_mode"
 _ZONE_COOLING_SETPOINT_TEMPERATURE = _ZONE_COOLING_CONFIGURATION + "/setpoint_temperature"
 _ZONE_COOLING_MANUAL_SETPOINT_TEMPERATURE = (
     _ZONE_COOLING_CONFIGURATION + "/manual_mode_cooling_temperature_setpoint"
@@ -269,6 +273,7 @@ def emf_devices(**kwargs: Any) -> str:
     return _EMF_DEVICES.format(**kwargs)
 
 
+# pylint: disable=too-many-arguments
 def emf_report_device(
     energy_type: str, function: str, time_range: str, start: str, offset: str, **kwargs: Any
 ) -> str:
@@ -350,6 +355,11 @@ def system_quickmode(**kwargs: Any) -> str:
 def system_holiday_mode(**kwargs: Any) -> str:
     """Url to get system :class:`~pymultimatic.model.mode.HolidayMode`."""
     return _SYSTEM_HOLIDAY_MODE.format(**kwargs)
+
+
+def system_away_mode(**kwargs: Any) -> str:
+    """Url to put system away."""
+    return _SYSTEM_AWAY_MODE.format(**kwargs)
 
 
 def dhw(**kwargs: Any) -> str:

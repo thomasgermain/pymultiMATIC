@@ -67,7 +67,36 @@ class OperatingModes:
     . The newly set temperature will be applied for a certain period of
     time."""
 
-    _VALUES = {opm.name: opm for opm in [AUTO, DAY, NIGHT, ON, OFF, MANUAL, QUICK_VETO]}
+    TIME_CONTROLLED = OperatingMode("TIME_CONTROLLED")
+    """The time controlled mode controls the heating circuit in accordance with the
+    set desired temperature and the set time slots.
+    """
+
+    NORMAL = OperatingMode("NORMAL")
+    """The normal operating mode applies the set-back temperature outside
+    the time slots
+    """
+
+    REDUCED = OperatingMode("REDUCED")
+    """The reduced operation mode switches off the heating outside the time slots.
+    Frost protection is activated.
+    """
+
+    _VALUES = {
+        opm.name: opm
+        for opm in [
+            AUTO,
+            DAY,
+            NIGHT,
+            ON,
+            OFF,
+            MANUAL,
+            QUICK_VETO,
+            TIME_CONTROLLED,
+            NORMAL,
+            REDUCED,
+        ]
+    }
 
     @classmethod
     def get(cls, name: str) -> OperatingMode:
@@ -154,6 +183,9 @@ class SettingModes:
     :class:`~pymultimatic.model.component.Zone` temperature to the Set-back
     temp. heating (`NIGHT`) that has been set.
     """
+
+    MANUAL = SettingMode("MANUAL")
+    """Maintains temperature without interruption"""
 
     _VALUES = {sm.name: sm for sm in [ON, OFF, DAY, NIGHT]}
 

@@ -19,7 +19,15 @@ from pymultimatic.model import (
     constants,
     TimeProgram,
 )
-from tests.conftest import _circulation, _hotwater, _room, _time_program, _zone, _zone_cooling
+from tests.conftest import (
+    _circulation,
+    _hotwater,
+    _room,
+    _full_day_time_program,
+    _zone,
+    _zone_senso,
+    _zone_cooling,
+)
 
 
 class SystemTest(unittest.TestCase):
@@ -93,7 +101,7 @@ class SystemTest(unittest.TestCase):
     def test_get_active_mode_hot_water_off(self) -> None:
         """Test active mode hot water off."""
         hotwater = _hotwater()
-        hotwater.time_program = _time_program(SettingModes.OFF)
+        hotwater.time_program = _full_day_time_program(SettingModes.OFF)
         dhw = Dhw(hotwater=hotwater)
 
         system = System(dhw=dhw)
@@ -107,7 +115,7 @@ class SystemTest(unittest.TestCase):
     def test_get_active_mode_hot_water_party(self) -> None:
         """Test active mode hot water off."""
         hotwater = _hotwater()
-        hotwater.time_program = _time_program(SettingModes.OFF)
+        hotwater.time_program = _full_day_time_program(SettingModes.OFF)
         dhw = Dhw(hotwater=hotwater)
 
         system = System(dhw=dhw, quick_mode=QuickModes.PARTY)
@@ -177,10 +185,40 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(SettingModes.DAY, active_mode.sub)
         self.assertEqual(zone.heating.target_high, active_mode.target)
 
+    def test_get_active_mode_senso_zone(self) -> None:
+        """Test get active mode for senso zone."""
+
+        zone = _zone_senso()
+        system = System(zones=[zone])
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(OperatingModes.TIME_CONTROLLED, active_mode.current)
+        self.assertEqual(SettingModes.DAY, active_mode.sub)
+        self.assertEqual(
+            25,
+            active_mode.target,
+        )
+
+    def test_get_active_mode_senso_night_zone(self) -> None:
+        """Test get active mode for senso zone."""
+
+        zone = _zone_senso(False)
+        system = System(zones=[zone])
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(OperatingModes.TIME_CONTROLLED, active_mode.current)
+        self.assertEqual(SettingModes.NIGHT, active_mode.sub)
+        self.assertEqual(
+            zone.heating.target_low,
+            active_mode.target,
+        )
+
     def test_get_active_mode_zone_off(self) -> None:
         """Test get active mode for zone off."""
         zone = _zone()
-        zone.heating.time_program = _time_program(SettingModes.NIGHT)
+        zone.heating.time_program = _full_day_time_program(SettingModes.NIGHT)
 
         system = System(zones=[zone])
 
@@ -189,6 +227,33 @@ class SystemTest(unittest.TestCase):
         self.assertEqual(OperatingModes.AUTO, active_mode.current)
         self.assertEqual(SettingModes.NIGHT, active_mode.sub)
         self.assertEqual(zone.heating.target_low, active_mode.target)
+
+    def test_get_active_mode_senso_zone_off(self) -> None:
+        """Test get active mode for zone off."""
+        zone = _zone_senso()
+        zone.heating.time_program = _full_day_time_program(SettingModes.NIGHT)
+
+        system = System(zones=[zone])
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(OperatingModes.TIME_CONTROLLED, active_mode.current)
+        self.assertEqual(SettingModes.NIGHT, active_mode.sub)
+        self.assertEqual(zone.heating.target_low, active_mode.target)
+
+    def test_get_active_mode_manual_senso_zone(self) -> None:
+        """Test get active mode for zone with manual mode."""
+
+        zone = _zone_senso()
+        zone.heating.operating_mode = OperatingModes.MANUAL
+        zone.heating.target_high = 25
+        system = System(zones=[zone])
+
+        active_mode = system.get_active_mode_zone(zone)
+
+        self.assertEqual(OperatingModes.MANUAL, active_mode.current)
+        self.assertIsNone(active_mode.sub)
+        self.assertEqual(zone.heating.target_high, active_mode.target)
 
     def test_get_active_mode_zone_quick_veto(self) -> None:
         """Test get active mode for zone quick veto."""
@@ -241,7 +306,7 @@ class SystemTest(unittest.TestCase):
 
         timeprogram_day_setting_sunday = TimePeriodSetting("00:00", None, SettingModes.NIGHT)
 
-        timeprogram = _time_program(SettingModes.DAY, None)
+        timeprogram = _full_day_time_program(SettingModes.DAY, None)
         timeprogram.days["sunday"] = TimeProgramDay([timeprogram_day_setting_sunday])
 
         zone = _zone()
@@ -258,7 +323,7 @@ class SystemTest(unittest.TestCase):
 
         timeprogram_day_setting_sunday = TimePeriodSetting("00:00", None, SettingModes.DAY)
 
-        timeprogram = _time_program(SettingModes.NIGHT, None)
+        timeprogram = _full_day_time_program(SettingModes.NIGHT, None)
         timeprogram.days["sunday"] = TimeProgramDay([timeprogram_day_setting_sunday])
 
         zone = _zone()
