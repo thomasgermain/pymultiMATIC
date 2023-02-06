@@ -1,0 +1,424 @@
+{
+    "body": {
+        "zones": [
+            {
+                "heating": {
+                    "configuration": {
+                        "operation_mode": "TIME_CONTROLLED",
+                        "setback_temperature_setpoint": 19.0,
+                        "manual_mode_temperature_setpoint": 22.0
+                    },
+                    "timeprogram": {
+                        "monday": [
+                            {
+                                "start_time": "05:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "tuesday": [
+                            {
+                                "start_time": "05:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "wednesday": [
+                            {
+                                "start_time": "05:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "thursday": [
+                            {
+                                "start_time": "05:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "friday": [
+                            {
+                                "start_time": "05:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "saturday": [
+                            {
+                                "start_time": "07:00",
+                                "end_time": "23:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "sunday": [
+                            {
+                                "start_time": "07:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ]
+                    }
+                },
+                "configuration": {
+                    "name": "Radiateurs",
+                    "enabled": true,
+                    "active_function": "STANDBY",
+                    "inside_temperature": 21.4,
+                    "eco_mode": false,
+                    "current_desired_setpoint": 21.0,
+                    "current_quickmode": "QUICK_VETO",
+                    "quick_veto": {
+                        "temperature_setpoint": 22.0
+                    },
+                    "away": {
+                        "start_datetime": "2019-01-01T00:00:00.000Z",
+                        "end_datetime": "2019-01-01T00:00:00.000Z",
+                        "temperature_setpoint": 15.0
+                    },
+                    "manual_cooling_active": false,
+                    "humidity": 38
+                },
+                "_id": "Control_ZO1"
+            },
+            {
+                "heating": {
+                    "configuration": {
+                        "operation_mode": "TIME_CONTROLLED",
+                        "setback_temperature_setpoint": 19.0,
+                        "manual_mode_temperature_setpoint": 21.5
+                    },
+                    "timeprogram": {
+                        "monday": [
+                            {
+                                "start_time": "06:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "tuesday": [
+                            {
+                                "start_time": "06:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "wednesday": [
+                            {
+                                "start_time": "06:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "thursday": [
+                            {
+                                "start_time": "06:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "friday": [
+                            {
+                                "start_time": "06:00",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "saturday": [
+                            {
+                                "start_time": "06:30",
+                                "end_time": "23:00",
+                                "setpoint": 21.0
+                            }
+                        ],
+                        "sunday": [
+                            {
+                                "start_time": "06:30",
+                                "end_time": "22:00",
+                                "setpoint": 21.0
+                            }
+                        ]
+                    }
+                },
+                "configuration": {
+                    "name": "Plancher",
+                    "enabled": true,
+                    "active_function": "STANDBY",
+                    "inside_temperature": 21.4,
+                    "eco_mode": false,
+                    "current_desired_setpoint": 21.0,
+                    "away": {
+                        "start_datetime": "2019-01-01T00:00:00.000Z",
+                        "end_datetime": "2019-01-01T00:00:00.000Z",
+                        "temperature_setpoint": 15.0
+                    },
+                    "manual_cooling_active": false,
+                    "humidity": 34
+                },
+                "_id": "Control_ZO2"
+            },
+            {
+                "heating": {
+                    "configuration": {
+                        "operation_mode": "MANUAL",
+                        "setback_temperature_setpoint": 15.0,
+                        "manual_mode_temperature_setpoint": 19.0
+                    }
+                },
+                "configuration": {
+                    "name": "Zone 3",
+                    "enabled": false,
+                    "active_function": "HEATING",
+                    "away": {
+                        "start_datetime": "2019-01-01T00:00:00.000Z",
+                        "end_datetime": "2019-01-01T00:00:00.000Z",
+                        "temperature_setpoint": 15.0
+                    },
+                    "manual_cooling_active": false
+                },
+                "_id": "Control_ZO3"
+            }
+        ],
+        "configuration": {
+            "manual_cooling": {
+                "start_date": "2019-01-01",
+                "end_date": "2019-01-01"
+            }
+        },
+        "status": {
+            "datetime": "2023-01-18T21:59:21.000Z",
+            "outside_temperature": 0.8
+        },
+        "dhw": {
+            "hotwater": {
+                "configuration": {
+                    "operation_mode": "MANUAL",
+                    "hotwater_temperature_setpoint": 53.0
+                },
+                "timeprogram": {
+                    "monday": [
+                        {
+                            "start_time": "05:30",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "tuesday": [
+                        {
+                            "start_time": "05:30",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "wednesday": [
+                        {
+                            "start_time": "05:30",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "thursday": [
+                        {
+                            "start_time": "05:30",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "friday": [
+                        {
+                            "start_time": "05:30",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "saturday": [
+                        {
+                            "start_time": "07:00",
+                            "end_time": "23:30"
+                        }
+                    ],
+                    "sunday": [
+                        {
+                            "start_time": "07:00",
+                            "end_time": "22:00"
+                        }
+                    ]
+                }
+            },
+            "circulation": {
+                "configuration": {
+                    "operation_mode": "TIME_CONTROLLED"
+                },
+                "timeprogram": {
+                    "monday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "tuesday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "wednesday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "thursday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "friday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00"
+                        }
+                    ],
+                    "saturday": [
+                        {
+                            "start_time": "07:30",
+                            "end_time": "23:30"
+                        }
+                    ],
+                    "sunday": [
+                        {
+                            "start_time": "07:30",
+                            "end_time": "22:00"
+                        }
+                    ]
+                }
+            },
+            "configuration": {
+                "away": {
+                    "start_datetime": "2019-01-01T00:00:00.000Z",
+                    "end_datetime": "2019-01-01T00:00:00.000Z"
+                }
+            }
+        }
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075733204,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/status"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075733204,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075726947,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO1/heating/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674079373000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO1/heating/timeprogram"
+                }
+            },
+            {
+                "state": "PENDING",
+                "timestamp": 1674075876884,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO1/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075751604,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO2/heating/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674079373000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO2/heating/timeprogram"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075751604,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO2/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075761928,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO3/heating/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075761928,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO3/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674079477125,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/circulation/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075739088,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/hotwater/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674079373000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/circulation/timeprogram"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674079373000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/hotwater/timeprogram"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1674075739088,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/configuration"
+                }
+            }
+        ]
+    }
+}

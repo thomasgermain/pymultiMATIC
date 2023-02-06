@@ -26,7 +26,10 @@ class ZoneHeating(Function):
         OperatingModes.OFF,
         OperatingModes.DAY,
         OperatingModes.NIGHT,
+        OperatingModes.NORMAL,
         OperatingModes.QUICK_VETO,
+        OperatingModes.REDUCED,
+        OperatingModes.TIME_CONTROLLED,
     ]
 
     def _active_mode(self) -> ActiveMode:
@@ -34,6 +37,8 @@ class ZoneHeating(Function):
             mode = ActiveMode(constants.FROST_PROTECTION_TEMP, OperatingModes.OFF)
         elif self.operating_mode == OperatingModes.DAY:
             mode = ActiveMode(self.target_high, OperatingModes.DAY)
+        elif self.operating_mode == OperatingModes.MANUAL:
+            mode = ActiveMode(self.target_high, OperatingModes.MANUAL)
         else:  # MODE_NIGHT
             mode = ActiveMode(self.target_low, OperatingModes.NIGHT)
         return mode
@@ -75,6 +80,8 @@ class Zone(Component):
         OperatingModes.NIGHT,
         OperatingModes.QUICK_VETO,
         OperatingModes.ON,
+        OperatingModes.TIME_CONTROLLED,
+        OperatingModes.MANUAL,
     ]
     """List of mode that are applicable to zones component."""
 

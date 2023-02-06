@@ -5,7 +5,7 @@ import unittest
 from datetime import date, datetime
 from typing import Any, Dict, Union
 
-from pymultimatic.api import payloads
+from pymultimatic.api import payloads, payloads_senso
 
 
 class PayloadsTest(unittest.TestCase):
@@ -31,6 +31,26 @@ class PayloadsTest(unittest.TestCase):
         self._assert_function_call(payload)
         assert payload["duration"] == 180
 
+    def test_all_payload_senso(self) -> None:
+        """Test that ensure all payload senso are well json formatted."""
+        functions_list = inspect.getmembers(payloads_senso, predicate=inspect.isfunction)
+
+        self.assertTrue(len(functions_list) > 0)
+
+        for function in functions_list:
+            args = self._get_args_name(function[1])
+
+            if not args:
+                url = function[1]()
+                self._assert_function_call(url)
+            else:
+                payload = function[1](**args)
+                self._assert_function_call(payload)
+
+        payload = payloads_senso.room_quick_veto(15, None)
+        self._assert_function_call(payload)
+        assert payload["duration"] == 180
+
     def _get_args_name(self, function: Any) -> Dict[str, Any]:
         args: Dict[str, Any] = {}
         params = inspect.signature(function).parameters
@@ -41,6 +61,8 @@ class PayloadsTest(unittest.TestCase):
             if cls == bool:
                 args[item[0]] = False
             elif cls == float:
+                args[item[0]] = 10.0
+            elif cls == Union[float, None]:
                 args[item[0]] = 10.0
             elif cls == date:
                 args[item[0]] = datetime.now()

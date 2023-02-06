@@ -1,5 +1,5 @@
 """Mappers from json to model classes."""
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, List, Optional, Tuple
 
 from . import (
@@ -33,7 +33,16 @@ from . import (
 )
 
 _DATE_FORMAT = "%Y-%m-%d"
-_DAYS_OF_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+_DAYS_OF_WEEK = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+]
 
 
 def map_emf_reports(json) -> List[EmfReport]:
@@ -212,17 +221,32 @@ def map_time_program_day(raw_time_program_day, key: Optional[str] = None) -> Tim
     """Map *time program day* and *time program day settings*."""
     settings = []
     if raw_time_program_day:
+        # By default in multimatic mode
+        multimatic_timeprogram = True
         for time_setting in raw_time_program_day:
-            start_time = time_setting.get("startTime")
-            target_temp = time_setting.get("temperatureSetpoint")
-
+            # Try if multimatic or senso
+            multimatic_timeprogram = "startTime" in time_setting
             mode = None
-            if key:
-                mode = SettingModes.get(time_setting.get(key))
+            end_time = None
+            if multimatic_timeprogram:
+                start_time = time_setting.get("startTime")
+                target_temp = time_setting.get("temperatureSetpoint")
+                if key:
+                    mode = SettingModes.get(time_setting.get(key))
+            else:
+                start_time = time_setting.get("start_time")
+                end_time = time_setting.get("end_time")
+                target_temp = time_setting.get("setpoint")
+                mode = SettingModes.DAY
 
-            settings.append(TimePeriodSetting(start_time, target_temp, mode))
+            settings.append(TimePeriodSetting(start_time, target_temp, mode, end_time))
 
-    return TimeProgramDay(settings)
+        time_program_day = TimeProgramDay(settings)
+        # In senso mode, deactivated periods are not declared.
+        if not multimatic_timeprogram:
+            time_program_day.complete_empty_periods(SettingModes.NIGHT)
+
+    return time_program_day
 
 
 def _map_boiler_status(hvac_state) -> Optional[BoilerStatus]:
@@ -377,10 +401,15 @@ def _map_function(
             target_high = conf.get("temperatureSetpoint", None)
         if not target_high:
             target_high = conf.get("day_level", None)
+        if not target_high:
+            target_high = conf.get("manual_mode_temperature_setpoint", None)
 
     target_low = conf.get("setback_temperature", None)
     if not target_low:
         target_low = conf.get("night_level", None)
+    if not target_low:
+        target_low = conf.get("setback_temperature_setpoint", None)
+
     time_program = map_time_program(raw.get("timeprogram"), tp_key)
 
     return time_program, operating_mode, target_high, target_low
@@ -391,8 +420,12 @@ def map_hot_water_from_system(full_system, live_reports) -> Optional[HotWater]:
     dhws = full_system.get("body", {}).get("dhw")
 
     if dhws:
+        # In Senso API, dhws is not a array
+        if isinstance(dhws, dict):
+            dhws = [dhws]
         hotwater = dhws[0].get("hotwater")
-        dhw_id = dhws[0].get("_id")
+        # Senso API does not provide an ID
+        dhw_id = dhws[0].get("_id", "Control_DHW")
         temp = _get_report_value(_find_dhw_temperature_report(live_reports))
         return _map_hot_water(hotwater, dhw_id, temp)
 
@@ -401,8 +434,13 @@ def map_hot_water_from_system(full_system, live_reports) -> Optional[HotWater]:
 
 def map_hot_water_from_dhw(json) -> Optional[HotWater]:
     """Mapp hotware from dhw."""
-    dhw = json.get("body")[0]
-    dhw_id = dhw.get("_id")
+    dhws = json.get("body", [])
+    # In Senso API, dhws is not a array
+    if isinstance(dhws, dict):
+        dhws = [dhws]
+    dhw = dhws[0]
+    # Senso API does not provide an ID
+    dhw_id = dhw.get("_id", "Control_DHW")
     return _map_hot_water(dhw.get("hotwater"), dhw_id, None)
 
 
@@ -432,10 +470,14 @@ def map_circulation_from_dhw(json) -> Optional[Circulation]:
     """Map *circulation*."""
     if json:
         dhws = json.get("body", [])
+        # In Senso API, dhws is not a array
+        if isinstance(dhws, dict):
+            dhws = [dhws]
 
         if dhws:
             circulation = dhws[0].get("circulation")
-            dhw_id = dhws[0].get("_id")
+            # Senso API does not provide an ID
+            dhw_id = dhws[0].get("_id", "Control_DHW")
             return _map_circulation(circulation, dhw_id)
     return None
 
@@ -444,10 +486,14 @@ def map_circulation_from_system(full_system) -> Optional[Circulation]:
     """Map *circulation*."""
     if full_system:
         hot_water_list = full_system.get("body", {}).get("dhw", [])
+        # In Senso API, hot water is not a array
+        if isinstance(hot_water_list, dict):
+            hot_water_list = [hot_water_list]
 
         if hot_water_list:
             raw_circulation = hot_water_list[0].get("circulation")
-            dhw_id = hot_water_list[0].get("_id")
+            # Senso API does not provide an ID
+            dhw_id = hot_water_list[0].get("_id", "Control_DHW")
 
             if raw_circulation:
                 return _map_circulation(raw_circulation, dhw_id)
@@ -492,6 +538,13 @@ def map_serial_number(facilities) -> str:
     """Map serial number."""
     facility = facilities.get("body", {}).get("facilitiesList", [])[0]
     return str(facility.get("serialNumber", None))
+
+
+def map_systemcontrol(facilities) -> str:
+    """Map system control found in capabilities."""
+    facility = facilities.get("body", {}).get("facilitiesList", [])[0]
+    capabilities = facility.get("capabilities", [])
+    return str([s for s in capabilities if s.startswith("SYSTEMCONTROL_")][0])
 
 
 def _map_state(raw_state) -> Optional[SyncState]:
@@ -582,9 +635,20 @@ def _get_report_value(report) -> Any:
 
 
 def _map_quick_veto_zone(raw_quick_veto) -> Optional[QuickVeto]:
-    if raw_quick_veto and raw_quick_veto.get("active"):
-        # No way to find start_date, Quick veto on zone lasts 6 hours
-        return QuickVeto(target=raw_quick_veto.get("setpoint_temperature"))
+    if raw_quick_veto and ("active" not in raw_quick_veto or raw_quick_veto.get("active")):
+        # No way to find the start date, the quick zone veto lasts 6 hours for Multimatic.
+        # For Senso, the expiry date is not immediately present.
+        expires_at = raw_quick_veto.get("expires_at")
+        duration = None
+        if expires_at:
+            expires_at_datetime = datetime.strptime(expires_at, _DATE_TIME_FORMAT)
+            duration, _ = divmod(expires_at_datetime - datetime.utcnow(), timedelta(minutes=1))
+            if duration <= 0:
+                return None
+        target = raw_quick_veto.get("setpoint_temperature")
+        if not target:
+            target = raw_quick_veto.get("temperature_setpoint")
+        return QuickVeto(target=target, duration=duration)
     return None
 
 

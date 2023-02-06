@@ -96,3 +96,61 @@ class TimeProgramTest(unittest.TestCase):
         next_setting = timeprogram.get_next(datetime(2019, 2, 18, 9, 30))
 
         self._assert(next_setting, tpds_day_after)
+
+    def test_complete_time_program(self) -> None:
+        expected1 = TimePeriodSetting(
+            start_time="00:00",
+            end_time="01:00",
+            target_temperature=None,
+            setting=SettingModes.NIGHT,
+        )
+        tpds1 = TimePeriodSetting(
+            start_time="01:00", end_time="03:00", target_temperature=25, setting=SettingModes.DAY
+        )
+        expected2 = TimePeriodSetting(
+            start_time="03:00",
+            end_time="10:00",
+            target_temperature=None,
+            setting=SettingModes.NIGHT,
+        )
+        tpds2 = TimePeriodSetting(
+            start_time="10:00", end_time="10:30", target_temperature=25, setting=SettingModes.DAY
+        )
+        expected3 = TimePeriodSetting(
+            start_time="10:30",
+            end_time="20:10",
+            target_temperature=None,
+            setting=SettingModes.NIGHT,
+        )
+        tpds3 = TimePeriodSetting(
+            start_time="20:10", end_time="22:00", target_temperature=25, setting=SettingModes.DAY
+        )
+        expected4 = TimePeriodSetting(
+            start_time="22:00",
+            end_time="24:00",
+            target_temperature=None,
+            setting=SettingModes.NIGHT,
+        )
+
+        monday = TimeProgramDay([tpds1, tpds2, tpds3])
+        monday.complete_empty_periods(SettingModes.NIGHT)
+        full_night_day = TimeProgramDay([])
+        full_night_day.complete_empty_periods(SettingModes.NIGHT)
+        timeprogram = TimeProgram(
+            {"monday": monday, "tuesday": full_night_day, "sunday": full_night_day}
+        )
+
+        self._assert(expected1, timeprogram.get_for(datetime(2019, 2, 18, 0, 30)))
+        self._assert(expected1, timeprogram.get_for(datetime(2019, 2, 18, 1, 0)))
+        self._assert(tpds1, timeprogram.get_for(datetime(2019, 2, 18, 1, 1)))
+        self._assert(expected2, timeprogram.get_for(datetime(2019, 2, 18, 9, 30)))
+        self._assert(expected3, timeprogram.get_for(datetime(2019, 2, 18, 15, 0)))
+        self._assert(expected4, timeprogram.get_for(datetime(2019, 2, 18, 23, 30)))
+
+        full_night_setting = TimePeriodSetting(
+            start_time="00:00",
+            end_time="24:00",
+            target_temperature=None,
+            setting=SettingModes.NIGHT,
+        )
+        self._assert(full_night_setting, timeprogram.get_for(datetime(2019, 2, 19, 13, 00)))

@@ -50,20 +50,25 @@ _HVAC_REQUEST_UPDATE = _FACILITIES + "/hvacstate/v1/hvacMessages/update"
 _LIVE_REPORT = _FACILITIES + "/livereport/v1"
 _LIVE_REPORT_DEVICE = _LIVE_REPORT + "/devices/{device_id}/reports/{report_id}"
 _PHOTOVOLTAICS_REPORT = _FACILITIES + "/spine/v1/currentPVMeteringInfo"
-_EMF_REPORT = _FACILITIES + "/emf/v1/devices"
-_EMF_REPORT_DEVICE = _EMF_REPORT + "/{device_id}"
+_EMF_DEVICES = _FACILITIES + "/emf/v1/devices"
+_EMF_REPORT_DEVICE = _EMF_DEVICES + "/{device_id}"
 
 """System control"""
-_SYSTEM = _FACILITIES + "/systemcontrol/tli/v1/"
+_SYSTEM = _FACILITIES + "/systemcontrol/tli/v1"
 _SYSTEM_CONFIGURATION = _SYSTEM + "/configuration"
 _SYSTEM_STATUS = _SYSTEM + "/status"
 _SYSTEM_DATETIME = _SYSTEM_STATUS + "/datetime"
 _SYSTEM_PARAMETERS = _SYSTEM + "/parameters"
-_SYSTEM_QUICK_MODE = _SYSTEM_CONFIGURATION + "/quickmode"
-_SYSTEM_HOLIDAY_MODE = _SYSTEM_CONFIGURATION + "/holidaymode"
+""" Quick Mode and Holiday Mode are only compatible with MULTIMATIC"""
+_SYSTEM_MULTIMATIC_CONFIGUTATION = _FACILITIES + "/systemcontrol/v1/configuration"
+_SYSTEM_QUICK_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/quickmode"
+_SYSTEM_HOLIDAY_MODE = _SYSTEM_MULTIMATIC_CONFIGUTATION + "/holidaymode"
+_SYSTEM_AWAY_MODE = _SYSTEM_CONFIGURATION + "/away"
 
 """DHW (Domestic Hot Water)"""
-_DHW = _SYSTEM + "/dhw/{id}"
+_DHWS = _SYSTEM + "/dhw"
+"""No id in the Senso API"""
+_DHW = _SYSTEM + "/dhw"
 
 """Circulation"""
 _CIRCULATION = _DHW + "/circulation"
@@ -78,7 +83,8 @@ _HOT_WATER_OPERATING_MODE = _HOT_WATER_CONFIGURATION + "/operation_mode"
 _HOT_WATER_TEMPERATURE_SETPOINT = _HOT_WATER_CONFIGURATION + "/temperature_setpoint"
 
 """Ventilation"""
-_VENTILATION = _SYSTEM + "/ventilation/{id}"
+_SYSTEM_VENTILATION = _SYSTEM + "/ventilation"
+_VENTILATION = _SYSTEM_VENTILATION + "/{id}"
 _VENTILATION_CONFIGURATION = _VENTILATION + "/fan/configuration"
 _VENTILATION_TIMEPROGRAM = _VENTILATION_CONFIGURATION + "/timeprogram"
 _VENTILATION_DAY_LEVEL = _VENTILATION_CONFIGURATION + "/day_level"
@@ -95,14 +101,14 @@ _ZONE_QUICK_VETO = _ZONE_CONFIGURATION + "/quick_veto"
 """Zone heating"""
 _ZONE_HEATING_CONFIGURATION = _ZONE + "/heating/configuration"
 _ZONE_HEATING_TIMEPROGRAM = _ZONE + "/heating/timeprogram"
-_ZONE_HEATING_MODE = _ZONE_HEATING_CONFIGURATION + "/mode"
+_ZONE_HEATING_MODE = _ZONE_HEATING_CONFIGURATION + "/operation_mode"
 _ZONE_HEATING_SETPOINT_TEMPERATURE = _ZONE_HEATING_CONFIGURATION + "/setpoint_temperature"
 _ZONE_HEATING_SETBACK_TEMPERATURE = _ZONE_HEATING_CONFIGURATION + "/setback_temperature"
 
 """Zone cooling"""
 _ZONE_COOLING_CONFIGURATION = _ZONE + "/cooling/configuration"
 _ZONE_COOLING_TIMEPROGRAM = _ZONE + "/cooling/timeprogram"
-_ZONE_COOLING_MODE = _ZONE_COOLING_CONFIGURATION + "/mode"
+_ZONE_COOLING_MODE = _ZONE_COOLING_CONFIGURATION + "/operation_mode"
 _ZONE_COOLING_SETPOINT_TEMPERATURE = _ZONE_COOLING_CONFIGURATION + "/setpoint_temperature"
 _ZONE_COOLING_MANUAL_SETPOINT_TEMPERATURE = (
     _ZONE_COOLING_CONFIGURATION + "/manual_mode_cooling_temperature_setpoint"
@@ -262,9 +268,9 @@ def photovoltaics(**kwargs: Any) -> str:
     return _PHOTOVOLTAICS_REPORT.format(**kwargs)
 
 
-def emf_report(**kwargs: Any) -> str:
+def emf_devices(**kwargs: Any) -> str:
     """Url to get emf (Embedded Metering Function) report."""
-    return _EMF_REPORT.format(**kwargs)
+    return _EMF_DEVICES.format(**kwargs)
 
 
 # pylint: disable=too-many-arguments
@@ -351,12 +357,25 @@ def system_holiday_mode(**kwargs: Any) -> str:
     return _SYSTEM_HOLIDAY_MODE.format(**kwargs)
 
 
+def system_away_mode(**kwargs: Any) -> str:
+    """Url to put system away."""
+    return _SYSTEM_AWAY_MODE.format(**kwargs)
+
+
 def dhw(**kwargs: Any) -> str:
     """Url to get domestic hot water
     (:class:`~pymultimatic.model.component.HotWater` and
     :class:`~pymultimatic.model.component.Circulation`).
     """
     return _DHW.format(**kwargs)
+
+
+def dhws(**kwargs: Any) -> str:
+    """Url to get all domestic hot water
+    (:class:`~pymultimatic.model.component.HotWater` and
+    :class:`~pymultimatic.model.component.Circulation`).
+    """
+    return _DHWS.format(**kwargs)
 
 
 def circulation(**kwargs: Any) -> str:
@@ -414,6 +433,11 @@ def hot_water_temperature_setpoint(**kwargs: Any) -> str:
 def ventilation(**kwargs: Any) -> str:
     """Url to get ventilation details."""
     return _VENTILATION.format(**kwargs)
+
+
+def system_ventilation(**kwargs: Any) -> str:
+    """Url to get ventilation details."""
+    return _SYSTEM_VENTILATION.format(**kwargs)
 
 
 def ventilation_configuration(**kwargs: Any) -> str:

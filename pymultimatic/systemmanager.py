@@ -7,7 +7,7 @@ from typing import Any, Callable, List, Optional, Tuple, Type
 from aiohttp import ClientSession
 from schema import Schema, SchemaError
 
-from .api import ApiError, Connector, WrongResponseError, defaults, payloads, schemas
+from .api import ApiError, Connector, WrongResponseError, defaults, schemas
 from .model import (
     Circulation,
     Dhw,
@@ -134,11 +134,14 @@ class SystemManager:
         self._serial = serial
         self._fixed_serial = self._serial is not None
         self._ensure_ready_lock = asyncio.Lock()
+        self._application = defaults.SENSO if application == defaults.SENSO else defaults.MULTIMATIC
 
         if application == defaults.SENSO:
             self.urls = __import__("pymultimatic.api.urls_senso", fromlist=[""])
+            self.payloads = __import__("pymultimatic.api.payloads_senso", fromlist=[""])
         else:
             self.urls = __import__("pymultimatic.api.urls", fromlist=[""])
+            self.payloads = __import__("pymultimatic.api.payloads", fromlist=[""])
 
     async def login(self, force_login: bool = False) -> bool:
         """Try to login to the API, see
@@ -250,7 +253,8 @@ class SystemManager:
         """
         serial = serial if serial is not None else self._serial
         return mapper.map_facility_detail(
-            await self._call_api(self.urls.facilities_list, schema=schemas.FACILITIES), serial
+            await self._call_api(self.urls.facilities_list, schema=schemas.FACILITIES),
+            serial,
         )
 
     @ignore_http_409()
@@ -407,18 +411,22 @@ class SystemManager:
         This will override the current
         :class:`~pymultimatic.model.mode.QuickMode`, if any.
 
+        Only compatible with MULTIMATIC.
         Args:
             quick_mode (QuickMode): the quick mode to set, see
                 :class:`~pymultimatic.model.mode.QuickModes`
         """
+        if self._application != defaults.MULTIMATIC:
+            _LOGGER.warning(f"quick_mode is not compatible with {self._application}")
         await self._call_api(
             self.urls.system_quickmode,
-            payload=payloads.quickmode(quick_mode.name, quick_mode.duration),
+            payload=self.payloads.quickmode(quick_mode.name, quick_mode.duration),
         )
 
     @ignore_http_409(return_value=False)
     async def remove_quick_mode(self) -> bool:
         """Removes current :class:`~pymultimatic.model.mode.QuickMode`.
+        Only compatible with MULTIMATIC.
 
         Note:
             if there is not :class:`~pymultimatic.model.mode.QuickMode` set,
@@ -430,6 +438,9 @@ class SystemManager:
                 (if there wasn't any quick mode set previously)
         """
 
+        if self._application != defaults.MULTIMATIC:
+            _LOGGER.warning(f"quick_mode is not compatible with {self._application}")
+            return False
         await self._call_api(self.urls.system_quickmode, "delete")
         return True
 
@@ -442,8 +453,7 @@ class SystemManager:
             temperature (float): Target temperature while holiday mode
                 :class:`~pymultimatic.model.mode.HolidayMode.is_applied`
         """
-        payload = payloads.holiday_mode(True, start_date, end_date, self._round(temperature))
-
+        payload = self.payloads.holiday_mode(True, start_date, end_date, self._round(temperature))
         await self._call_api(self.urls.system_holiday_mode, payload=payload)
 
     async def remove_holiday_mode(self) -> None:
@@ -468,7 +478,7 @@ class SystemManager:
 
         """
 
-        payload = payloads.holiday_mode(
+        payload = self.payloads.holiday_mode(
             False,
             date.today() - timedelta(days=2),
             date.today() - timedelta(days=1),
@@ -481,10 +491,12 @@ class SystemManager:
         """This set the target temperature for *hot water*."""
         _LOGGER.debug("Will set dhw target temperature to %s", temperature)
 
-        payload = payloads.hotwater_temperature_setpoint(self._round(temperature))
+        payload = self.payloads.hotwater_temperature_setpoint(self._round(temperature))
 
         await self._call_api(
-            self.urls.hot_water_temperature_setpoint, params={"id": dhw_id}, payload=payload
+            self.urls.hot_water_temperature_setpoint,
+            params={"id": dhw_id},
+            payload=payload,
         )
 
     async def set_hot_water_operating_mode(self, dhw_id: str, new_mode: OperatingMode) -> None:
@@ -514,7 +526,7 @@ class SystemManager:
             await self._call_api(
                 self.urls.hot_water_operating_mode,
                 params={"id": dhw_id},
-                payload=payloads.hot_water_operating_mode(new_mode.name),
+                payload=self.payloads.hot_water_operating_mode(new_mode.name),
             )
         else:
             _LOGGER.debug("New mode is not available for hot water %s", new_mode)
@@ -548,7 +560,7 @@ class SystemManager:
             await self._call_api(
                 self.urls.room_operating_mode,
                 params={"id": room_id},
-                payload=payloads.room_operating_mode(new_mode.name),
+                payload=self.payloads.room_operating_mode(new_mode.name),
             )
         else:
             _LOGGER.debug("mode is not available for room %s", new_mode)
@@ -563,7 +575,7 @@ class SystemManager:
             room_id (str): Id of the room.
             quick_veto (QuickVeto): Quick veto to set.
         """
-        payload = payloads.room_quick_veto(self._round(quick_veto.target), quick_veto.duration)
+        payload = self.payloads.room_quick_veto(self._round(quick_veto.target), quick_veto.duration)
         await self._call_api(self.urls.room_quick_veto, params={"id": room_id}, payload=payload)
 
     async def remove_room_quick_veto(self, room_id: str) -> None:
@@ -598,7 +610,7 @@ class SystemManager:
         await self._call_api(
             self.urls.room_temperature_setpoint,
             params={"id": room_id},
-            payload=payloads.room_temperature_setpoint(self._round(temperature)),
+            payload=self.payloads.room_temperature_setpoint(self._round(temperature)),
         )
 
     async def set_zone_quick_veto(self, zone_id: str, quick_veto: QuickVeto) -> None:
@@ -611,7 +623,10 @@ class SystemManager:
             zone_id (str): Id of the zone.
             quick_veto (QuickVeto): Quick veto to set.
         """
-        payload = payloads.zone_quick_veto(self._round(quick_veto.target))
+        payload = self.payloads.zone_quick_veto(
+            self._round(quick_veto.target),
+            self._round(quick_veto.duration) if quick_veto.duration else None,
+        )
 
         await self._call_api(self.urls.zone_quick_veto, params={"id": zone_id}, payload=payload)
 
@@ -644,7 +659,7 @@ class SystemManager:
             await self._call_api(
                 self.urls.zone_heating_mode,
                 params={"id": zone_id},
-                payload=payloads.zone_operating_mode(new_mode.name),
+                payload=self.payloads.zone_operating_mode(new_mode.name),
             )
         else:
             _LOGGER.debug("mode is not available for zone %s", new_mode)
@@ -678,7 +693,7 @@ class SystemManager:
             await self._call_api(
                 self.urls.zone_cooling_mode,
                 params={"id": zone_id},
-                payload=payloads.zone_operating_mode(new_mode.name),
+                payload=self.payloads.zone_operating_mode(new_mode.name),
             )
         else:
             _LOGGER.debug("mode is not available for zone %s", new_mode)
@@ -706,7 +721,7 @@ class SystemManager:
         """
         _LOGGER.debug("Will try to set zone target temperature to %s", temperature)
 
-        payload = payloads.zone_temperature_setpoint(self._round(temperature))
+        payload = self.payloads.zone_temperature_setpoint(self._round(temperature))
 
         await self._call_api(
             self.urls.zone_heating_setpoint_temperature,
@@ -728,7 +743,7 @@ class SystemManager:
         """
         _LOGGER.debug("Will try to set zone target temperature to %s", temperature)
 
-        payload = payloads.zone_temperature_setpoint(self._round(temperature))
+        payload = self.payloads.zone_temperature_setpoint(self._round(temperature))
 
         await self._call_api(
             self.urls.zone_cooling_setpoint_temperature,
@@ -753,7 +768,7 @@ class SystemManager:
         await self._call_api(
             self.urls.zone_heating_setback_temperature,
             params={"id": zone_id},
-            payload=payloads.zone_temperature_setback(self._round(temperature)),
+            payload=self.payloads.zone_temperature_setback(self._round(temperature)),
         )
 
     async def set_ventilation_operating_mode(
@@ -770,7 +785,7 @@ class SystemManager:
         await self._call_api(
             self.urls.set_ventilation_operating_mode,
             params={"id": ventilation_id},
-            payload=payloads.ventilation_operating_mode(mode.name),
+            payload=self.payloads.ventilation_operating_mode(mode.name),
         )
 
     async def set_ventilation_day_level(self, ventilation_id: str, level: int) -> None:
@@ -783,7 +798,7 @@ class SystemManager:
         await self._call_api(
             self.urls.set_ventilation_day_level,
             params={"id": ventilation_id},
-            payload=payloads.ventilation_level(level),
+            payload=self.payloads.ventilation_day_level(level),
         )
 
     async def set_ventilation_night_level(self, ventilation_id: str, level: int) -> None:
@@ -796,7 +811,7 @@ class SystemManager:
         await self._call_api(
             self.urls.set_ventilation_night_level,
             params={"id": ventilation_id},
-            payload=payloads.ventilation_level(level),
+            payload=self.payloads.ventilation_night_level(level),
         )
 
     async def request_hvac_update(self) -> None:

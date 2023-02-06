@@ -1,0 +1,153 @@
+{
+    "body": {
+        "hotwater": {
+            "configuration": {
+                "operation_mode": "MANUAL",
+                "hotwater_temperature_setpoint": 53.0
+            },
+            "timeprogram": {
+                "monday": [
+                    {
+                        "start_time": "05:30",
+                        "end_time": "22:00"
+                    }
+                ],
+                "tuesday": [
+                    {
+                        "start_time": "05:30",
+                        "end_time": "22:00"
+                    }
+                ],
+                "wednesday": [
+                    {
+                        "start_time": "05:30",
+                        "end_time": "22:00"
+                    }
+                ],
+                "thursday": [
+                    {
+                        "start_time": "05:30",
+                        "end_time": "22:00"
+                    }
+                ],
+                "friday": [
+                    {
+                        "start_time": "05:30",
+                        "end_time": "22:00"
+                    }
+                ],
+                "saturday": [
+                    {
+                        "start_time": "07:00",
+                        "end_time": "23:30"
+                    }
+                ],
+                "sunday": [
+                    {
+                        "start_time": "07:00",
+                        "end_time": "22:00"
+                    }
+                ]
+            }
+        },
+        "circulation": {
+            "configuration": {
+                "operation_mode": "TIME_CONTROLLED"
+            },
+            "timeprogram": {
+                "monday": [
+                    {
+                        "start_time": "06:00",
+                        "end_time": "22:00"
+                    }
+                ],
+                "tuesday": [
+                    {
+                        "start_time": "06:00",
+                        "end_time": "22:00"
+                    }
+                ],
+                "wednesday": [
+                    {
+                        "start_time": "06:00",
+                        "end_time": "22:00"
+                    }
+                ],
+                "thursday": [
+                    {
+                        "start_time": "06:00",
+                        "end_time": "22:00"
+                    }
+                ],
+                "friday": [
+                    {
+                        "start_time": "06:00",
+                        "end_time": "22:00"
+                    }
+                ],
+                "saturday": [
+                    {
+                        "start_time": "07:30",
+                        "end_time": "23:30"
+                    }
+                ],
+                "sunday": [
+                    {
+                        "start_time": "07:30",
+                        "end_time": "22:00"
+                    }
+                ]
+            }
+        },
+        "configuration": {
+            "away": {
+                "start_datetime": "2019-01-01T00:00:00.000Z",
+                "end_datetime": "2019-01-01T00:00:00.000Z"
+            }
+        }
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1672182442754,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/circulation/configuration"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1672178785571,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/hotwater/configuration"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1672174927000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/circulation/timeprogram"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1672174927000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/hotwater/timeprogram"
+                }
+            },
+            {
+                "state": "SYNCED",
+                "timestamp": 1672178785571,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/configuration"
+                }
+            }
+        ]
+    }
+}
