@@ -34,10 +34,11 @@ TIMEPROGRAM_PART = Schema(
     {
         day: [
             {
-                "startTime": non_empty_str,  # TODO: parse time
-                Optional("temperatureSetpoint"): numeric,
+                Or("startTime", "start_time"): non_empty_str,  # TODO: parse time
+                Optional(Or("temperatureSetpoint", "setpoint")): numeric,
                 Optional("setting"): non_empty_str,  # TODO: ENUM
                 Optional("mode"): non_empty_str,  # TODO: ENUM
+                Optional("end_time"): non_empty_str,  # TODO: parse time
             }
         ]
         for day in (
@@ -97,9 +98,13 @@ _OPTIONAL_CONFIG_FUNCTION_PART = Schema(
                     "temperature_setpoint",
                     "temperatureSetpoint",
                     "day_level",
+                    "hotwater_temperature_setpoint",
+                    "manual_mode_temperature_setpoint",
                 )
             ): numeric,
-            Optional(Or("setback_temperature", "night_level")): numeric,
+            Optional(
+                Or("setback_temperature", "night_level", "setback_temperature_setpoint")
+            ): numeric,
             Optional("day_level"): int,
             Optional("night_level"): int,
         },
@@ -120,9 +125,12 @@ FUNCTION_PART = Schema(
                     "temperature_setpoint",
                     "temperatureSetpoint",
                     "day_level",
+                    "manual_mode_temperature_setpoint",
                 )
             ): numeric,
-            Optional(Or("setback_temperature", "night_level")): numeric,
+            Optional(
+                Or("setback_temperature", "night_level", "setback_temperature_setpoint")
+            ): numeric,
             Optional("day_level"): int,
             Optional("night_level"): int,
         },
@@ -138,17 +146,37 @@ QUICK_MODE = Schema(
     }
 )
 
+_CONFIGURATION_AWAY = Schema(
+    {
+        "start_datetime": non_empty_str,
+        "end_datetime": non_empty_str,
+        Optional("temperature_setpoint"): numeric,
+    },
+)
+
 _ZONE_CONFIGURATION = Schema(
     {
         "name": non_empty_str,
         Optional("enabled"): bool,
         Optional("inside_temperature"): numeric,
         Optional("active_function"): non_empty_str,  # TODO: add ENUM validation
-        Optional("quick_veto"): {
-            "active": bool,
-            "setpoint_temperature": numeric,
-        },
+        Optional("current_quickmode"): non_empty_str,
+        Optional("quick_veto"): Or(
+            {
+                "active": bool,
+                "setpoint_temperature": numeric,
+            },
+            {
+                Optional("expires_at"): str,
+                "temperature_setpoint": numeric,
+            },
+        ),
         Optional("quickmode"): QUICK_MODE,
+        Optional("eco_mode"): bool,
+        Optional("current_desired_setpoint"): numeric,
+        Optional("away"): _CONFIGURATION_AWAY,
+        Optional("manual_cooling_active"): bool,
+        Optional("humidity"): numeric,
     }
 )
 
@@ -209,6 +237,17 @@ _ZONE_PART = Schema(
     ignore_extra_keys=True,
 )
 
+_DHW_SENSO_PART = Schema(
+    {
+        "hotwater": _OPTIONAL_CONFIG_FUNCTION_PART,
+        "circulation": _OPTIONAL_CONFIG_FUNCTION_PART,
+        Optional("controlled_by"): CONTROLLED_BY,
+        Optional("configuration"): {
+            Optional("away"): _CONFIGURATION_AWAY,
+        },
+    }
+)
+
 _DHW_PART = Schema(
     {
         "_id": non_empty_str,
@@ -219,7 +258,7 @@ _DHW_PART = Schema(
     ignore_extra_keys=True,
 )
 
-DHWS = Schema({"body": [_DHW_PART]}, ignore_extra_keys=True)
+DHWS = Schema({"body": Or([_DHW_PART], _DHW_SENSO_PART)}, ignore_extra_keys=True)
 
 _VENTILATION_PART = Schema(
     {
@@ -237,12 +276,16 @@ SYSTEM = Schema(
     {
         "body": {
             "configuration": {
-                "eco_mode": bool,
-                "holidaymode": {
+                Optional("eco_mode"): bool,
+                Optional("holidaymode"): {
                     "active": bool,
                     "start_date": non_empty_str,  # TODO: parse date
                     "end_date": non_empty_str,  # TODO: parse date
                     "temperature_setpoint": numeric,
+                },
+                Optional("manual_cooling"): {
+                    "start_date": non_empty_str,  # TODO: parse date
+                    "end_date": non_empty_str,  # TODO: parse date
                 },
                 Optional("quickmode"): QUICK_MODE,
             },
@@ -251,7 +294,7 @@ SYSTEM = Schema(
                 Optional("outside_temperature"): numeric,
             },
             "zones": [_ZONE_PART],
-            Optional("dhw"): [_DHW_PART],
+            Optional("dhw"): Or([_DHW_PART], _DHW_SENSO_PART),
             Optional("ventilation"): [_VENTILATION_PART],
         }
     },

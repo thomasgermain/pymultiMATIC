@@ -1,0 +1,120 @@
+{
+    "body": {
+        "devices": [
+            {
+                "reports": [
+                    {
+                        "unit": "%",
+                        "name": "Humidit\u00e9 ambiante actuelle",
+                        "value": 42.0,
+                        "_id": "HumidityCurrent",
+                        "measurement_category": "AIR_QUALITY",
+                        "associated_device_function": "RELATIVE_HUMIDITY"
+                    }
+                ],
+                "_id": "Control_ZO2",
+                "name": "Zone 2"
+            },
+            {
+                "reports": [
+                    {
+                        "unit": "\u00b0C",
+                        "name": "Temp\u00e9rature de l'ECS du ballon",
+                        "value": 54.0,
+                        "_id": "DomesticHotWaterTankTemperature",
+                        "measurement_category": "TEMPERATURE",
+                        "associated_device_function": "DHW"
+                    }
+                ],
+                "_id": "Control_DHW",
+                "name": "Circuit sanitaire"
+            },
+            {
+                "reports": [
+                    {
+                        "unit": "%",
+                        "name": "Humidit\u00e9 ambiante actuelle",
+                        "value": 43.0,
+                        "_id": "HumidityCurrent",
+                        "measurement_category": "AIR_QUALITY",
+                        "associated_device_function": "RELATIVE_HUMIDITY"
+                    }
+                ],
+                "_id": "Control_ZO1",
+                "name": "Zone 1"
+            },
+            {
+                "reports": [
+                    {
+                        "unit": "bar",
+                        "name": "Pression d'eau",
+                        "value": 1.0,
+                        "_id": "WaterPressureSensor",
+                        "measurement_category": "PRESSURE",
+                        "associated_device_function": "HEATING"
+                    }
+                ],
+                "_id": "Control_SYS_senso",
+                "name": "MiPro Sense"
+            },
+            {
+                "reports": [
+                    {
+                        "unit": "\u00b0C",
+                        "name": "Sonde de temp\u00e9rature de d\u00e9part",
+                        "value": 34.7,
+                        "_id": "FlowTemperatureSensor",
+                        "measurement_category": "TEMPERATURE",
+                        "associated_device_function": "HEATING"
+                    }
+                ],
+                "_id": "Control_CC1",
+                "name": "Circuit chauffage 1"
+            }
+        ]
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "OUTDATED",
+                "timestamp": 1672244659,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/livereport/v1/devices/Control_ZO2/reports/HumidityCurrent"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1672244646,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/livereport/v1/devices/Control_DHW/reports/DomesticHotWaterTankTemperature"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1672244638,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/livereport/v1/devices/Control_ZO1/reports/HumidityCurrent"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1672244642,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/livereport/v1/devices/Control_SYS_senso/reports/WaterPressureSensor"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1672244651,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/livereport/v1/devices/Control_CC1/reports/FlowTemperatureSensor"
+                }
+            }
+        ]
+    }
+}

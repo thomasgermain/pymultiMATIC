@@ -1,7 +1,7 @@
 import unittest
 
 from pymultimatic.model import OperatingModes, SettingModes
-from tests.conftest import _time_program, _ventilation
+from tests.conftest import _full_day_time_program, _ventilation
 
 
 class ZoneTest(unittest.TestCase):
@@ -45,7 +45,7 @@ class ZoneTest(unittest.TestCase):
 
     def test_get_active_mode_auto_off(self) -> None:
         ventilation = _ventilation()
-        ventilation.time_program = _time_program(SettingModes.OFF)
+        ventilation.time_program = _full_day_time_program(SettingModes.OFF)
         ventilation.operating_mode = OperatingModes.AUTO
 
         active_mode = ventilation.active_mode

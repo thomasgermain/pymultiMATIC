@@ -24,6 +24,7 @@ class SchemaTest(unittest.TestCase):
             "systemcontrol_quick_veto",
             "systemcontrol_ventilation",
             "systemcontrol_zone_no_config_rbr",
+            "systemcontrol_senso",
         ]
 
         for file in files:
@@ -31,7 +32,11 @@ class SchemaTest(unittest.TestCase):
                 json_val = json.loads(open_f.read())
                 result = schemas.SYSTEM.validate(json_val)
                 json_val.pop("meta")
-                json_val.get("body").pop("parameters")
+
+                body = json_val.get("body")
+                if "parameters" in body:
+                    body.pop("parameters")
+                self.maxDiff = None
                 self.assertDictEqual(result, json_val, "error for " + file)
 
     def test_schema_system_validation_error(self) -> None:
@@ -46,7 +51,7 @@ class SchemaTest(unittest.TestCase):
     def test_schema_livereport_validation(self) -> None:
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
-        files = ["livereport", "livereport_FlowTemperatureVF1"]
+        files = ["livereport", "livereport_FlowTemperatureVF1", "livereport_senso"]
 
         for file in files:
             with open(path(my_path + file), "r") as open_f:
@@ -76,6 +81,7 @@ class SchemaTest(unittest.TestCase):
             "hvacstate_empty",
             "hvacstate_errors",
             "hvacstate_pending",
+            "hvacstate_senso",
         ]
 
         for file in files:
@@ -89,7 +95,7 @@ class SchemaTest(unittest.TestCase):
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
 
-        files = ["facilities", "facilities_multiple"]
+        files = ["facilities", "facilities_multiple", "facilities_senso"]
 
         for file in files:
             with open(path(my_path + file), "r") as open_f:
@@ -121,7 +127,13 @@ class SchemaTest(unittest.TestCase):
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
 
-        files = ["zones", "zones_3_zones", "zones_missing_heating_config_quick_veto"]
+        files = [
+            "zones",
+            "zones_3_zones",
+            "zones_missing_heating_config_quick_veto",
+            "zones_senso",
+            "zones_senso_manual",
+        ]
 
         for file in files:
             with open(path(my_path + file), "r") as open_f:
@@ -160,7 +172,7 @@ class SchemaTest(unittest.TestCase):
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
 
-        files = ["dhws", "dhws_minimal"]
+        files = ["dhws", "dhws_minimal", "dhws_senso", "dhws_minimal_senso"]
 
         for file in files:
             with open(path(my_path + file), "r") as open_f:

@@ -1,7 +1,7 @@
 """Test for the model mapper."""
 import json
 import unittest
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from pymultimatic.model import ActiveFunction, OperatingModes, QuickModes, mapper
 from tests.conftest import path
@@ -36,6 +36,12 @@ class MapperTest(unittest.TestCase):
             zones = mapper.map_zones(json_raw)
             self.assertEqual(2, len(zones))
 
+    def test_map_zones_senso(self) -> None:
+        with open(path("files/responses/zones_senso"), "r") as file:
+            json_raw = json.loads(file.read())
+            zones = mapper.map_zones(json_raw)
+            self.assertEqual(3, len(zones))
+
     def test_map_zones_3_zones(self) -> None:
         with open(path("files/responses/zones_3_zones"), "r") as file:
             json_raw = json.loads(file.read())
@@ -56,8 +62,25 @@ class MapperTest(unittest.TestCase):
             self.assertIsNone(dhw.hotwater.temperature)
             self.assertIsNotNone(dhw.circulation)
 
+    def test_map_dhw_senso(self) -> None:
+        with open(path("files/responses/dhws_senso"), "r") as file:
+            raw_dhw = json.loads(file.read())
+            dhw = mapper.map_dhw(raw_dhw)
+            self.assertIsNotNone(dhw.hotwater)
+            self.assertIsNone(dhw.hotwater.temperature)
+            self.assertIsNotNone(dhw.circulation)
+
     def test_map_dhw_no_timeprogram(self) -> None:
         with open(path("files/responses/dhws_minimal"), "r") as file:
+            raw_dhw = json.loads(file.read())
+            dhw = mapper.map_dhw(raw_dhw)
+            self.assertIsNotNone(dhw.hotwater)
+            self.assertIsNotNone(dhw.circulation)
+            self.assertIsNotNone(dhw.circulation.time_program)
+            self.assertIsNotNone(dhw.hotwater.time_program)
+
+    def test_map_dhw_no_timeprogram_senso(self) -> None:
+        with open(path("files/responses/dhws_minimal_senso"), "r") as file:
             raw_dhw = json.loads(file.read())
             dhw = mapper.map_dhw(raw_dhw)
             self.assertIsNotNone(dhw.hotwater)
@@ -121,6 +144,39 @@ class MapperTest(unittest.TestCase):
             if zone.id == "Control_ZO2":
                 self.assertIsNotNone(zone.quick_veto)
                 self.assertEqual(18.5, zone.quick_veto.target)
+                self.assertIsNone(zone.quick_veto.duration)
+                return
+        self.fail("Wrong zone found")
+
+    def test_map_quick_veto_senso_zone(self) -> None:
+        """Test map quick veto zone for Senso."""
+        with open(path("files/responses/systemcontrol_senso_quick_veto"), "r") as file:
+            system = json.loads(file.read())
+        # update of the expiry date for the tests
+        system.get("body", {}).get("zones", [])[0]["configuration"]["quick_veto"]["expires_at"] = (
+            datetime.utcnow() + timedelta(hours=2)
+        ).strftime(mapper._DATE_TIME_FORMAT)
+        zones = mapper.map_zones_from_system(system)
+
+        for zone in zones:
+            if zone.id == "Control_ZO1":
+                self.assertIsNotNone(zone.quick_veto)
+                self.assertEqual(22.0, zone.quick_veto.target)
+                self.assertTrue(zone.quick_veto.duration <= 120)
+                return
+        self.fail("Wrong zone found")
+
+    def test_map_quick_veto_senso_zone_after_put(self) -> None:
+        """Test map quick veto zone for Senso after put quick veto.
+        The expiry date is not immediately filled in."""
+        with open(path("files/responses/systemcontrol_senso_quick_veto_after_put"), "r") as file:
+            system = json.loads(file.read())
+        zones = mapper.map_zones_from_system(system)
+
+        for zone in zones:
+            if zone.id == "Control_ZO1":
+                self.assertIsNotNone(zone.quick_veto)
+                self.assertEqual(22.0, zone.quick_veto.target)
                 self.assertIsNone(zone.quick_veto.duration)
                 return
         self.fail("Wrong zone found")
@@ -447,6 +503,16 @@ class MapperTest(unittest.TestCase):
         self.assertEqual("Home", sys_info.name)
         self.assertEqual("01:23:45:67:89:AB", sys_info.ethernet_mac)
         self.assertEqual("1.2.3", sys_info.firmware_version)
+
+    def test_map_facility_detail_senso(self) -> None:
+        with open(path("files/responses/facilities_senso"), "r") as file:
+            facilities = json.loads(file.read())
+
+        sys_info = mapper.map_facility_detail(facilities)
+        self.assertEqual("SERIAL_NUMBER", sys_info.serial_number)
+        self.assertEqual("Maison", sys_info.name)
+        self.assertEqual("01:23:45:67:89:AB", sys_info.ethernet_mac)
+        self.assertEqual("0357.27.06", sys_info.firmware_version)
 
     def test_map_system_info_specific_serial(self) -> None:
         with open(path("files/responses/facilities_multiple"), "r") as file:
