@@ -212,7 +212,7 @@ async def test_logout(manager: SystemManager) -> None:
 # logout tests need to be run individually (loss of cookie)
 @pytest.mark.asyncio
 async def test_logout_senso(senso_manager: SystemManager) -> None:
-    test_logout(senso_manager)
+    await test_logout(senso_manager)
 
 
 @pytest.mark.asyncio
