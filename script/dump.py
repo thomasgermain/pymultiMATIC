@@ -29,7 +29,7 @@ URLS = {
     "dhws": {},
     "dhw": {"id": "Control_DHW"},
     "emf_devices": {},
-    "circulation": {},
+    "circulation": {"id": "Control_DHW"},
     "rooms": {},
     "system": {},
     "system_ventilation": {},

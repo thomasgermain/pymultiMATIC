@@ -92,6 +92,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+venv*/
 
 # Spyder project settings
 .spyderproject
@@ -108,3 +109,6 @@ venv.bak/
 
 #idea
 .idea/
+
+#project custom
+script/dump_result

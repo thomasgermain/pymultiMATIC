@@ -14,6 +14,8 @@ HEADER = {
     "Accept-Encoding": "gzip",
     "Accept": "application/json",
     "Vaillant-Mobile-App": "multiMATIC v2.1.45 b389 (Android)",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
 }
 
 
