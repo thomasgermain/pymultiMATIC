@@ -1,0 +1,24 @@
+{
+    "body": {
+        "facilitiesList": [
+            {
+                "serialNumber": "SERIAL_NUMBER",
+                "name": "Maison",
+                "responsibleCountryCode": "BE",
+                "supportedBrand": "GREEN_BRAND_COMPATIBLE",
+                "capabilities": [
+                    "SPINE",
+                    "SYSTEMCONTROL_SENSO",
+                    "ROOM_BY_ROOM"
+                ],
+                "networkInformation": {
+                    "macAddressEthernet": "01:23:45:67:89:AB",
+                    "macAddressWifiAccessPoint": "84:c3:e8:04:36:98",
+                    "macAddressWifiClient": "84:c3:e8:04:36:99"
+                },
+                "firmwareVersion": "0357.27.06"
+            }
+        ]
+    },
+    "meta": {}
+}

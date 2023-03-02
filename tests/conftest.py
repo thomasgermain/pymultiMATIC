@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from http.cookies import SimpleCookie
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator, Optional, Iterator
 
 import pytest
 from aiohttp import ClientSession
@@ -261,3 +261,20 @@ def _ventilation() -> Ventilation:
 
 def path(file: str) -> str:
     return os.path.join(os.path.dirname(__file__), file) + ".json"
+
+
+def sub_folders(path: str) -> Iterator[str]:
+    dirfiles = os.listdir(os.path.join(os.path.dirname(__file__), path))
+    fullpaths = (os.path.join(path, name) for name in dirfiles)
+    for file in fullpaths:
+        if os.path.isdir(file):
+            yield file
+
+
+def senso_responses_folders() -> Iterator[str]:
+    return sub_folders("files/responses/senso")
+
+
+def senso_responses_files_paths(file: str) -> Iterator[str]:
+    for folder in senso_responses_folders():
+        yield path(os.path.join(folder, file))

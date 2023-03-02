@@ -104,23 +104,23 @@ async def test_system(manager: SystemManager, resp: aioresponses) -> None:
 
 
 @pytest.mark.asyncio
-async def test_system_senso(senso_manager: SystemManager, resp: aioresponses) -> None:
-    with open(path("files/responses/livereport_senso"), "r") as file:
+async def test_system_senso_vr921(senso_manager: SystemManager, resp: aioresponses) -> None:
+    with open(path("files/responses/senso/vr921/live_report"), "r") as file:
         livereport_data = json.loads(file.read())
 
-    with open(path("files/responses/rooms_senso"), "r") as file:
+    with open(path("files/responses/senso/vr921/rooms"), "r") as file:
         rooms_data = json.loads(file.read())
 
-    with open(path("files/responses/systemcontrol_senso"), "r") as file:
+    with open(path("files/responses/senso/vr921/system"), "r") as file:
         system_data = json.loads(file.read())
 
-    with open(path("files/responses/hvacstate_senso"), "r") as file:
+    with open(path("files/responses/senso/vr921/hvac"), "r") as file:
         hvacstate_data = json.loads(file.read())
 
-    with open(path("files/responses/facilities_senso"), "r") as file:
+    with open(path("files/responses/senso/vr921/facilities_list"), "r") as file:
         facilities = json.loads(file.read())
 
-    with open(path("files/responses/gateway_senso"), "r") as file:
+    with open(path("files/responses/senso/vr921/gateway_type"), "r") as file:
         gateway = json.loads(file.read())
 
     _mock(
@@ -142,6 +142,47 @@ async def test_system_senso(senso_manager: SystemManager, resp: aioresponses) ->
     assert len(system.rooms) == 0
     # Rooms API is not called
     _assert_calls(5, senso_manager)
+    assert senso_manager._fixed_serial
+
+
+@pytest.mark.asyncio
+async def test_system_senso_vr920(senso_manager: SystemManager, resp: aioresponses) -> None:
+    with open(path("files/responses/senso/vr920/live_report"), "r") as file:
+        livereport_data = json.loads(file.read())
+
+    with open(path("files/responses/senso/vr920/rooms"), "r") as file:
+        rooms_data = json.loads(file.read())
+
+    with open(path("files/responses/senso/vr920/system"), "r") as file:
+        system_data = json.loads(file.read())
+
+    with open(path("files/responses/senso/vr920/hvac"), "r") as file:
+        hvacstate_data = json.loads(file.read())
+
+    with open(path("files/responses/senso/vr920/facilities_list"), "r") as file:
+        facilities = json.loads(file.read())
+
+    with open(path("files/responses/senso/vr920/gateway_type"), "r") as file:
+        gateway = json.loads(file.read())
+
+    _mock(
+        urls_senso,
+        resp,
+        hvacstate_data,
+        livereport_data,
+        rooms_data,
+        system_data,
+        facilities,
+        gateway,
+    )
+
+    system = await senso_manager.get_system()
+
+    assert system is not None
+
+    assert len(system.zones) == 1
+    assert len(system.rooms) == 7
+    _assert_calls(6, senso_manager)
     assert senso_manager._fixed_serial
 
 
@@ -939,12 +980,28 @@ async def test_get_zones(manager: SystemManager, resp: aioresponses) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_zones_senso(senso_manager: SystemManager, resp: aioresponses) -> None:
+async def test_get_zones_senso_vr920(senso_manager: SystemManager, resp: aioresponses) -> None:
     url = urls_senso.zones(
         serial=SERIAL,
     )
 
-    with open(path("files/responses/zones_senso"), "r") as file:
+    with open(path("files/responses/senso/vr920/zones"), "r") as file:
+        json_raw = json.loads(file.read())
+
+    resp.get(url, status=200, payload=json_raw)
+
+    zones = await senso_manager.get_zones()
+    assert zones is not None and len(zones) > 0
+    _assert_calls(1, senso_manager, [url])
+
+
+@pytest.mark.asyncio
+async def test_get_zones_senso_vr921(senso_manager: SystemManager, resp: aioresponses) -> None:
+    url = urls_senso.zones(
+        serial=SERIAL,
+    )
+
+    with open(path("files/responses/senso/vr921/zones"), "r") as file:
         json_raw = json.loads(file.read())
 
     resp.get(url, status=200, payload=json_raw)

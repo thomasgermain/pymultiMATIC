@@ -320,7 +320,15 @@ def map_zone(raw_zone) -> Optional[Zone]:
             configuration.get("active_function", ActiveFunction.STANDBY.name)
         ]
         quick_veto = _map_quick_veto_zone(configuration.get("quick_veto"))
-        rbr = raw_zone.get("currently_controlled_by", {}).get("name", "") == "RBR"
+
+        currently_controlled_by = raw_zone.get("currently_controlled_by")
+        rbr = currently_controlled_by and (
+            (isinstance(currently_controlled_by, str) and currently_controlled_by == "RBR")
+            or (
+                isinstance(currently_controlled_by, dict)
+                and currently_controlled_by.get("name", "") == "RBR"
+            )
+        )
 
         raw_heating = raw_zone.get("heating", {})
         raw_cooling = raw_zone.get("cooling", {})

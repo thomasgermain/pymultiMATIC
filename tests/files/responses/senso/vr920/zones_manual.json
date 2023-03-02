@@ -1,0 +1,107 @@
+{
+    "body": [
+        {
+            "heating": {
+                "configuration": {
+                    "operation_mode": "MANUAL",
+                    "setback_temperature_setpoint": 15.0,
+                    "manual_mode_temperature_setpoint": 19.0
+                },
+                "timeprogram": {
+                    "sunday": [
+                        {
+                            "start_time": "07:30",
+                            "end_time": "22:00",
+                            "setpoint": 20.0
+                        }
+                    ],
+                    "friday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00",
+                            "setpoint": 20.0
+                        }
+                    ],
+                    "saturday": [
+                        {
+                            "start_time": "07:30",
+                            "end_time": "23:30",
+                            "setpoint": 20.0
+                        }
+                    ],
+                    "thursday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00",
+                            "setpoint": 20.0
+                        }
+                    ],
+                    "monday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00",
+                            "setpoint": 20.0
+                        }
+                    ],
+                    "tuesday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00",
+                            "setpoint": 20.0
+                        }
+                    ],
+                    "wednesday": [
+                        {
+                            "start_time": "06:00",
+                            "end_time": "22:00",
+                            "setpoint": 20.0
+                        }
+                    ]
+                }
+            },
+            "configuration": {
+                "name": "Maison",
+                "enabled": true,
+                "active_function": "HEATING",
+                "eco_mode": false,
+                "current_desired_setpoint": 19.0,
+                "away": {
+                    "start_datetime": "2023-01-25T22:01:51.000Z",
+                    "end_datetime": "2023-01-26T22:01:51.000Z",
+                    "temperature_setpoint": 20.0
+                },
+                "manual_cooling_active": false
+            },
+            "currently_controlled_by": "RBR",
+            "_id": "Control_ZO1"
+        }
+    ],
+    "meta": {
+        "resourceState": [
+            {
+                "state": "OUTDATED",
+                "timestamp": 1677708663039,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO1/heating/configuration"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1677711220000,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO1/heating/timeprogram"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1677708663039,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/zones/Control_ZO1/configuration"
+                }
+            }
+        ]
+    }
+}

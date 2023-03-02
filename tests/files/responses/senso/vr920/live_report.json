@@ -1,0 +1,54 @@
+{
+    "body": {
+        "devices": [
+            {
+                "reports": [
+                    {
+                        "unit": "bar",
+                        "name": "WaterPressureSensor",
+                        "value": 2.3,
+                        "_id": "WaterPressureSensor",
+                        "measurement_category": "PRESSURE",
+                        "associated_device_function": "HEATING"
+                    }
+                ],
+                "_id": "Control_SYS_senso",
+                "name": "sensoCOMFORT"
+            },
+            {
+                "reports": [
+                    {
+                        "unit": "\u00b0C",
+                        "name": "FlowTemperatureSensor",
+                        "value": 37.0,
+                        "_id": "FlowTemperatureSensor",
+                        "measurement_category": "TEMPERATURE",
+                        "associated_device_function": "HEATING"
+                    }
+                ],
+                "_id": "Control_CC1",
+                "name": "Heating Circuit 1"
+            }
+        ]
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "OUTDATED",
+                "timestamp": 1677708645,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/livereport/v1/devices/Control_SYS_senso/reports/WaterPressureSensor"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1677708649,
+                "link": {
+                    "rel": "child",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/livereport/v1/devices/Control_CC1/reports/FlowTemperatureSensor"
+                }
+            }
+        ]
+    }
+}

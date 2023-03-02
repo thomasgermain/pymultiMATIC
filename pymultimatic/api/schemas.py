@@ -224,6 +224,15 @@ _ZONE_PART = Schema(
                 Optional("cooling"): _OPTIONAL_CONFIG_FUNCTION_PART,
             }
         ),
+        Schema(  # rbr zone vr920, in that case, almost everything is optional
+            {
+                "_id": non_empty_str,
+                Optional("configuration"): _ZONE_CONFIGURATION,
+                Optional("currently_controlled_by"): non_empty_str,
+                Optional("heating"): _OPTIONAL_CONFIG_FUNCTION_PART,
+                Optional("cooling"): _OPTIONAL_CONFIG_FUNCTION_PART,
+            }
+        ),
         Schema(  # quick veto set on a zone, configuration of heating (or cooling) is optional
             {
                 "_id": non_empty_str,
