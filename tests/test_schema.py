@@ -5,7 +5,7 @@ import unittest
 from schema import SchemaError
 
 from pymultimatic.api import schemas
-from tests.conftest import path
+from tests.conftest import path, senso_responses_folders
 
 
 class SchemaTest(unittest.TestCase):
@@ -24,11 +24,15 @@ class SchemaTest(unittest.TestCase):
             "systemcontrol_quick_veto",
             "systemcontrol_ventilation",
             "systemcontrol_zone_no_config_rbr",
-            "systemcontrol_senso",
         ]
+        for i in range(len(files)):
+            files[i] = my_path + files[i]
+
+        for folder in senso_responses_folders():
+            files.append(folder + "/system")
 
         for file in files:
-            with open(path(my_path + file), "r") as open_f:
+            with open(path(file), "r") as open_f:
                 json_val = json.loads(open_f.read())
                 result = schemas.SYSTEM.validate(json_val)
                 json_val.pop("meta")
@@ -51,10 +55,18 @@ class SchemaTest(unittest.TestCase):
     def test_schema_livereport_validation(self) -> None:
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
-        files = ["livereport", "livereport_FlowTemperatureVF1", "livereport_senso"]
+        files = [
+            "livereport",
+            "livereport_FlowTemperatureVF1",
+        ]
+        for i in range(len(files)):
+            files[i] = my_path + files[i]
+
+        for folder in senso_responses_folders():
+            files.append(folder + "/live_report")
 
         for file in files:
-            with open(path(my_path + file), "r") as open_f:
+            with open(path(file), "r") as open_f:
                 json_val = json.loads(open_f.read())
                 result = schemas.LIVE_REPORTS.validate(json_val)
                 json_val.pop("meta")
@@ -81,11 +93,15 @@ class SchemaTest(unittest.TestCase):
             "hvacstate_empty",
             "hvacstate_errors",
             "hvacstate_pending",
-            "hvacstate_senso",
         ]
+        for i in range(len(files)):
+            files[i] = my_path + files[i]
+
+        for folder in senso_responses_folders():
+            files.append(folder + "/hvac")
 
         for file in files:
-            with open(path(my_path + file), "r") as open_f:
+            with open(path(file), "r") as open_f:
                 json_val = json.loads(open_f.read())
                 result = schemas.HVAC.validate(json_val)
                 json_val.get("meta").pop("syncState")
@@ -95,10 +111,18 @@ class SchemaTest(unittest.TestCase):
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
 
-        files = ["facilities", "facilities_multiple", "facilities_senso"]
+        files = [
+            "facilities",
+            "facilities_multiple",
+        ]
+        for i in range(len(files)):
+            files[i] = my_path + files[i]
+
+        for folder in senso_responses_folders():
+            files.append(folder + "/facilities_list")
 
         for file in files:
-            with open(path(my_path + file), "r") as open_f:
+            with open(path(file), "r") as open_f:
                 json_val = json.loads(open_f.read())
                 result = schemas.FACILITIES.validate(json_val)
                 json_val.pop("meta")
@@ -131,12 +155,16 @@ class SchemaTest(unittest.TestCase):
             "zones",
             "zones_3_zones",
             "zones_missing_heating_config_quick_veto",
-            "zones_senso",
-            "zones_senso_manual",
         ]
+        for i in range(len(files)):
+            files[i] = my_path + files[i]
+
+        for folder in senso_responses_folders():
+            files.append(folder + "/zones")
+            files.append(folder + "/zones_manual")
 
         for file in files:
-            with open(path(my_path + file), "r") as open_f:
+            with open(path(file), "r") as open_f:
                 json_val = json.loads(open_f.read())
                 result = schemas.ZONE_LIST.validate(json_val)
                 json_val.pop("meta")
@@ -172,10 +200,19 @@ class SchemaTest(unittest.TestCase):
         """Ensure schema validation doesn't alter the response"""
         my_path = "files/responses/"
 
-        files = ["dhws", "dhws_minimal", "dhws_senso", "dhws_minimal_senso"]
+        files = [
+            "dhws",
+            "dhws_minimal",
+        ]
+        for i in range(len(files)):
+            files[i] = my_path + files[i]
+
+        for folder in senso_responses_folders():
+            files.append(folder + "/dhw")
+            files.append(folder + "/dhws")
 
         for file in files:
-            with open(path(my_path + file), "r") as open_f:
+            with open(path(file), "r") as open_f:
                 json_val = json.loads(open_f.read())
                 result = schemas.DHWS.validate(json_val)
                 json_val.pop("meta")

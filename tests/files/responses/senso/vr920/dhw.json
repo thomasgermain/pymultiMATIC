@@ -1,0 +1,49 @@
+{
+    "body": {
+        "hotwater": {
+            "configuration": {
+                "operation_mode": "TIME_CONTROLLED",
+                "hotwater_temperature_setpoint": 60.0
+            }
+        },
+        "circulation": {
+            "configuration": {
+                "operation_mode": "TIME_CONTROLLED"
+            }
+        },
+        "configuration": {
+            "away": {
+                "start_datetime": "2023-01-25T22:01:51.000Z",
+                "end_datetime": "2023-01-26T22:01:51.000Z"
+            }
+        }
+    },
+    "meta": {
+        "resourceState": [
+            {
+                "state": "SYNCED",
+                "timestamp": 1677712948678,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/circulation/configuration"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1677708652841,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/hotwater/configuration"
+                }
+            },
+            {
+                "state": "OUTDATED",
+                "timestamp": 1677708652841,
+                "link": {
+                    "rel": "self",
+                    "resourceLink": "/facilities/SERIAL_NUMBER/systemcontrol/tli/v1/dhw/configuration"
+                }
+            }
+        ]
+    }
+}
