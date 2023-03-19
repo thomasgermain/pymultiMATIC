@@ -25,6 +25,7 @@ class ZoneHeating(Function):
         OperatingModes.AUTO,
         OperatingModes.OFF,
         OperatingModes.DAY,
+        OperatingModes.MANUAL,
         OperatingModes.NIGHT,
         OperatingModes.NORMAL,
         OperatingModes.QUICK_VETO,
