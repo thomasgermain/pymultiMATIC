@@ -64,7 +64,7 @@ class Connector:
         Returns:
             bool: True/False if authentication succeeded or not.
         """
-        _LOGGER.debug("Will login with user %, force=%s", self._user, force)
+        _LOGGER.debug(f"Will login with user {self._user}, force={force}")
 
         if force:
             self._clear_cookies()
@@ -146,7 +146,7 @@ class Connector:
         return self._session.cookie_jar.filter_cookies(urls.base())  # type: ignore
 
     def _clear_cookies(self) -> None:
-        _LOGGER.debug("clear cookies")
+        _LOGGER.debug("Clear cookies")
         self._session.cookie_jar.clear()
 
     async def get(self, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
@@ -169,7 +169,7 @@ class Connector:
         """Do a request against vaillant API."""
         async with self._session.request(method, url, json=payload, headers=HEADER) as resp:
             if resp.status == 401:
-                _LOGGER.debug("Request (%) to % failed, will re login", method, url)
+                _LOGGER.debug(f"Request ({method}) to {url} failed, will re login")
                 await self.login(True)
                 return await self.request(method, url, payload)
 
@@ -185,5 +185,5 @@ class Connector:
                 )
 
             data = await resp.json(content_type=None)
-            _LOGGER.debug("Request (%) to % successful, data are: %s", method, url, data)
+            _LOGGER.debug(f"Request ({method}) to {url} successful, response is: {data}")
             return data
