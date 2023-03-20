@@ -31,7 +31,7 @@ from .model import (
     EmfReport,
 )
 
-_LOGGER = logging.getLogger("SystemManager")
+_LOGGER = logging.getLogger(__name__)
 
 
 def ignore_http_409(return_value: Any = None) -> Callable[..., Any]:
@@ -92,7 +92,7 @@ def retry_async(
                         if ex.status not in on_status_codes:
                             raise
                     retry_in = backoff_base * (num_tries - _num_tries)
-                    _LOGGER.debug("Error occurred, retrying in %s", retry_in, exc_info=True)
+                    _LOGGER.debug(f"Error occurred, retrying in {retry_in}", exc_info=True)
                     await asyncio.sleep(retry_in)
 
         return wrapper
@@ -489,7 +489,7 @@ class SystemManager:
 
     async def set_hot_water_setpoint_temperature(self, dhw_id: str, temperature: float) -> None:
         """This set the target temperature for *hot water*."""
-        _LOGGER.debug("Will set dhw target temperature to %s", temperature)
+        _LOGGER.debug(f"Will set dhw target temperature to {temperature}")
 
         payload = self.payloads.hotwater_temperature_setpoint(self._round(temperature))
 
@@ -519,17 +519,19 @@ class SystemManager:
             dhw_id (str): domestic hot water id.
             new_mode (OperatingMode): The new mode to set.
         """
-        _LOGGER.debug("Will try to set hot water mode to %s", new_mode)
+        _LOGGER.debug(f"Will try to set hot water mode to {new_mode.name if new_mode else None}")
 
         if new_mode in HotWater.MODES:
-            _LOGGER.debug("New mode is %s", new_mode)
+            _LOGGER.debug(f"New mode is {new_mode}")
             await self._call_api(
                 self.urls.hot_water_operating_mode,
                 params={"id": dhw_id},
                 payload=self.payloads.hot_water_operating_mode(new_mode.name),
             )
         else:
-            _LOGGER.debug("New mode is not available for hot water %s", new_mode)
+            _LOGGER.debug(
+                f"Mode {new_mode.name if new_mode else None} is not available for hot water"
+            )
 
     async def set_room_operating_mode(self, room_id: str, new_mode: OperatingMode) -> None:
         """Set new operating mode for
@@ -556,14 +558,14 @@ class SystemManager:
             new_mode (OperatingMode): The new mode to set.
         """
         if new_mode in Room.MODES and new_mode != OperatingModes.QUICK_VETO:
-            _LOGGER.debug("New mode is %s", new_mode)
+            _LOGGER.debug(f"New mode is {new_mode.name}")
             await self._call_api(
                 self.urls.room_operating_mode,
                 params={"id": room_id},
                 payload=self.payloads.room_operating_mode(new_mode.name),
             )
         else:
-            _LOGGER.debug("mode is not available for room %s", new_mode)
+            _LOGGER.debug(f"Mode {new_mode.name if new_mode else None} is not available for room")
 
     async def set_room_quick_veto(self, room_id: str, quick_veto: QuickVeto) -> None:
         """Set a :class:`~pymultimatic.model.mode.QuickVeto` for a
@@ -605,7 +607,7 @@ class SystemManager:
             temperature (float): Target temperature to set.
         """
 
-        _LOGGER.debug("Will try to set room target temperature to %s", temperature)
+        _LOGGER.debug(f"Will try to set room target temperature to {temperature}")
 
         await self._call_api(
             self.urls.room_temperature_setpoint,
@@ -655,14 +657,14 @@ class SystemManager:
             new_mode (OperatingMode): The new mode to set.
         """
         if new_mode in ZoneHeating.MODES and new_mode != OperatingModes.QUICK_VETO:
-            _LOGGER.debug("New mode is %s", new_mode)
+            _LOGGER.debug(f"New mode is {new_mode}")
             await self._call_api(
                 self.urls.zone_heating_mode,
                 params={"id": zone_id},
                 payload=self.payloads.zone_operating_mode(new_mode.name),
             )
         else:
-            _LOGGER.debug("mode is not available for zone %s", new_mode)
+            _LOGGER.debug(f"Mode {new_mode.name if new_mode else None} is not available for zone")
 
     async def set_zone_cooling_operating_mode(self, zone_id: str, new_mode: OperatingMode) -> None:
         """Set new operating mode to cool a
@@ -689,14 +691,14 @@ class SystemManager:
             new_mode (OperatingMode): The new mode to set.
         """
         if new_mode in ZoneCooling.MODES and new_mode != OperatingModes.QUICK_VETO:
-            _LOGGER.debug("New mode is %s", new_mode)
+            _LOGGER.debug(f"New mode is {new_mode}")
             await self._call_api(
                 self.urls.zone_cooling_mode,
                 params={"id": zone_id},
                 payload=self.payloads.zone_operating_mode(new_mode.name),
             )
         else:
-            _LOGGER.debug("mode is not available for zone %s", new_mode)
+            _LOGGER.debug(f"Mode {new_mode.name if new_mode else None} is not available for zone")
 
     async def remove_zone_quick_veto(self, zone_id: str) -> None:
         """Remove the :class:`~pymultimatic.model.mode.QuickVeto` from a
@@ -719,7 +721,7 @@ class SystemManager:
             zone_id (str): Id of the zone.
             temperature (float): New temperature.
         """
-        _LOGGER.debug("Will try to set zone target temperature to %s", temperature)
+        _LOGGER.debug(f"Will try to set zone target temperature to {temperature}")
 
         payload = self.payloads.zone_temperature_setpoint(self._round(temperature))
 
@@ -741,7 +743,7 @@ class SystemManager:
             zone_id (str): Id of the zone.
             temperature (float): New temperature.
         """
-        _LOGGER.debug("Will try to set zone target temperature to %s", temperature)
+        _LOGGER.debug(f"Will try to set zone target temperature to {temperature}")
 
         payload = self.payloads.zone_temperature_setpoint(self._round(temperature))
 
@@ -763,7 +765,7 @@ class SystemManager:
             zone_id (str): Id of the zone.
             temperature (float): New temperature.
         """
-        _LOGGER.debug("Will try to set zone setback temperature to %s", temperature)
+        _LOGGER.debug(f"Will try to set zone setback temperature to {temperature}")
 
         await self._call_api(
             self.urls.zone_heating_setback_temperature,

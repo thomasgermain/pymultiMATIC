@@ -64,12 +64,16 @@ class Connector:
         Returns:
             bool: True/False if authentication succeeded or not.
         """
+        _LOGGER.debug(f"Will login with user {self._user}, force={force}")
+
         if force:
             self._clear_cookies()
 
         if self._get_cookies():
+            _LOGGER.debug("Already logged in")
             return True
 
+        _LOGGER.debug("Not logged in")
         token = await self._token()
         await self._authenticate(token)
         return True
@@ -77,7 +81,7 @@ class Connector:
     async def is_logged(self) -> bool:
         """Check if the connector is already logged in.
 
-        It relies in the presence of cookies.
+        It relies on the presence of cookies.
         """
         return len(self._get_cookies()) > 0
 
@@ -103,6 +107,7 @@ class Connector:
             self._clear_cookies()
 
     async def _token(self) -> str:
+        _LOGGER.debug("Will request token")
         params = {
             "smartphoneId": self._smartphone_id,
             "username": self._user,
@@ -120,6 +125,7 @@ class Connector:
         )
 
     async def _authenticate(self, token: str) -> None:
+        _LOGGER.debug("Will authenticate")
         params = {
             "smartphoneId": self._smartphone_id,
             "username": self._user,
@@ -134,11 +140,13 @@ class Connector:
                 response=await auth_res.text(),
                 status=auth_res.status,
             )
+        _LOGGER.debug("Authentication successful")
 
     def _get_cookies(self) -> Dict[Any, Any]:
         return self._session.cookie_jar.filter_cookies(urls.base())  # type: ignore
 
     def _clear_cookies(self) -> None:
+        _LOGGER.debug("Clear cookies")
         self._session.cookie_jar.clear()
 
     async def get(self, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
@@ -159,8 +167,10 @@ class Connector:
 
     async def request(self, method: str, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a request against vaillant API."""
+        _LOGGER.debug(f"Will call API: {method} {url} with payload {payload}")
         async with self._session.request(method, url, json=payload, headers=HEADER) as resp:
             if resp.status == 401:
+                _LOGGER.debug(f"Request ({method}) to {url} failed, will re login")
                 await self.login(True)
                 return await self.request(method, url, payload)
 
@@ -175,4 +185,6 @@ class Connector:
                     status=resp.status,
                 )
 
-            return await resp.json(content_type=None)
+            data = await resp.json(content_type=None)
+            _LOGGER.debug(f"Request ({method}) to {url} successful, response is: {data}")
+            return data
