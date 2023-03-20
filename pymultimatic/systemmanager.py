@@ -31,7 +31,7 @@ from .model import (
     EmfReport,
 )
 
-_LOGGER = logging.getLogger("SystemManager")
+_LOGGER = logging.getLogger(__name__)
 
 
 def ignore_http_409(return_value: Any = None) -> Callable[..., Any]:
