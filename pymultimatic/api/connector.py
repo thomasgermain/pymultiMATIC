@@ -167,6 +167,7 @@ class Connector:
 
     async def request(self, method: str, url: str, payload: Optional[Dict[str, Any]] = None) -> Any:
         """Do a request against vaillant API."""
+        _LOGGER.debug(f"Will call API: {method} {url} with payload {payload}")
         async with self._session.request(method, url, json=payload, headers=HEADER) as resp:
             if resp.status == 401:
                 _LOGGER.debug(f"Request ({method}) to {url} failed, will re login")
