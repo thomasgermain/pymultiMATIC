@@ -24,7 +24,7 @@ def zone_temperature_setpoint(temperature: float) -> Dict[str, Any]:
     """Payload used to set target temperature for
     :class:`~pymultimatic.model.component.Zone`.
     """
-    return {"temperature_setpoint": temperature}
+    return {"manual_mode_temperature_setpoint": temperature}
 
 
 def zone_temperature_setback(temperature: float) -> Dict[str, Any]:

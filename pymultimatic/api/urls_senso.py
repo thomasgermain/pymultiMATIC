@@ -102,8 +102,10 @@ _ZONE_QUICK_VETO = _ZONE_CONFIGURATION + "/quick_veto"
 _ZONE_HEATING_CONFIGURATION = _ZONE + "/heating/configuration"
 _ZONE_HEATING_TIMEPROGRAM = _ZONE + "/heating/timeprogram"
 _ZONE_HEATING_MODE = _ZONE_HEATING_CONFIGURATION + "/operation_mode"
-_ZONE_HEATING_SETPOINT_TEMPERATURE = _ZONE_HEATING_CONFIGURATION + "/setpoint_temperature"
-_ZONE_HEATING_SETBACK_TEMPERATURE = _ZONE_HEATING_CONFIGURATION + "/setback_temperature"
+_ZONE_HEATING_SETPOINT_TEMPERATURE = (
+    _ZONE_HEATING_CONFIGURATION + "/manual_mode_temperature_setpoint"
+)
+_ZONE_HEATING_SETBACK_TEMPERATURE = _ZONE_HEATING_CONFIGURATION + "/setback_temperature_setpoint"
 
 """Zone cooling"""
 _ZONE_COOLING_CONFIGURATION = _ZONE + "/cooling/configuration"

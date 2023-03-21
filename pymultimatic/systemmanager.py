@@ -656,7 +656,7 @@ class SystemManager:
             zone_id (str): id of the zone.
             new_mode (OperatingMode): The new mode to set.
         """
-        if new_mode in ZoneHeating.MODES and new_mode != OperatingModes.QUICK_VETO:
+        if zone_id and new_mode in ZoneHeating.MODES and new_mode != OperatingModes.QUICK_VETO:
             _LOGGER.debug(f"New mode is {new_mode}")
             await self._call_api(
                 self.urls.zone_heating_mode,
