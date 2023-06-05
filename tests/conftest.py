@@ -3,7 +3,7 @@ from datetime import datetime
 from http.cookies import SimpleCookie
 from typing import AsyncGenerator, Optional, Iterator
 
-import pytest
+import pytest_asyncio
 from aiohttp import ClientSession
 from aioresponses import aioresponses
 from yarl import URL
@@ -27,27 +27,27 @@ from pymultimatic.model import (
 )
 
 
-@pytest.fixture(autouse=True, name="session")
+@pytest_asyncio.fixture(autouse=True, name="session")
 async def fixture_session() -> AsyncGenerator[ClientSession, None]:
     async with ClientSession() as sess:
         yield sess
         await sess.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def resp(raw_resp: aioresponses) -> AsyncGenerator[aioresponses, None]:
     mock_auth(raw_resp)
     yield raw_resp
 
 
-@pytest.fixture(name="raw_resp")
+@pytest_asyncio.fixture(name="raw_resp")
 async def fixture_raw_resp() -> AsyncGenerator[aioresponses, None]:
     with aioresponses() as aioreponses:
         yield aioreponses
         aioreponses.clear()
 
 
-@pytest.fixture(autouse=True)
+@pytest_asyncio.fixture(autouse=True)
 async def connector(session: ClientSession) -> AsyncGenerator[Connector, None]:
     con = Connector("test", "test", session)
     orig_login = con.login
@@ -67,7 +67,7 @@ async def connector(session: ClientSession) -> AsyncGenerator[Connector, None]:
 
 
 # It's necessary to differentiate the connectors so that they can be launched in the same test.
-@pytest.fixture(autouse=True)
+@pytest_asyncio.fixture(autouse=True)
 async def senso_connector(session: ClientSession) -> AsyncGenerator[Connector, None]:
     con = Connector("test", "test", session)
     orig_login = con.login
@@ -127,7 +127,7 @@ def _zone() -> Zone:
         target_high=25,
         target_low=22,
     )
-    return Zone(  # type: ignore
+    return Zone(
         id="zone",
         name="Zone",
         temperature=22,
@@ -145,7 +145,7 @@ def _zone_senso(active_period_day: Optional[bool] = True) -> Zone:
         target_low=22,
     )
 
-    return Zone(  # type: ignore
+    return Zone(
         id="zone",
         name="Zone",
         temperature=22,
@@ -160,7 +160,7 @@ def _zone_cooling() -> Zone:
     cooling = ZoneCooling(
         time_program=timeprogram, operating_mode=OperatingModes.AUTO, target_high=23
     )
-    return Zone(  # type: ignore
+    return Zone(
         id="zone",
         name="Zone",
         temperature=22,

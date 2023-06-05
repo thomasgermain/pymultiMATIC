@@ -8,7 +8,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="pymultiMATIC",
-    version="0.7.0b4",
+    version="0.7.0b5",
     description="Python interface with Vaillant multiMATIC",
     long_description_content_type="text/markdown",
     long_description=long_description,
@@ -31,6 +31,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Home Automation",
     ],
 )
