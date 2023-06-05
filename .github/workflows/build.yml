@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
 
     - name: Check code format with black
       run: |
-        black --fast --check  -l 100 pymultimatic tests *.py
+        black --fast --check -l 100 pymultimatic tests *.py
 
     - name: Lint with flake8
       run: |

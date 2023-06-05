@@ -1,10 +1,12 @@
 import datetime
 import json
 from datetime import date, timedelta
-from typing import Any, AsyncGenerator, Dict, List, Tuple, Type
+from typing import Any, Dict, List, Tuple, Type
 from unittest import mock
+from collections.abc import AsyncGenerator
 
 import pytest
+import pytest_asyncio
 from aiohttp import ClientSession
 from aioresponses import aioresponses
 
@@ -23,7 +25,7 @@ from tests.conftest import mock_auth, path
 SERIAL = mapper.map_serial_number(json.loads(open(path("files/responses/facilities")).read()))
 
 
-@pytest.fixture(name="resp", autouse=True)
+@pytest_asyncio.fixture(name="resp", autouse=True)
 async def fixture_resp(resp: aioresponses) -> AsyncGenerator[aioresponses, None]:
     with open(path("files/responses/facilities"), "r") as file:
         facilities = json.loads(file.read())
@@ -31,7 +33,7 @@ async def fixture_resp(resp: aioresponses) -> AsyncGenerator[aioresponses, None]
     yield resp
 
 
-@pytest.fixture(name="manager")
+@pytest_asyncio.fixture(name="manager")
 async def fixture_manager(
     session: ClientSession, connector: Connector
 ) -> AsyncGenerator[SystemManager, None]:
@@ -42,7 +44,7 @@ async def fixture_manager(
         yield manager
 
 
-@pytest.fixture(name="senso_manager")
+@pytest_asyncio.fixture(name="senso_manager")
 async def fixture_senso_manager(
     session: ClientSession, senso_connector: Connector
 ) -> AsyncGenerator[SystemManager, None]:
@@ -53,7 +55,7 @@ async def fixture_senso_manager(
         yield manager
 
 
-@pytest.fixture(name="managers")
+@pytest_asyncio.fixture(name="managers")
 async def fixture_managers(
     session: ClientSession,
     connector: Connector,
@@ -848,7 +850,7 @@ async def test_get_facility_detail_other_serial(manager: SystemManager, resp: ai
 
     key = None
     for match in resp._matches.items():
-        if match[1].url_or_pattern.path in manager.urls.facilities_list():
+        if match[1].url_or_pattern.path in manager.urls.facilities_list(): # type: ignore
             key = match[0]
     resp._matches.pop(key)
     resp.get(url, status=200, payload=json_raw)
@@ -871,7 +873,7 @@ async def test_get_facility_detail_other_serial_senso(
 
     key = None
     for match in resp._matches.items():
-        if match[1].url_or_pattern.path in senso_manager.urls.facilities_list():
+        if match[1].url_or_pattern.path in senso_manager.urls.facilities_list():  # type: ignore
             key = match[0]
     resp._matches.pop(key)
     resp.get(url, status=200, payload=json_raw)

@@ -172,7 +172,13 @@ class SystemManager:
             System: the full system.
         """
 
-        (facilities, full_system, live_report, hvac_state, gateway_json,) = await asyncio.gather(
+        (
+            facilities,
+            full_system,
+            live_report,
+            hvac_state,
+            gateway_json,
+        ) = await asyncio.gather(
             self._call_api(self.urls.facilities_list, schema=schemas.FACILITIES),
             self._call_api(self.urls.system, schema=schemas.SYSTEM),
             self._call_api(self.urls.live_report, schema=schemas.LIVE_REPORTS),

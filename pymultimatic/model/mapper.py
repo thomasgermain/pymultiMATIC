@@ -342,7 +342,7 @@ def map_zone(raw_zone) -> Optional[Zone]:
             func = _map_function(raw_cooling, "setting")
             zone_cooling = ZoneCooling(func[0], func[1], func[2], func[3])
 
-        return Zone(  # type: ignore
+        return Zone(
             id=zone_id,
             name=name,
             temperature=temperature,
