@@ -1,9 +1,8 @@
 import datetime
 import json
 from datetime import date, timedelta
-from typing import Any, Dict, List, Tuple, Type
+from typing import Any, AsyncGenerator, Dict, List, Tuple, Type
 from unittest import mock
-from collections.abc import AsyncGenerator
 
 import pytest
 import pytest_asyncio
@@ -850,7 +849,7 @@ async def test_get_facility_detail_other_serial(manager: SystemManager, resp: ai
 
     key = None
     for match in resp._matches.items():
-        if match[1].url_or_pattern.path in manager.urls.facilities_list(): # type: ignore
+        if match[1].url_or_pattern.path in manager.urls.facilities_list():  # type: ignore
             key = match[0]
     resp._matches.pop(key)
     resp.get(url, status=200, payload=json_raw)
