@@ -31,7 +31,9 @@ class HotWater(Function, Component):
             self.operating_mode == OperatingModes.AUTO
         ):  # auto at this point mean we have a "direct heater"
             mode = ActiveMode(self.target_high, OperatingModes.AUTO, SettingModes.ON)
-        elif self.operating_mode == OperatingModes.ON or self.operating_mode == OperatingModes.MANUAL:
+        elif (
+            self.operating_mode == OperatingModes.ON or self.operating_mode == OperatingModes.MANUAL
+        ):
             mode = ActiveMode(self.target_high, self.operating_mode)
         else:  # MODE_OFF
             mode = ActiveMode(constants.FROST_PROTECTION_TEMP, OperatingModes.OFF)
