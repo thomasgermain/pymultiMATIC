@@ -75,7 +75,9 @@ class MapperTest(unittest.TestCase):
                 dhw = mapper.map_dhw(raw_dhw)
                 self.assertIsNotNone(dhw.hotwater)
                 self.assertIsNone(dhw.hotwater.temperature)
+                self.assertIsNotNone(dhw.hotwater.target_high)
                 self.assertIsNotNone(dhw.circulation)
+                self.assertIsNotNone(dhw.hotwater.active_mode)
 
     def test_map_dhw_no_timeprogram(self) -> None:
         with open(path("files/responses/dhws_minimal"), "r") as file:
