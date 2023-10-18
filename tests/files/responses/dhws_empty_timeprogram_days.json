@@ -1,0 +1,86 @@
+{
+  "body": [
+    {
+      "hotwater": {
+        "configuration": {
+          "operation_mode": "AUTO",
+          "temperature_setpoint": 50.0
+        },
+        "timeprogram": {
+          "monday": [
+          ],
+          "tuesday": [
+          ],
+          "wednesday": [
+          ],
+          "thursday": [
+          ],
+          "friday": [
+          ],
+          "saturday": [
+          ],
+          "sunday": [
+          ]
+        }
+      },
+      "circulation": {
+        "configuration": {
+          "operationMode": "AUTO"
+        },
+        "timeprogram": {
+          "monday": [
+          ],
+          "tuesday": [
+          ],
+          "wednesday": [
+          ],
+          "thursday": [
+          ],
+          "friday": [
+          ],
+          "saturday": [
+          ],
+          "sunday": [
+          ]
+        }
+      },
+      "_id": "Control_DHW"
+    }
+  ],
+  "meta": {
+    "resourceState": [
+      {
+        "state": "SYNCED",
+        "timestamp": 1624356098685,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxxx/systemcontrol/v1/dhw/Control_DHW/circulation/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624348841011,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxxx/systemcontrol/v1/dhw/Control_DHW/hotwater/configuration"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624355861000,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxxx/systemcontrol/v1/dhw/Control_DHW/circulation/timeprogram"
+        }
+      },
+      {
+        "state": "SYNCED",
+        "timestamp": 1624355861000,
+        "link": {
+          "rel": "self",
+          "resourceLink": "/facilities/xxxxx/systemcontrol/v1/dhw/Control_DHW/hotwater/timeprogram"
+        }
+      }
+    ]
+  }
+}

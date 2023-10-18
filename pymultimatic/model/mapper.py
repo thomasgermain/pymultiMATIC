@@ -220,6 +220,7 @@ def map_time_program(raw_time_program, key: Optional[str] = None) -> TimeProgram
 def map_time_program_day(raw_time_program_day, key: Optional[str] = None) -> TimeProgramDay:
     """Map *time program day* and *time program day settings*."""
     settings = []
+    time_program_day = None
     if raw_time_program_day:
         # By default in multimatic mode
         multimatic_timeprogram = True
