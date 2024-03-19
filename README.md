@@ -1,3 +1,5 @@
+## ⚠️ This project is archived: multimatic API is no longer accessible and has been replaced by MyVaillant.
+
 # pymultiMATIC
 ![PyPI - License](https://img.shields.io/github/license/thomasgermain/pymultiMATIC)
 [![codecov](https://codecov.io/gh/thomasgermain/pymultiMATIC/branch/master/graph/badge.svg?token=KKM0BRHJR7)](https://codecov.io/gh/thomasgermain/pymultiMATIC)
